@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens sampled from the PickASparky Figma file.
+ * Change a value here and every component follows.
+ */
+@theme inline {
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+
+  /*
+   * Reviews marquee. Declared inline so `--marquee-duration` is read from the
+   * row it is set on (each row sets it from its number of cards).
+   */
+  --animate-marquee: marquee var(--marquee-duration, 60s) linear infinite;
+}
+
+@theme {
+  /* Brand */
+  --color-primary: #0a9b53;
+  --color-primary-dark: #088246;
+  --color-primary-soft: #e0f2e9;
+  --color-forest: #153a2c;
+
+  /* Text */
+  --color-ink: #10263f;
+  --color-muted: #5c6b7a;
+  --color-subtle: #8a96a3;
+
+  /* Surfaces */
+  --color-surface: #fafafa;
+  --color-mint: #d8eeee;
+  --color-mint-soft: #eff8f7;
+  --color-sand: #efeee7;
+  --color-stone: #efede9;
+  --color-peach: #f8e6dd;
+  --color-peach-soft: #f9ebe4;
+  --color-footer: #d8edee;
+  --color-footer-bar: #12232b;
+
+  /* Lines and accents */
+  --color-line: #e5e9ee;
+  --color-star: #f5a623;
+
+  --shadow-soft: 0 1px 2px rgb(16 38 63 / 0.04), 0 2px 8px rgb(16 38 63 / 0.04);
+  --shadow-card: 0 12px 32px -12px rgb(16 38 63 / 0.16);
+  --shadow-float: 0 20px 48px -16px rgb(16 38 63 / 0.22);
+
+  /*
+   * Each marquee group slides left by exactly its own width, at which point
+   * the identical group behind it sits where this one started.
+   */
+  @keyframes marquee {
+    to {
+      transform: translate3d(-100%, 0, 0);
+    }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: #fff;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Native <details> marker is replaced by our own plus/minus icon. */
+  summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/*
+ * The coverage map (Leaflet) sets system fonts on its own controls and
+ * attribution. Poppins is the only typeface on the site, so the map inherits
+ * it. Kept outside the layers and prefixed with `body` so it wins over
+ * Leaflet's stylesheet whichever of the two loads first.
+ */
+body .leaflet-container,
+body .leaflet-container .leaflet-bar a,
+body .leaflet-container a.leaflet-popup-close-button {
+  font-family: inherit;
+}
