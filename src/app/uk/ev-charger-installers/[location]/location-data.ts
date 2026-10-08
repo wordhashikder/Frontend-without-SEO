@@ -20,13 +20,15 @@ export async function loadLocation(slug: string, page = 1) {
   const location = await api.location(slug);
   if (!location) return null;
 
-  const [listing, reviews] = await Promise.all([
+  const [listing, reviews, locations] = await Promise.all([
     api.installers({
       location: slug,
       page: 1,
       pageSize: Math.min(page * INSTALLERS_PER_PAGE, MAX_INSTALLERS),
     }),
     api.featuredReviews(10),
+    // Neighbouring towns for the local map (cached for an hour, shared by every page).
+    api.locations(),
   ]);
 
   return {
@@ -34,6 +36,11 @@ export async function loadLocation(slug: string, page = 1) {
     installers: listing?.items ?? [],
     total: listing?.total ?? 0,
     reviews,
+    // Coordinates arrived in a later API version; skip entries without them.
+    neighbours: locations.filter(
+      (place) =>
+        Number.isFinite(place.latitude) && Number.isFinite(place.longitude),
+    ),
   };
 }
 

@@ -151,11 +151,16 @@ const quoteSchema = z
       .trim()
       .max(quoteLimits.email, { error: quoteMessages.email })
       .pipe(z.email({ error: quoteMessages.email })),
+    // Optional: blank (or missing) is sent as null; a number that is given must be valid.
     phone: z
       .string({ error: quoteMessages.phone })
       .trim()
       .max(30, { error: quoteMessages.phone })
-      .refine(isPhone, { error: quoteMessages.phone }),
+      .refine((value) => value === "" || isPhone(value), {
+        error: quoteMessages.phone,
+      })
+      .nullish()
+      .transform((value) => value || null),
     consent: z.literal(true, { error: quoteMessages.consent }),
     // A malformed slug is dropped rather than blocking the request.
     installer_slug: z

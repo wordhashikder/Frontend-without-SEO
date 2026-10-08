@@ -30,7 +30,7 @@ export default async function LocationPage({ params }: Props) {
   return (
     <>
       <LocationView {...data} page={1} />
-      <LocationsDirectory near={slug} />
+      <LocationsDirectory />
     </>
   );
 }

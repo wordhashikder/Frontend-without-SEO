@@ -30,10 +30,11 @@ function Column({ title, items }: { title: string; items: LocationRef[] }) {
 
 /**
  * "Find trusted installers in your area": the internal-link hub that closes
- * every page. Pass `near` on location pages so the first columns are local.
+ * every page. The four columns and their order are set in the API's location
+ * data (the same on every page), and no location is listed twice.
  */
-export async function LocationsDirectory({ near }: { near?: string }) {
-  const directory = await api.locationDirectory(near);
+export async function LocationsDirectory() {
+  const directory = await api.locationDirectory();
   if (!directory) return null;
 
   return (

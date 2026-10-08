@@ -5,6 +5,7 @@ import {
   quoteSteps,
 } from "@/components/directory/how-it-works-steps";
 import { InstallerListing } from "@/components/directory/installer-listing";
+import { LocationMap } from "@/components/directory/location-map";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { FeatureCard } from "@/components/sections/feature-blocks";
 import { JsonLd } from "@/components/sections/json-ld";
@@ -24,10 +25,17 @@ import {
   webPageSchema,
 } from "@/lib/seo";
 import { installerPath, locationPath, routes } from "@/lib/site";
-import type { InstallerCard, LocationDetail, Review } from "@/lib/types";
+import type {
+  InstallerCard,
+  LocationDetail,
+  LocationSummary,
+  Review,
+} from "@/lib/types";
 
 type LocationViewProps = {
   location: LocationDetail;
+  /** Other locations, for the neighbouring towns on the local map. */
+  neighbours: LocationSummary[];
   /** The installers to list (cumulative across "Load More" pages). */
   installers: InstallerCard[];
   /** All installers covering this location. */
@@ -54,9 +62,47 @@ function GreenerPill({ city }: { city: string }) {
   );
 }
 
+/**
+ * The town's photo: one shipped with the site (public/images/locations/) or
+ * one the admin uploaded, with its credit when there is one. Without a photo
+ * the town's own local map is drawn instead, so no card is ever blank.
+ */
+function LocationPicture({
+  location,
+  neighbours,
+}: Pick<LocationViewProps, "location" | "neighbours">) {
+  if (location.image_url) {
+    return (
+      <>
+        <Image
+          src={location.image_url}
+          alt={location.image_alt ?? `${location.name} city centre`}
+          fill
+          sizes="(min-width: 1280px) 598px, (min-width: 1024px) 50vw, 100vw"
+          className="object-cover"
+        />
+        {location.image_credit ? (
+          <p className="absolute top-3 right-3 max-w-[70%] truncate rounded-md bg-ink/60 px-2 py-0.5 text-[10px] leading-4 text-white">
+            {location.image_credit}
+          </p>
+        ) : null}
+      </>
+    );
+  }
+
+  return (
+    <LocationMap
+      location={location}
+      neighbours={neighbours}
+      className="absolute inset-0 size-full"
+    />
+  );
+}
+
 /** Everything on a location page between the header and the locations directory. */
 export function LocationView({
   location,
+  neighbours,
   installers,
   total,
   page,
@@ -192,15 +238,7 @@ export function LocationView({
 
           <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-2">
             <div className="relative aspect-[598/282] min-h-[240px] w-full overflow-hidden rounded-2xl bg-mint lg:aspect-auto lg:min-h-[282px]">
-              {location.image_url ? (
-                <Image
-                  src={location.image_url}
-                  alt={`${city} skyline`}
-                  fill
-                  sizes="(min-width: 1024px) 598px, 100vw"
-                  className="object-cover"
-                />
-              ) : null}
+              <LocationPicture location={location} neighbours={neighbours} />
               <GreenerPill city={city} />
             </div>
             <div>

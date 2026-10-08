@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { site } from "@/lib/site";
+import { routes, site } from "@/lib/site";
 
 /**
  * Canonical form of a site path: pages end with a slash, files do not
@@ -297,5 +297,77 @@ export function installerSchema(args: {
           })),
         }
       : {}),
+  };
+}
+
+/** `@id` of the blog as a whole, shared by the listing and every article. */
+const blogId = () => `${absoluteUrl(routes.blog)}#blog`;
+
+/** Absolute URL for an image given as a site path or an absolute URL. */
+const imageUrl = (image: string) =>
+  image.startsWith("/") ? absoluteUrl(image) : image;
+
+/** The team byline is the organisation itself; any other name is a person. */
+const authorNode = (name: string) =>
+  name === `${site.name} Team`
+    ? { "@id": `${site.url}/#organization` }
+    : { "@type": "Person", name };
+
+type PostSummary = {
+  title: string;
+  path: string;
+  publishedAt: string;
+  image?: string | null;
+};
+
+/** The blog listing's main entity (nested in its page node): a `Blog` with the posts shown. */
+export function blogSchema(posts: PostSummary[]): Json {
+  return {
+    "@type": "Blog",
+    "@id": blogId(),
+    name: `${site.name} Blog`,
+    url: absoluteUrl(routes.blog),
+    inLanguage: "en-GB",
+    publisher: { "@id": `${site.url}/#organization` },
+    blogPost: posts.map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.title,
+      url: absoluteUrl(post.path),
+      datePublished: post.publishedAt,
+      ...(post.image ? { image: imageUrl(post.image) } : {}),
+    })),
+  };
+}
+
+/** One article, tied to its page, the blog and the organisation by `@id`. */
+export function blogPostingSchema(args: {
+  title: string;
+  description: string;
+  path: string;
+  image?: string | null;
+  publishedAt: string;
+  modifiedAt: string;
+  author: string;
+  section: string;
+  minutes: number;
+}): Json {
+  const url = absoluteUrl(args.path);
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${url}#article`,
+    headline: args.title,
+    description: args.description,
+    url,
+    mainEntityOfPage: { "@id": `${url}#webpage` },
+    isPartOf: { "@id": blogId() },
+    ...(args.image ? { image: imageUrl(args.image) } : {}),
+    datePublished: args.publishedAt,
+    dateModified: args.modifiedAt,
+    author: authorNode(args.author),
+    publisher: { "@id": `${site.url}/#organization` },
+    articleSection: args.section,
+    timeRequired: `PT${args.minutes}M`,
+    inLanguage: "en-GB",
   };
 }

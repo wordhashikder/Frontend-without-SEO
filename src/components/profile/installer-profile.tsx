@@ -121,85 +121,95 @@ export function InstallerProfile({
           ]}
         />
 
-        {/* Header */}
-        <header className="mt-6 sm:mt-8">
-          <div className="flex items-start gap-4 sm:gap-5">
-            <InstallerLogo
-              name={name}
-              logoUrl={installer.logo_url}
-              size={112}
-              className="max-sm:size-20!"
-            />
-            <div className="min-w-0 sm:pt-1.5">
-              <h1 className="text-[22px] font-bold leading-7 tracking-[-0.01em] sm:text-2xl">
-                {name}
-              </h1>
-              {installer.tagline ? (
-                <p className="mt-1 text-sm">{installer.tagline}</p>
-              ) : null}
-              {hasRating && installer.rating_avg !== null ? (
-                <a
-                  href="#reviews"
-                  className="mt-2 inline-flex flex-wrap items-center gap-x-2 text-sm hover:underline"
-                >
-                  <StarRating rating={installer.rating_avg} />
-                  <span className="font-semibold text-ink">
-                    {installer.rating_avg.toFixed(1)}
-                  </span>
-                  <span>({reviewsLabel})</span>
-                </a>
-              ) : (
-                <p className="mt-2 text-sm text-subtle">No reviews yet</p>
-              )}
-              <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
-                <li className="flex items-center gap-1.5">
-                  <MapPin aria-hidden className="size-4" strokeWidth={1.75} />
-                  {installer.town}
-                </li>
-                {installer.verified ? (
-                  <li className="flex items-center gap-1.5">
-                    <ShieldCheck
-                      aria-hidden
-                      className="size-4 text-primary"
-                      strokeWidth={1.75}
-                    />
-                    Verified installer
-                  </li>
+        {/*
+          Header and gallery on the left; the quote card on the right, level with
+          the top of the header as in the design. On phones: header, gallery, card.
+        */}
+        <div className="mt-6 grid grid-cols-1 gap-y-6 sm:mt-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:grid-rows-[auto_1fr] lg:gap-x-8">
+          <header className="lg:col-start-1 lg:row-start-1">
+            <div className="flex items-start gap-4 sm:gap-5">
+              <InstallerLogo
+                name={name}
+                logoUrl={installer.logo_url}
+                size={112}
+                className="max-sm:size-20!"
+              />
+              <div className="min-w-0 sm:pt-1.5">
+                <h1 className="text-[22px] font-bold leading-7 tracking-[-0.01em] sm:text-2xl">
+                  {name}
+                </h1>
+                {installer.tagline ? (
+                  <p className="mt-1 text-sm">{installer.tagline}</p>
                 ) : null}
-                {installer.years_experience ? (
+                {hasRating && installer.rating_avg !== null ? (
+                  <a
+                    href="#reviews"
+                    className="mt-2 inline-flex flex-wrap items-center gap-x-2 text-sm hover:underline"
+                  >
+                    <StarRating rating={installer.rating_avg} />
+                    <span className="font-semibold text-ink">
+                      {installer.rating_avg.toFixed(1)}
+                    </span>
+                    <span>({reviewsLabel})</span>
+                  </a>
+                ) : (
+                  <p className="mt-2 text-sm text-subtle">No reviews yet</p>
+                )}
+                <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
                   <li className="flex items-center gap-1.5">
-                    <Clock aria-hidden className="size-4" strokeWidth={1.75} />
-                    {installer.years_experience}+ years experience
+                    <MapPin aria-hidden className="size-4" strokeWidth={1.75} />
+                    {installer.town}
                   </li>
-                ) : null}
-              </ul>
+                  {installer.verified ? (
+                    <li className="flex items-center gap-1.5">
+                      <ShieldCheck
+                        aria-hidden
+                        className="size-4 text-primary"
+                        strokeWidth={1.75}
+                      />
+                      Verified installer
+                    </li>
+                  ) : null}
+                  {installer.years_experience ? (
+                    <li className="flex items-center gap-1.5">
+                      <Clock
+                        aria-hidden
+                        className="size-4"
+                        strokeWidth={1.75}
+                      />
+                      {installer.years_experience}+ years experience
+                    </li>
+                  ) : null}
+                </ul>
+              </div>
             </div>
-          </div>
-          {installer.services.length > 0 ? (
-            <ul
-              aria-label="Services"
-              className="mt-5 flex flex-wrap gap-2 sm:mt-4"
-            >
-              {installer.services.map((service) => (
-                <li
-                  key={service}
-                  className="rounded-md border border-line bg-[#f9fafb] px-3 py-1.5 text-xs font-medium text-ink/80"
-                >
-                  {serviceLabels[service] ?? service}
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </header>
+            {installer.services.length > 0 ? (
+              <ul
+                aria-label="Services"
+                className="mt-5 flex flex-wrap gap-2 sm:mt-4"
+              >
+                {installer.services.map((service) => (
+                  <li
+                    key={service}
+                    className="rounded-md border border-line bg-[#f9fafb] px-3 py-1.5 text-xs font-medium text-ink/80"
+                  >
+                    {serviceLabels[service] ?? service}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </header>
 
-        {/* Gallery (or the description when there are no photos) + quote card */}
-        <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
-          {hasPhotos ? (
-            <Gallery photos={installer.photos} name={name} />
-          ) : (
-            <div>{about}</div>
-          )}
-          <div className="lg:sticky lg:top-24 lg:self-start">
+          {/* Gallery, or the description when there are no photos */}
+          <div className="lg:col-start-1 lg:row-start-2">
+            {hasPhotos ? (
+              <Gallery photos={installer.photos} name={name} />
+            ) : (
+              about
+            )}
+          </div>
+
+          <div className="max-lg:mt-2 lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
             <QuoteCard installer={installer} />
           </div>
         </div>

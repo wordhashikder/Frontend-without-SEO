@@ -99,7 +99,7 @@ export default async function InstallerPage(props: Props) {
         reviews={reviews?.items ?? []}
         similar={similar}
       />
-      <LocationsDirectory near={installer.location_slug} />
+      <LocationsDirectory />
     </>
   );
 }

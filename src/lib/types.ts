@@ -44,18 +44,25 @@ export interface LocationRef {
 
 export interface LocationSummary extends LocationRef {
   region: string;
+  latitude: number;
+  longitude: number;
   installer_count: number;
 }
 
 export interface LocationDetail extends LocationSummary {
-  latitude: number;
-  longitude: number;
   intro: string | null;
+  /**
+   * The town's photo: one shipped with the site (public/images/locations/) or
+   * one the admin uploaded. Without one, the page draws a local map.
+   */
   image_url: string | null;
+  image_alt: string | null;
+  /** Photo credit, e.g. "Photo: Jane Doe". */
+  image_credit: string | null;
 }
 
+/** The four directory columns, each in display order; no location appears twice. */
 export interface LocationDirectory {
-  anchor: LocationRef;
   nearby: LocationRef[];
   popular: LocationRef[];
   more_in_area: LocationRef[];
@@ -176,7 +183,8 @@ export interface QuoteRequestCreate {
   notes: string | null;
   first_name: string;
   email: string;
-  phone: string;
+  /** Optional: null when the customer prefers to be contacted by email. */
+  phone: string | null;
   consent: true;
   /** Set when the request is sent to one installer from their profile page. */
   installer_slug?: string | null;
@@ -202,6 +210,17 @@ export interface ContactMessageCreate {
   email: string;
   subject: ContactSubject;
   message: string;
+  website?: string;
+}
+
+/** The "Request a Quote" form on an installer's profile: a message to that installer only. */
+export interface InstallerEnquiryCreate {
+  name: string;
+  email: string;
+  /** Optional: null when the customer prefers to be contacted by email. */
+  phone: string | null;
+  message: string;
+  /** Honeypot. Must be empty. */
   website?: string;
 }
 
@@ -258,6 +277,30 @@ export interface ReviewInvite {
 
 export interface UrlResponse {
   url: string;
+}
+
+/** A published blog post, as listed. */
+export interface BlogPostSummary {
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  category_slug: string;
+  author_name: string;
+  /** Absolute (Cloudinary) URL or a site path such as /images/…; null when unset. */
+  cover_image_url: string | null;
+  cover_image_alt: string | null;
+  reading_minutes: number;
+  is_featured: boolean;
+  published_at: string;
+  updated_at: string;
+}
+
+/** A published blog post with its Markdown body. */
+export interface BlogPostDetail extends BlogPostSummary {
+  body: string;
+  seo_title: string | null;
+  seo_description: string | null;
 }
 
 /** Error envelope returned by the API for every non-2xx response. */

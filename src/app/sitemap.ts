@@ -1,10 +1,10 @@
 import type { MetadataRoute } from "next";
 import { api } from "@/lib/api";
 import { absoluteUrl } from "@/lib/seo";
-import { installerPath, locationPath, routes } from "@/lib/site";
-import type { InstallerCard } from "@/lib/types";
+import { blogPostPath, installerPath, locationPath, routes } from "@/lib/site";
+import type { BlogPostSummary, InstallerCard } from "@/lib/types";
 
-// Regenerated hourly so new locations and installers are discovered quickly.
+// Regenerated hourly so new locations, installers and posts are discovered quickly.
 export const revalidate = 3600;
 
 const staticPages: { path: string; priority: number }[] = [
@@ -19,6 +19,7 @@ const staticPages: { path: string; priority: number }[] = [
   { path: routes.vetting, priority: 0.6 },
   { path: routes.about, priority: 0.6 },
   { path: routes.contact, priority: 0.5 },
+  { path: routes.blog, priority: 0.7 },
   { path: routes.privacy, priority: 0.2 },
   { path: routes.terms, priority: 0.2 },
   { path: routes.cookies, priority: 0.2 },
@@ -39,11 +40,27 @@ async function allInstallers() {
   return items;
 }
 
+/** Every published post; an unreachable API leaves them out of this hour's sitemap. */
+async function allPosts() {
+  const items: BlogPostSummary[] = [];
+  try {
+    for (let page = 1; page <= MAX_PAGES; page++) {
+      const result = await api.blogPosts({ page, pageSize: PAGE_SIZE });
+      items.push(...result.items);
+      if (page >= result.pages) break;
+    }
+  } catch (error) {
+    console.error("[sitemap] blog posts skipped", error);
+  }
+  return items;
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const [locations, installers] = await Promise.all([
+  const [locations, installers, posts] = await Promise.all([
     api.locations(),
     allInstallers(),
+    allPosts(),
   ]);
 
   // Each installer appears once, at its one canonical profile URL, however
@@ -65,6 +82,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: absoluteUrl(installerPath(installer.slug)),
       lastModified: now,
       changeFrequency: "weekly" as const,
+      priority: 0.6,
+    })),
+    ...posts.map((post) => ({
+      url: absoluteUrl(blogPostPath(post.slug)),
+      lastModified: new Date(post.updated_at),
+      changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
   ];

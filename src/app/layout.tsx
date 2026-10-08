@@ -70,7 +70,15 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-GB" className={`${poppins.variable} h-full antialiased`}>
+    // `data-scroll-behavior="smooth"`: in-page links (e.g. "#reviews") scroll smoothly,
+    // but Next.js switches smooth scrolling off while it moves to a new page, so every
+    // navigation (the logo included) lands instantly at the top instead of animating
+    // from the old scroll position and stopping part-way down.
+    <html
+      lang="en-GB"
+      data-scroll-behavior="smooth"
+      className={`${poppins.variable} h-full antialiased`}
+    >
       <body className="flex min-h-full flex-col">
         <a
           href="#main"

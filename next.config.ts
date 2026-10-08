@@ -6,10 +6,6 @@ type Redirect = Awaited<
 
 const isDev = process.env.NODE_ENV === "development";
 
-/**
- * Static CSP (no nonces) so marketing pages stay statically cacheable.
- * Leaflet map tiles are served from OpenStreetMap; installer media from Cloudinary.
- */
 const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
@@ -39,11 +35,7 @@ const securityHeaders = [
   },
 ];
 
-/*
- * One host only. When NEXT_PUBLIC_SITE_URL is a www address, any request that
- * arrives on the bare domain is answered with a single 301 to the same path on
- * www. (The equivalent of an .htaccess rule; this stack has no Apache.)
- */
+
 const siteUrl = new URL(
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
 );
@@ -54,7 +46,6 @@ const bareHost = siteUrl.hostname.startsWith("www.")
 const hostRedirects: Redirect[] = bareHost
   ? [
       {
-        // `(.*)` keeps the path exactly as requested, trailing slash included.
         source: "/:path(.*)",
         has: [{ type: "host", value: bareHost.replaceAll(".", "\\.") }],
         destination: `${siteUrl.origin}/:path`,
@@ -63,11 +54,6 @@ const hostRedirects: Redirect[] = bareHost
     ]
   : [];
 
-/*
- * Addresses used before the /uk/ prefix, and any attempt to reach an installer
- * profile underneath a location. Each one answers with a 301 to the single
- * canonical URL, so none of them can become a second indexable copy.
- */
 const directory = "/uk/ev-charger-installers";
 const profiles = "/uk/installer";
 const legacyRedirects: Redirect[] = [

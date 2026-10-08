@@ -2,10 +2,13 @@ import "server-only";
 
 import type {
   ApiErrorBody,
+  BlogPostDetail,
+  BlogPostSummary,
   ContactMessageCreate,
   CurrentUser,
   InstallerCard,
   InstallerDetail,
+  InstallerEnquiryCreate,
   LocationDetail,
   LocationDirectory,
   LocationSummary,
@@ -182,10 +185,10 @@ export const api = {
       }),
     ),
 
-  locationDirectory: (near?: string) =>
+  /** The "Find trusted installers in your area" columns: the same on every page. */
+  locationDirectory: () =>
     safe(
       request<LocationDirectory>("/locations/directory", {
-        query: { near },
         revalidate: HOUR,
         tags: ["locations"],
       }),
@@ -264,6 +267,47 @@ export const api = {
   createReview: (body: ReviewCreate, clientIp?: string) =>
     request<MessageResponse>("/reviews", { method: "POST", body, clientIp }),
 
+  // ---- Blog --------------------------------------------------------------
+  /**
+   * Published posts, newest first. The primary resource of the blog pages, so
+   * an outage propagates (never cached as an empty blog).
+   */
+  blogPosts: (params: {
+    page?: number;
+    pageSize?: number;
+    category?: string;
+  }) =>
+    request<Paginated<BlogPostSummary>>("/blog/posts", {
+      query: {
+        page: params.page ?? 1,
+        page_size: params.pageSize ?? 9,
+        category: params.category,
+      },
+      revalidate: 5 * MINUTE,
+      tags: ["blog"],
+    }),
+
+  blogPost: (slug: string) =>
+    orNull(
+      request<BlogPostDetail>(`/blog/posts/${encodeURIComponent(slug)}`, {
+        revalidate: 5 * MINUTE,
+        tags: ["blog", `blog:${slug}`],
+      }),
+    ),
+
+  relatedBlogPosts: (slug: string, limit = 3) =>
+    safe(
+      request<BlogPostSummary[]>(
+        `/blog/posts/${encodeURIComponent(slug)}/related`,
+        {
+          query: { limit },
+          revalidate: 5 * MINUTE,
+          tags: ["blog"],
+        },
+      ),
+      [] as BlogPostSummary[],
+    ),
+
   // ---- Quotes & contact (mutations: errors propagate to the caller) -------
   lookupPostcode: (postcode: string, clientIp?: string) =>
     request<PostcodeLookup>(`/postcodes/${encodeURIComponent(postcode)}`, {
@@ -275,6 +319,16 @@ export const api = {
 
   sendContactMessage: (body: ContactMessageCreate, clientIp?: string) =>
     request<MessageResponse>("/contact", { method: "POST", body, clientIp }),
+
+  sendInstallerEnquiry: (
+    slug: string,
+    body: InstallerEnquiryCreate,
+    clientIp?: string,
+  ) =>
+    request<MessageResponse>(
+      `/installers/${encodeURIComponent(slug)}/enquiries`,
+      { method: "POST", body, clientIp },
+    ),
 
   // ---- Auth --------------------------------------------------------------
   register: (body: RegisterRequest, clientIp?: string) =>

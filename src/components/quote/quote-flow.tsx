@@ -225,6 +225,7 @@ export function QuoteFlow({ entry, intro, outro }: QuoteFlowProps) {
               matchedInstallers: outcome.matchedInstallers,
               firstName: answers.first_name.trim(),
               email: answers.email.trim(),
+              hasPhone: answers.phone.trim().length > 0,
             },
           });
         } else {

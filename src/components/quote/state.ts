@@ -68,6 +68,8 @@ export type QuoteResult = {
   matchedInstallers: number;
   firstName: string;
   email: string;
+  /** Whether the customer gave a phone number (it is optional). */
+  hasPhone: boolean;
 };
 
 export type FlowState = {
@@ -170,7 +172,10 @@ export function validateStep(step: StepId, answers: Answers): QuoteFieldErrors {
         errors.first_name = quoteMessages.firstNameLength;
       if (!isEmail(answers.email) || answers.email.length > quoteLimits.email)
         errors.email = quoteMessages.email;
-      if (!isPhone(answers.phone)) errors.phone = quoteMessages.phone;
+      // Optional: only a number that was entered has to be valid.
+      if (answers.phone.trim() && !isPhone(answers.phone)) {
+        errors.phone = quoteMessages.phone;
+      }
       if (!answers.consent) errors.consent = quoteMessages.consent;
       break;
     }

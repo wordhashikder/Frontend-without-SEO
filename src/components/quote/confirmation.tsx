@@ -23,7 +23,9 @@ export function Confirmation({ headingRef, result }: ConfirmationProps) {
           },
           {
             title: "Installers get in touch",
-            text: "Your matched installers will contact you by email or phone with their quotes.",
+            text: result.hasPhone
+              ? "Your matched installers will contact you by email or phone with their quotes."
+              : "Your matched installers will email you their quotes.",
           },
           {
             title: "Compare and choose",

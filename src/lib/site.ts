@@ -55,6 +55,8 @@ export const routes = {
   privacy: "/privacy-policy/",
   terms: "/terms-and-conditions/",
   cookies: "/cookie-policy/",
+  /** Blog listing (page 1). Articles live directly under it. */
+  blog: "/blog/",
 } as const;
 
 /** /uk/ev-charger-installers/manchester/ */
@@ -69,6 +71,13 @@ export const locationPath = (locationSlug: string) =>
 export const installerPath = (installerSlug: string) =>
   `${routes.installerProfiles}${installerSlug}/`;
 
+/** /blog/what-affects-the-cost-of-a-home-ev-charger-installation/ */
+export const blogPostPath = (postSlug: string) => `${routes.blog}${postSlug}/`;
+
+/** /blog/ for page 1, then /blog/page/2/, /blog/page/3/ … */
+export const blogListingPath = (page: number) =>
+  page <= 1 ? routes.blog : `${routes.blog}page/${page}/`;
+
 export type NavLink = { label: string; href: string };
 export type NavGroup = { title: string; links: NavLink[] };
 
@@ -82,6 +91,7 @@ export const navigation: NavGroup[] = [
       { label: "FAQ", href: routes.faq },
       { label: "Electrician Accreditations", href: routes.accreditations },
       { label: "Electrical Safety & Regulations", href: routes.safety },
+      { label: "EV Charging Blog", href: routes.blog },
     ],
   },
   {

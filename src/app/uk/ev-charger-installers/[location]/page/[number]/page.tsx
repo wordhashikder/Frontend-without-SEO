@@ -36,7 +36,7 @@ async function load({ params }: Pick<Props, "params">) {
   // A page beyond the last one would only repeat the previous page.
   if (!data || (page - 1) * INSTALLERS_PER_PAGE >= data.total) notFound();
 
-  return { slug, page, data };
+  return { page, data };
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
@@ -45,12 +45,12 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 export default async function LocationListingPage(props: Props) {
-  const { slug, page, data } = await load(props);
+  const { page, data } = await load(props);
 
   return (
     <>
       <LocationView {...data} page={page} />
-      <LocationsDirectory near={slug} />
+      <LocationsDirectory />
     </>
   );
 }

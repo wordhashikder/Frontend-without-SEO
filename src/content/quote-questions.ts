@@ -172,7 +172,9 @@ export const contactStep = {
   title: "Where should we send your quotes?",
   firstName: "First name",
   email: "Email",
+  /** Optional: the label is followed by "(optional)". */
   phone: "Phone number",
+  phoneHint: "Leave blank if you'd prefer installers to contact you by email.",
   consent:
     "I agree to PickASparky sharing my request with matched installers so they can provide quotes.",
   button: "Get up to 5 free quotes",
@@ -264,7 +266,11 @@ export function isEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.trim());
 }
 
-/** UK-style phone number: 10 to 15 digits once spaces, +, brackets and dashes are removed. */
+/**
+ * UK-style phone number: 10 to 15 digits once spaces, +, brackets and dashes are
+ * removed. The number is optional on the quote form, so callers skip this check
+ * for a blank value.
+ */
 export function isPhone(value: string) {
   const trimmed = value.trim();
   if (!/^[\d\s+()-]+$/.test(trimmed)) return false;
@@ -282,6 +288,6 @@ export const quoteMessages = {
   firstName: "Enter your first name.",
   firstNameLength: `Please keep your name under ${quoteLimits.firstName} characters.`,
   email: "Enter a valid email address, for example name@example.com.",
-  phone: "Enter a phone number installers can reach you on.",
+  phone: "Enter a valid phone number, or leave this blank.",
   consent: "Please tick the box so we can share your request with installers.",
 } as const;

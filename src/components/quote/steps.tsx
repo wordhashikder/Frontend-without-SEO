@@ -472,7 +472,9 @@ export function ContactStep({
         <Field
           label={contactStep.phone}
           htmlFor="quote-phone"
+          optional
           error={errors.phone}
+          hint={contactStep.phoneHint}
         >
           <Input
             id="quote-phone"
@@ -484,8 +486,7 @@ export function ContactStep({
             autoComplete="tel"
             maxLength={30}
             enterKeyHint="done"
-            aria-required
-            {...describedBy("quote-phone", errors.phone)}
+            {...describedBy("quote-phone", errors.phone, contactStep.phoneHint)}
             className={inputClass}
           />
         </Field>

@@ -29,6 +29,7 @@ Key facts:
 - [Understanding electrician accreditations](${url(routes.accreditations)}): What NICEIC, NAPIT, TrustMark and MCS registration mean.
 - [UK electrical safety and regulations](${url(routes.safety)}): Part P, BS 7671, Competent Person Schemes and EICRs explained.
 - [How we vet installers](${url(routes.vetting)}): The five checks every listed electrician goes through.
+- [EV charging blog](${url(routes.blog)}): Articles on the cost, choice, installation and regulation of home EV chargers.
 
 ## For electricians
 - [Join as an installer](${url(routes.join)}): Membership options and how leads work.
