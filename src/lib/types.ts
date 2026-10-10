@@ -59,6 +59,9 @@ export interface LocationDetail extends LocationSummary {
   image_alt: string | null;
   /** Photo credit, e.g. "Photo: Jane Doe". */
   image_credit: string | null;
+  /** Search snippet overrides set in the Dashboard; null uses the standard wording. */
+  seo_title?: string | null;
+  seo_description?: string | null;
 }
 
 /** The four directory columns, each in display order; no location appears twice. */
@@ -80,6 +83,11 @@ export interface InstallerCard {
   plan: Plan;
   is_featured: boolean;
   verified: boolean;
+  /**
+   * False for a free listing PickASparky added that the business has not
+   * claimed yet: its profile offers a "Claim this listing" link.
+   */
+  is_claimed?: boolean;
 }
 
 export interface Accreditation {
@@ -310,4 +318,55 @@ export interface ApiErrorBody {
     message: string;
     fields?: Record<string, string>;
   };
+}
+
+/** The listing a claim link is for. */
+export interface ClaimPreview {
+  business_name: string;
+  slug: string;
+  email: string;
+  town: string;
+}
+
+export type MessageSender = "installer" | "homeowner" | "team" | "system";
+export type OfferStatus = "sent" | "accepted" | "declined" | "withdrawn";
+
+export interface ConversationMessage {
+  id: string;
+  sender: MessageSender;
+  body: string;
+  created_at: string;
+}
+
+/** A priced quote an installer sent; shown to people as a "quote". */
+export interface ConversationOffer {
+  id: string;
+  reference: string;
+  /** Decimal string, e.g. "949.00". */
+  amount: string;
+  includes_vat: boolean;
+  description: string;
+  valid_until: string | null;
+  status: OfferStatus;
+  responded_at: string | null;
+  response_note: string | null;
+  created_at: string;
+}
+
+/** A conversation as the homeowner sees it through their private link. */
+export interface ConversationThread {
+  id: string;
+  installer_name: string;
+  installer_slug: string;
+  homeowner_name: string;
+  job: {
+    kind: "lead" | "enquiry";
+    reference: string | null;
+    summary: [string, string][];
+    message: string | null;
+    created_at: string;
+  };
+  messages: ConversationMessage[];
+  offers: ConversationOffer[];
+  created_at: string;
 }

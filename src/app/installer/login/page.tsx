@@ -21,6 +21,8 @@ const notices = {
   reset: "Your password has been changed. Sign in with your new password.",
   verified: "Your email address is verified. Sign in to continue.",
   signedOut: "You've been signed out.",
+  claimed:
+    "Your listing is now yours. Sign in with your business email and new password.",
 };
 
 export default async function LoginPage({
@@ -52,7 +54,9 @@ export default async function LoginPage({
         ? notices.verified
         : query.signed_out === "1"
           ? notices.signedOut
-          : null;
+          : query.claimed === "1"
+            ? notices.claimed
+            : null;
 
   return (
     <AuthCard

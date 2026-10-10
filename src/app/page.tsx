@@ -7,6 +7,7 @@ import { LocationsDirectory } from "@/components/layout/locations-directory";
 import { InstallerLogo } from "@/components/sections/installer-card";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PageSchema } from "@/components/sections/page-schema";
+import { PostcodeCard } from "@/components/sections/postcode-card";
 import { PostcodeForm } from "@/components/sections/postcode-form";
 import { ReviewsMarquee } from "@/components/sections/reviews";
 import { ButtonLink } from "@/components/ui/button";
@@ -123,9 +124,9 @@ export default async function HomePage() {
             EV charger installers. It&apos;s free and there&apos;s no
             obligation.
           </p>
-          <PostcodeForm
+          <PostcodeCard
             id="hero-postcode"
-            className="mx-auto mt-8 max-w-[672px] text-left"
+            className="mx-auto mt-8 max-w-[672px]"
           />
         </Container>
       </section>

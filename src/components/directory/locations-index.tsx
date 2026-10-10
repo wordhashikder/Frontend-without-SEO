@@ -20,7 +20,7 @@ function groupByRegion(locations: LocationSummary[]) {
     }));
 }
 
-/** Every location page, as crawlable link lists under a heading per region. */
+/** Every location page with its installer count, as crawlable link lists under a heading per region (two columns of regions on desktop). */
 export function LocationsIndex({
   locations,
 }: {
@@ -29,11 +29,10 @@ export function LocationsIndex({
   const groups = groupByRegion(locations);
 
   return (
-    <Section spacing="sm" aria-labelledby="browse-heading" className="md:pb-20">
+    <Section aria-labelledby="browse-heading">
       <Container>
         <SectionHeading
           id="browse-heading"
-          eyebrow="Browse by location"
           title="EV charger installers by town and city"
           lead="Choose your nearest town or city to see the installers who cover it."
         />
@@ -52,13 +51,13 @@ export function LocationsIndex({
             </ButtonLink>
           </div>
         ) : (
-          <div className="mt-10 space-y-10 md:space-y-12">
+          <div className="mt-10 grid grid-cols-1 gap-x-16 gap-y-10 md:grid-cols-2">
             {groups.map(({ region, items }) => (
               <section key={region} aria-label={region}>
                 <h3 className="text-lg font-extrabold tracking-[-0.01em] sm:text-xl">
                   {region}
                 </h3>
-                <ul className="mt-3 grid grid-cols-1 gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
+                <ul className="mt-3">
                   {items.map((location) => (
                     <li key={location.slug} className="border-b border-line">
                       <Link

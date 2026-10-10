@@ -4,7 +4,11 @@ import type {
   ApiErrorBody,
   BlogPostDetail,
   BlogPostSummary,
+  ClaimPreview,
   ContactMessageCreate,
+  ConversationMessage,
+  ConversationOffer,
+  ConversationThread,
   CurrentUser,
   InstallerCard,
   InstallerDetail,
@@ -384,6 +388,51 @@ export const api = {
     }),
 
   me: (token: string) => request<CurrentUser>("/auth/me", { token }),
+
+  // ---- Claiming a free listing ---------------------------------------------
+  requestClaim: (slug: string, email: string, clientIp?: string) =>
+    request<MessageResponse>(`/installers/${encodeURIComponent(slug)}/claim`, {
+      method: "POST",
+      body: { email },
+      clientIp,
+    }),
+
+  claimPreview: (token: string, clientIp?: string) =>
+    request<ClaimPreview>("/auth/claim", { query: { token }, clientIp }),
+
+  claimListing: (token: string, password: string, clientIp?: string) =>
+    request<MessageResponse>("/auth/claim", {
+      method: "POST",
+      body: { token, password, accept_terms: true },
+      clientIp,
+    }),
+
+  // ---- Homeowner conversation link (no account) -----------------------------
+  conversation: (token: string, clientIp?: string) =>
+    request<ConversationThread>("/conversation-links/view", {
+      method: "POST",
+      body: { token },
+      clientIp,
+    }),
+
+  replyToConversation: (token: string, body: string, clientIp?: string) =>
+    request<ConversationMessage>("/conversation-links/messages", {
+      method: "POST",
+      body: { token, body },
+      clientIp,
+    }),
+
+  respondToOffer: (
+    token: string,
+    offerId: string,
+    decision: "accept" | "decline",
+    note: string | null,
+    clientIp?: string,
+  ) =>
+    request<ConversationOffer>(
+      `/conversation-links/quotes/${encodeURIComponent(offerId)}`,
+      { method: "POST", body: { token, decision, note }, clientIp },
+    ),
 
   // ---- Billing -----------------------------------------------------------
   createCheckoutSession: (token: string, plan: Exclude<Plan, "free">) =>

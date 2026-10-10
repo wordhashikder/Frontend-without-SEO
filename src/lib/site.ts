@@ -91,7 +91,7 @@ export const navigation: NavGroup[] = [
       { label: "FAQ", href: routes.faq },
       { label: "Electrician Accreditations", href: routes.accreditations },
       { label: "Electrical Safety & Regulations", href: routes.safety },
-      { label: "Blog", href: routes.blog },
+      { label: "EV Charging Blog", href: routes.blog },
     ],
   },
   {

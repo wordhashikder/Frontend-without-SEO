@@ -10,6 +10,7 @@ import {
   Zap,
 } from "lucide-react";
 import type { ReactNode } from "react";
+import { ClaimListing } from "@/components/claim/claim-listing";
 import { CoverageMap } from "@/components/profile/coverage-map";
 import { Gallery } from "@/components/profile/gallery";
 import { QuoteCard } from "@/components/profile/quote-card";
@@ -211,6 +212,9 @@ export function InstallerProfile({
 
           <div className="max-lg:mt-2 lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
             <QuoteCard installer={installer} />
+            {installer.is_claimed === false ? (
+              <ClaimListing slug={installer.slug} businessName={name} />
+            ) : null}
           </div>
         </div>
 

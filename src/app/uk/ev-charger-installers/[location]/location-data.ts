@@ -49,7 +49,12 @@ export async function loadLocation(slug: string, page = 1) {
  * page itself), because later pages repeat page 1 and only add to it.
  */
 export function locationMetadata(
-  location: { slug: string; name: string },
+  location: {
+    slug: string;
+    name: string;
+    seo_title?: string | null;
+    seo_description?: string | null;
+  },
   total: number,
   page = 1,
 ): Metadata {
@@ -61,15 +66,20 @@ export function locationMetadata(
     page < MAX_LISTING_PAGE &&
     page * INSTALLERS_PER_PAGE < Math.min(total, MAX_INSTALLERS);
 
+  // Search snippet overrides set in the Dashboard (SEO & Locations) win when present.
+  const base = pageMetadata({
+    title: location.seo_title ?? `EV Charger Installers in ${city}`,
+    description:
+      location.seo_description ??
+      (long.length <= 160
+        ? long
+        : `${lead} Enter your postcode and choose the electrician that suits you.`),
+    path,
+  });
+
   return {
-    ...pageMetadata({
-      title: `EV Charger Installers in ${city}`,
-      description:
-        long.length <= 160
-          ? long
-          : `${lead} Enter your postcode and choose the electrician that suits you.`,
-      path,
-    }),
+    ...base,
+    ...(location.seo_title ? { title: { absolute: location.seo_title } } : {}),
     pagination: {
       previous: page > 1 ? listingPagePath(path, page - 1) : null,
       next: hasNext ? listingPagePath(path, page + 1) : null,

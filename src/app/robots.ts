@@ -6,7 +6,7 @@ import { site } from "@/lib/site";
  * Account pages and form endpoints are kept out of every index.
  */
 export default function robots(): MetadataRoute.Robots {
-  const privatePaths = ["/installer/", "/review", "/api/"];
+  const privatePaths = ["/installer/", "/review", "/messages", "/api/"];
   return {
     rules: [
       { userAgent: "*", allow: "/", disallow: privatePaths },
