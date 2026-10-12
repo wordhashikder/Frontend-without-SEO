@@ -7,6 +7,7 @@ import {
 import { InstallerListing } from "@/components/directory/installer-listing";
 import { LocationMap } from "@/components/directory/location-map";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
+import { ContentMarkdown } from "@/components/sections/content-markdown";
 import { FeatureCard } from "@/components/sections/feature-blocks";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PostcodeForm } from "@/components/sections/postcode-form";
@@ -18,6 +19,7 @@ import {
   Section,
   SectionHeading,
 } from "@/components/ui/layout";
+import type { PageContent } from "@/lib/content";
 import {
   absoluteUrl,
   howToSchema,
@@ -31,9 +33,12 @@ import type {
   LocationSummary,
   Review,
 } from "@/lib/types";
+import { keyed } from "@/lib/utils";
 
 type LocationViewProps = {
   location: LocationDetail;
+  /** The location page template, with {city} filled in. */
+  content: PageContent<"location">;
   /** Other locations, for the neighbouring towns on the local map. */
   neighbours: LocationSummary[];
   /** The installers to list (cumulative across "Load More" pages). */
@@ -45,7 +50,9 @@ type LocationViewProps = {
 };
 
 /** "Powering a greener {City}" card that sits over the location photo. */
-function GreenerPill({ city }: { city: string }) {
+function GreenerPill({ text, city }: { text: string; city: string }) {
+  // The design breaks the line before the town's name.
+  const before = text.endsWith(city) ? text.slice(0, -city.length).trim() : "";
   return (
     <p className="absolute bottom-4 left-4 flex max-w-[calc(100%-2rem)] items-center gap-2 rounded-xl bg-white p-3 pr-5 text-lg font-medium leading-[1.5] text-ink shadow-float sm:p-4 sm:pr-6 sm:text-xl">
       <span
@@ -54,10 +61,14 @@ function GreenerPill({ city }: { city: string }) {
       >
         <Zap className="size-7 fill-current sm:size-9" strokeWidth={0} />
       </span>
-      <span>
-        Powering a greener <br />
-        {city}
-      </span>
+      {before ? (
+        <span>
+          {before} <br />
+          {city}
+        </span>
+      ) : (
+        <span>{text}</span>
+      )}
     </p>
   );
 }
@@ -102,6 +113,7 @@ function LocationPicture({
 /** Everything on a location page between the header and the locations directory. */
 export function LocationView({
   location,
+  content,
   neighbours,
   installers,
   total,
@@ -110,39 +122,25 @@ export function LocationView({
 }: LocationViewProps) {
   const city = location.name;
   const path = locationPath(location.slug);
-  const steps = quoteSteps(city);
-  const introParagraphs = location.intro
-    ? location.intro.split(/\n\s*\n/).filter((text) => text.trim())
-    : [
-        `Whether you need a home charger, a workplace installation or a larger commercial solution, PickASparky helps you find trusted EV charger installers covering ${city} and the surrounding areas.`,
-      ];
+  const { hero, installers: listing, why, local } = content;
+  const steps = quoteSteps(content.steps.items);
+  // This location's own text (SEO & Locations) replaces the template's intro.
+  const intro = location.intro?.trim() || local.intro;
 
-  const features = [
-    {
-      icon: ShieldCheck,
-      title: "Verified installers",
-      text: "Local, qualified and reviewed electricians.",
-      tone: "mint",
-    },
-    {
-      icon: FileText,
-      title: "Up to 5 quotes",
-      text: "Compare quotes from trusted local installers.",
-      tone: "peach",
-    },
-    {
-      icon: MapPin,
-      title: "Local expertise",
-      text: `Installers who know ${city} and the surrounding areas.`,
-      tone: "sand",
-    },
-    {
-      icon: User,
-      title: "You're in control",
-      text: "It's free, with no obligation, and you choose who to contact.",
-      tone: "mint",
-    },
+  const featureStyles = [
+    { icon: ShieldCheck, tone: "mint" },
+    { icon: FileText, tone: "peach" },
+    { icon: MapPin, tone: "sand" },
+    { icon: User, tone: "mint" },
   ] as const;
+  const features = keyed(why.cards, (card) => card.title).map(
+    ({ item, key }, index) => ({
+      ...featureStyles[index % featureStyles.length],
+      key,
+      title: item.title,
+      text: item.text,
+    }),
+  );
 
   return (
     <>
@@ -153,14 +151,19 @@ export function LocationView({
           className="py-20 text-center sm:py-28 lg:pt-[168px] lg:pb-[84px]"
         >
           <h1 className="text-[34px] font-bold leading-[1.15] tracking-[-0.01em] sm:text-5xl sm:leading-[1.17]">
-            Find trusted <br className="max-sm:hidden" />
-            EV charger installers in {city} <br />
-            <span className="text-primary">Compare up to 5 quotes</span>
+            {location.h1_heading ? (
+              <>{location.h1_heading} </>
+            ) : (
+              <>
+                {hero.line1} <br className="max-sm:hidden" />
+                {hero.line2}{" "}
+              </>
+            )}
+            <br />
+            <span className="text-primary">{hero.highlight}</span>
           </h1>
           <p className="mx-auto mt-6 max-w-[560px] text-[15px] leading-relaxed">
-            Enter your postcode and we&apos;ll connect you with trusted, local
-            EV charger installers. It&apos;s free and there&apos;s no
-            obligation.
+            {hero.lead}
           </p>
           <PostcodeForm
             id="hero-postcode"
@@ -186,8 +189,8 @@ export function LocationView({
           <div className="mt-6 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
             <SectionHeading
               id="installers-heading"
-              eyebrow="Trusted local installers"
-              title={`EV charger installers in ${city}`}
+              eyebrow={listing.eyebrow}
+              title={listing.title}
             />
             <ButtonLink
               href={routes.quotes}
@@ -195,12 +198,11 @@ export function LocationView({
               arrow
               className="sm:mb-2"
             >
-              Search Installers
+              {listing.search_link}
             </ButtonLink>
           </div>
           <p className="mt-4 max-w-3xl text-[15px] leading-relaxed">
-            Here are some of the trusted EV charger installers covering {city}{" "}
-            and surrounding areas.
+            {listing.lead}
           </p>
           <InstallerListing
             city={city}
@@ -212,18 +214,20 @@ export function LocationView({
         </Container>
       </Section>
 
-      <HowItWorksSteps city={city} steps={steps} />
+      <HowItWorksSteps
+        eyebrow={content.steps.eyebrow}
+        title={content.steps.title}
+        lead={content.steps.lead}
+        steps={steps}
+      />
 
       {/* Why choose + local block */}
       <Section aria-labelledby="why-heading" className="md:pt-24 md:pb-10">
         <Container>
-          <SectionHeading
-            id="why-heading"
-            title={`Why choose PickASparky in ${city}?`}
-          />
+          <SectionHeading id="why-heading" title={why.title} />
           <ul className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
             {features.map((feature) => (
-              <li key={feature.title}>
+              <li key={feature.key}>
                 <FeatureCard
                   icon={feature.icon}
                   title={feature.title}
@@ -239,27 +243,22 @@ export function LocationView({
           <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-2">
             <div className="relative aspect-[598/282] min-h-[240px] w-full overflow-hidden rounded-2xl bg-mint lg:aspect-auto lg:min-h-[282px]">
               <LocationPicture location={location} neighbours={neighbours} />
-              <GreenerPill city={city} />
+              <GreenerPill text={local.pill} city={city} />
             </div>
             <div>
-              <Eyebrow className="mb-2.5">EV charging in {city}</Eyebrow>
+              <Eyebrow className="mb-2.5">{local.eyebrow}</Eyebrow>
               <h2
                 id="local-heading"
                 className="text-2xl font-bold leading-tight tracking-[-0.01em] sm:text-[28px]"
               >
-                EV charger installation in {city}
+                {local.title}
               </h2>
-              <div className="mt-4 space-y-5 text-sm leading-[1.45]">
-                {introParagraphs.map((text) => (
-                  <p key={text}>{text}</p>
-                ))}
-                <p>
-                  Compare up to 5 quotes from qualified electricians in {city}{" "}
-                  and find the right installer for your needs.
-                </p>
-              </div>
+              <ContentMarkdown className="mt-4">{intro}</ContentMarkdown>
+              {local.closing ? (
+                <p className="mt-5 text-sm leading-[1.45]">{local.closing}</p>
+              ) : null}
               <ButtonLink href={routes.quotes} variant="dark" className="mt-5">
-                Search in Your Area
+                {local.button}
               </ButtonLink>
             </div>
           </div>
@@ -272,8 +271,8 @@ export function LocationView({
         data={[
           webPageSchema({
             type: "CollectionPage",
-            title: `EV Charger Installers in ${city}`,
-            description: `Compare up to 5 free quotes from vetted EV charger installers in ${city}.`,
+            title: location.seo_title ?? content.seo.title,
+            description: location.seo_description ?? content.seo.description,
             path,
           }),
           serviceSchema({

@@ -20,6 +20,8 @@ import type {
   Paginated,
   Plan,
   PostcodeLookup,
+  PublicContent,
+  PublicPlatform,
   QuoteRequestCreate,
   QuoteRequestCreated,
   RegisterRequest,
@@ -171,6 +173,30 @@ const MINUTE = 60;
 const HOUR = 60 * MINUTE;
 
 export const api = {
+  // ---- Editable content (Dashboard → Website content) ----------------------
+  /**
+   * A page's content as the team last published it. Cached for an hour; the API
+   * refreshes the tags the moment the team saves (see /api/revalidate).
+   */
+  content: (key: string) =>
+    safe(
+      request<PublicContent>(`/content/${encodeURIComponent(key)}`, {
+        revalidate: HOUR,
+        tags: ["content", `content:${key}`],
+      }),
+      null,
+    ),
+
+  /** The organisation's name and support email (Dashboard → Settings). */
+  platform: () =>
+    safe(
+      request<PublicPlatform>("/platform", {
+        revalidate: HOUR,
+        tags: ["content"],
+      }),
+      null,
+    ),
+
   // ---- Locations ---------------------------------------------------------
   locations: () =>
     safe(

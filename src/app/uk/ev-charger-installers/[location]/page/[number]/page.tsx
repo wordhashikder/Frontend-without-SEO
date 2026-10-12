@@ -41,7 +41,7 @@ async function load({ params }: Pick<Props, "params">) {
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const { data, page } = await load(props);
-  return locationMetadata(data.location, data.total, page);
+  return locationMetadata(data.location, data.content.seo, data.total, page);
 }
 
 export default async function LocationListingPage(props: Props) {

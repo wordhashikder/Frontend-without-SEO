@@ -14,8 +14,23 @@ type ConfirmationProps = {
 /** Shown once the request has been accepted. There is nothing here to resubmit. */
 export function Confirmation({ headingRef, result }: ConfirmationProps) {
   const matched = result.matchedInstallers;
-  const steps =
-    matched > 0
+  const held = result.held && matched === 0;
+  const steps = held
+    ? [
+        {
+          title: "Check your inbox",
+          text: `We're sending a confirmation of your request to ${result.email}.`,
+        },
+        {
+          title: "We choose your installers",
+          text: `Our team picks the best-placed installers covering ${result.postcode} and emails you who they are, usually within one working day.`,
+        },
+        {
+          title: "Compare and choose",
+          text: "Installers send you their quotes. Compare them and choose the one that suits you, with no obligation.",
+        },
+      ]
+    : matched > 0
       ? [
           {
             title: "Check your inbox",
@@ -65,7 +80,12 @@ export function Confirmation({ headingRef, result }: ConfirmationProps) {
         received your request
       </h1>
       <p className="mt-3 text-[15px] leading-relaxed sm:text-base">
-        {matched > 0 ? (
+        {held ? (
+          <>
+            Our team is choosing the best local installers for your job and will
+            email you as soon as your request has been shared.
+          </>
+        ) : matched > 0 ? (
           <>
             We&apos;ve matched you with{" "}
             <strong className="font-semibold text-ink">

@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { location: slug } = await params;
   const data = await loadLocation(slug);
   if (!data) notFound();
-  return locationMetadata(data.location, data.total);
+  return locationMetadata(data.location, data.content.seo, data.total);
 }
 
 export default async function LocationPage({ params }: Props) {

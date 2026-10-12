@@ -8,6 +8,7 @@ import {
   MAX_LISTING_PAGE,
 } from "@/components/directory/installer-listing";
 import { api } from "@/lib/api";
+import { getContent, type PageContent } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
 import { locationPath } from "@/lib/site";
 
@@ -20,7 +21,7 @@ export async function loadLocation(slug: string, page = 1) {
   const location = await api.location(slug);
   if (!location) return null;
 
-  const [listing, reviews, locations] = await Promise.all([
+  const [listing, reviews, locations, content] = await Promise.all([
     api.installers({
       location: slug,
       page: 1,
@@ -29,10 +30,13 @@ export async function loadLocation(slug: string, page = 1) {
     api.featuredReviews(10),
     // Neighbouring towns for the local map (cached for an hour, shared by every page).
     api.locations(),
+    // The location page template (Dashboard → Website content → Location pages).
+    getContent("location", { city: location.name }),
   ]);
 
   return {
     location,
+    content,
     installers: listing?.items ?? [],
     total: listing?.total ?? 0,
     reviews,
@@ -51,29 +55,22 @@ export async function loadLocation(slug: string, page = 1) {
 export function locationMetadata(
   location: {
     slug: string;
-    name: string;
     seo_title?: string | null;
     seo_description?: string | null;
   },
+  seo: PageContent<"location">["seo"],
   total: number,
   page = 1,
 ): Metadata {
-  const city = location.name;
   const path = locationPath(location.slug);
-  const lead = `Compare up to 5 free quotes from vetted EV charger installers in ${city}.`;
-  const long = `${lead} Enter your postcode, see trusted local electricians and choose who to contact.`;
   const hasNext =
     page < MAX_LISTING_PAGE &&
     page * INSTALLERS_PER_PAGE < Math.min(total, MAX_INSTALLERS);
 
-  // Search snippet overrides set in the Dashboard (SEO & Locations) win when present.
+  // This location's own snippet (SEO & Locations) wins over the template.
   const base = pageMetadata({
-    title: location.seo_title ?? `EV Charger Installers in ${city}`,
-    description:
-      location.seo_description ??
-      (long.length <= 160
-        ? long
-        : `${lead} Enter your postcode and choose the electrician that suits you.`),
+    title: location.seo_title ?? seo.title,
+    description: location.seo_description ?? seo.description,
     path,
   });
 

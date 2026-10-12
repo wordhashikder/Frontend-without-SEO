@@ -8,6 +8,7 @@ import { PageSchema } from "@/components/sections/page-schema";
 import { ButtonLink } from "@/components/ui/button";
 import { IconBadge } from "@/components/ui/icon-badge";
 import { Container, Section } from "@/components/ui/layout";
+import { getContent } from "@/lib/content";
 import { blogSchema } from "@/lib/seo";
 import { blogListingPath, blogPostPath, routes } from "@/lib/site";
 import type { BlogPostSummary, Paginated } from "@/lib/types";
@@ -17,12 +18,6 @@ import { cn } from "@/lib/utils";
 export const POSTS_PER_PAGE = 9;
 /** Paths stop at /blog/page/99/; far beyond any realistic archive. */
 export const MAX_BLOG_PAGE = 99;
-
-export const blogPage = {
-  title: "EV Charging Guides and Advice",
-  description:
-    "Practical guides to choosing, installing and running a home EV charger in the UK: costs, chargers, installation, regulations and choosing an installer.",
-} as const;
 
 function Pagination({ page, pages }: { page: number; pages: number }) {
   if (pages <= 1) return null;
@@ -83,13 +78,14 @@ function Pagination({ page, pages }: { page: number; pages: number }) {
  * Page 1 opens with the lead story: the newest post marked as featured, or
  * simply the newest post.
  */
-export function BlogListing({
+export async function BlogListing({
   listing,
   page,
 }: {
   listing: Paginated<BlogPostSummary>;
   page: number;
 }) {
+  const { seo, hero, empty, cta } = await getContent("blog");
   const posts = listing.items;
   const lead =
     page === 1
@@ -101,9 +97,9 @@ export function BlogListing({
   return (
     <>
       <PageHero
-        eyebrow="PickASparky Blog"
-        title={blogPage.title}
-        lead="Clear, practical advice from the PickASparky team on choosing, installing and running a home EV charger."
+        eyebrow={hero.eyebrow}
+        title={hero.title}
+        lead={hero.lead}
         className={page > 1 ? "md:pb-8" : undefined}
       >
         {page > 1 ? (
@@ -124,14 +120,13 @@ export function BlogListing({
                 className="mx-auto"
               />
               <h2 className="mt-6 text-2xl font-extrabold tracking-[-0.01em]">
-                New articles are on their way
+                {empty.title}
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed">
-                In the meantime, compare free quotes from vetted EV charger
-                installers in your area.
+                {empty.text}
               </p>
               <ButtonLink href={routes.quotes} arrow className="mt-7">
-                Get Free Quotes
+                {cta.button}
               </ButtonLink>
             </div>
           ) : (
@@ -158,17 +153,18 @@ export function BlogListing({
       </Section>
 
       <CtaBand
-        eyebrow="Ready when you are"
-        title="Compare up to 5 free quotes from trusted EV charger installers"
-        lead="Answer six quick questions and get quotes from vetted installers who cover your postcode."
+        eyebrow={cta.eyebrow}
+        title={cta.title}
+        lead={cta.lead}
+        buttonLabel={cta.button}
       />
 
       <LocationsDirectory />
 
       <PageSchema
         type="CollectionPage"
-        title={page > 1 ? `${blogPage.title} (page ${page})` : blogPage.title}
-        description={blogPage.description}
+        title={page > 1 ? `${seo.title} (page ${page})` : seo.title}
+        description={seo.description}
         path={path}
         crumb={page > 1 ? `Page ${page}` : "Blog"}
         parents={page > 1 ? [{ name: "Blog", path: routes.blog }] : []}

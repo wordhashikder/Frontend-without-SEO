@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import { PHASE_PRODUCTION_BUILD } from "next/constants";
-import {
-  BlogListing,
-  blogPage,
-  POSTS_PER_PAGE,
-} from "@/components/blog/blog-listing";
+import { BlogListing, POSTS_PER_PAGE } from "@/components/blog/blog-listing";
 import { api } from "@/lib/api";
+import { getContent } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
 import { blogListingPath, routes } from "@/lib/site";
 import type { BlogPostSummary, Paginated } from "@/lib/types";
@@ -37,9 +34,12 @@ async function loadListing() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const listing = await loadListing();
+  const [listing, { seo }] = await Promise.all([
+    loadListing(),
+    getContent("blog"),
+  ]);
   return {
-    ...pageMetadata({ ...blogPage, path: routes.blog }),
+    ...pageMetadata({ ...seo, path: routes.blog }),
     pagination: {
       previous: null,
       next: listing.pages > 1 ? blogListingPath(2) : null,

@@ -30,116 +30,40 @@ import {
   Section,
   SectionHeading,
 } from "@/components/ui/layout";
-import { joinFaqs } from "@/content/faqs";
 import { plans } from "@/content/plans";
+import { getContent } from "@/lib/content";
 import { absoluteUrl, pageMetadata } from "@/lib/seo";
 import { routes, site } from "@/lib/site";
+import { keyed } from "@/lib/utils";
 
-const lowestPaidPrice = Math.min(
-  ...plans.filter((plan) => plan.price > 0).map((plan) => plan.price),
-);
+export async function generateMetadata(): Promise<Metadata> {
+  const { seo } = await getContent("join");
+  return pageMetadata({ ...seo, path: routes.join });
+}
 
-const description = `Join PickASparky to get enquiries from homeowners looking for vetted electricians in your area. Free listing, plans from £${lowestPaidPrice} a month, no long-term contracts.`;
-
-const page = {
-  title: "Electrician Leads: Join as an Installer",
-  description,
-  path: routes.join,
-};
-
-export const metadata: Metadata = pageMetadata(page);
-
-const heroClaims = [
-  "Quality, local enquiries",
-  "No long-term contracts",
-  "Easy to get started",
-];
-
-const benefits = [
-  {
-    icon: UsersRound,
-    tone: "green",
-    title: "Reach local customers",
-    text: "Get enquiries from homeowners in your area who are actively looking for an electrician.",
-  },
-  {
-    icon: Target,
-    tone: "peach",
-    title: "Quality, relevant leads",
-    text: "Receive genuine enquiries that match your services and location.",
-  },
-  {
-    icon: Settings,
-    tone: "green",
-    title: "You stay in control",
-    text: "Choose the types of jobs you receive and when you're available to take on new work.",
-  },
-  {
-    icon: ChartNoAxesColumn,
-    tone: "green",
-    title: "Grow your business",
-    text: "A simple and affordable way to get more work and build your reputation.",
-  },
+/* Icons and colours pair with the editable lists by position. */
+const benefitStyles = [
+  { icon: UsersRound, tone: "green" },
+  { icon: Target, tone: "peach" },
+  { icon: Settings, tone: "green" },
+  { icon: ChartNoAxesColumn, tone: "green" },
 ] as const;
 
-const steps = [
-  {
-    icon: FileText,
-    title: "Create your profile",
-    text: "Tell us about your business, services, coverage areas and accreditations.",
-  },
-  {
-    icon: CircleCheck,
-    title: "Get verified",
-    text: "We review your information to make sure you're a qualified and legitimate electrician.",
-  },
-  {
-    icon: Mail,
-    title: "Start receiving enquiries",
-    text: "Get notified when homeowners in your area request quotes for electrical work.",
-  },
-  {
-    icon: HeartHandshake,
-    title: "Win more work",
-    text: "Contact interested customers, provide your quote and grow your business.",
-  },
-];
+const stepIcons = [FileText, CircleCheck, Mail, HeartHandshake];
 
-const workTypes = [
-  {
-    icon: House,
-    tone: "coral",
-    title: "Domestic electrical work",
-    text: "Rewiring, lighting, consumer units and more.",
-  },
-  {
-    icon: Wrench,
-    tone: "blue",
-    title: "EV charger installations",
-    text: "Home and commercial EV charging points.",
-  },
-  {
-    icon: Zap,
-    tone: "green",
-    title: "Electrical repairs",
-    text: "Fault finding and safe repairs.",
-  },
-  {
-    icon: Building2,
-    tone: "sky",
-    title: "Commercial projects",
-    text: "Offices, shops, landlords and more.",
-  },
-  {
-    icon: Settings,
-    tone: "violet",
-    title: "Additional services",
-    text: "Solar PV, battery storage, smart home installations and more.",
-  },
-] satisfies ComponentProps<typeof IconColumns>["items"];
+const workStyles = [
+  { icon: House, tone: "coral" },
+  { icon: Wrench, tone: "blue" },
+  { icon: Zap, tone: "green" },
+  { icon: Building2, tone: "sky" },
+  { icon: Settings, tone: "violet" },
+] satisfies Pick<
+  ComponentProps<typeof IconColumns>["items"][number],
+  "icon" | "tone"
+>[];
 
 /** Memberships as schema.org offers; prices come from the same data as the cards. */
-const membershipSchema = {
+const membershipSchema = (description: string) => ({
   "@context": "https://schema.org",
   "@type": "Service",
   name: "PickASparky installer membership",
@@ -168,24 +92,23 @@ const membershipSchema = {
       unitText: "month",
     },
   })),
-};
+});
 
-export default function JoinPage() {
+export default async function JoinPage() {
+  const content = await getContent("join");
+  const { seo, hero, benefits, steps, work, faq } = content;
   return (
     <>
       {/* Hero */}
       <section className="overflow-hidden">
         <Container className="grid lg:grid-cols-[minmax(0,620fr)_minmax(0,570fr)] lg:gap-[30px]">
           <div className="pt-12 pb-10 md:py-20">
-            <Eyebrow className="mb-2">Join as an electrician</Eyebrow>
+            <Eyebrow className="mb-2">{hero.eyebrow}</Eyebrow>
             <h1 className="text-[32px] font-extrabold leading-[1.25] tracking-[-0.01em] sm:text-[40px] md:text-5xl md:leading-[1.45] xl:[text-wrap:wrap]">
-              Get more qualified <br className="hidden xl:block" />
-              leads for your electrical business
+              {hero.title}
             </h1>
             <p className="mt-3 max-w-[600px] text-base leading-relaxed sm:text-xl sm:leading-[1.6] md:text-[22px] md:leading-8">
-              Join PickASparky and receive enquiries from homeowners looking for
-              trusted, vetted electricians in your area. It&apos;s a simple and
-              cost-effective way to grow your business.
+              {hero.lead}
             </p>
             <ButtonLink
               href={routes.register}
@@ -193,22 +116,24 @@ export default function JoinPage() {
               arrow
               className="mt-8 md:mt-10"
             >
-              Join as an Installer
+              {hero.button}
             </ButtonLink>
             <ul className="mt-4 flex flex-col gap-x-7 gap-y-2.5 sm:flex-row sm:flex-wrap">
-              {heroClaims.map((claim) => (
-                <li
-                  key={claim}
-                  className="flex items-center gap-2.5 text-sm font-medium text-ink"
-                >
-                  <Check
-                    aria-hidden
-                    className="size-4 text-primary"
-                    strokeWidth={2.25}
-                  />
-                  {claim}
-                </li>
-              ))}
+              {keyed(hero.claims, (claim) => claim.text).map(
+                ({ item, key }) => (
+                  <li
+                    key={key}
+                    className="flex items-center gap-2.5 text-sm font-medium text-ink"
+                  >
+                    <Check
+                      aria-hidden
+                      className="size-4 text-primary"
+                      strokeWidth={2.25}
+                    />
+                    {item.text}
+                  </li>
+                ),
+              )}
             </ul>
           </div>
           {/*
@@ -217,8 +142,8 @@ export default function JoinPage() {
             download it; the left edge is feathered to hide the crop seam.
           */}
           <Image
-            src="/images/join/hero-electrician.jpg"
-            alt="Smiling electrician in a hard hat with examples of new customer enquiries"
+            src={hero.image || "/images/join/hero-electrician.jpg"}
+            alt={hero.image_alt}
             width={667}
             height={659}
             fetchPriority="high"
@@ -239,22 +164,24 @@ export default function JoinPage() {
             Why electricians join PickASparky
           </h2>
           <ul className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-            {benefits.map((benefit) => (
-              <li key={benefit.title} className="lg:px-6">
-                <IconBadge
-                  icon={benefit.icon}
-                  tone={benefit.tone}
-                  size="lg"
-                  className="text-ink"
-                />
-                <h3 className="mt-6 text-xl font-extrabold leading-7 lg:mt-8">
-                  {benefit.title}
-                </h3>
-                <p className="mt-3 max-w-sm text-sm leading-5 lg:max-w-[250px]">
-                  {benefit.text}
-                </p>
-              </li>
-            ))}
+            {keyed(benefits.items, (item) => item.title).map(
+              ({ item: benefit, key }, index) => (
+                <li key={key} className="lg:px-6">
+                  <IconBadge
+                    icon={benefitStyles[index % benefitStyles.length].icon}
+                    tone={benefitStyles[index % benefitStyles.length].tone}
+                    size="lg"
+                    className="text-ink"
+                  />
+                  <h3 className="mt-6 text-xl font-extrabold leading-7 lg:mt-8">
+                    {benefit.title}
+                  </h3>
+                  <p className="mt-3 max-w-sm text-sm leading-5 lg:max-w-[250px]">
+                    {benefit.text}
+                  </p>
+                </li>
+              ),
+            )}
           </ul>
         </Container>
       </Section>
@@ -267,29 +194,34 @@ export default function JoinPage() {
         <Container>
           <SectionHeading
             id="steps-heading"
-            title="How it works"
-            lead="Getting started is quick and easy. Here's how it works:"
+            title={steps.title}
+            lead={steps.lead}
           />
           <ol className="mt-8 grid gap-4 sm:grid-cols-2 md:mt-10 lg:grid-cols-4 lg:gap-6">
-            {steps.map((step, index) => (
-              <li
-                key={step.title}
-                className="rounded-2xl border border-line bg-white p-4"
-              >
-                <div className="flex items-center gap-3.5">
-                  <StepNumber>{index + 1}</StepNumber>
-                  <step.icon
-                    aria-hidden
-                    className="size-9 text-ink"
-                    strokeWidth={1.75}
-                  />
-                </div>
-                <h3 className="mt-8 text-xl font-extrabold leading-7 tracking-[-0.01em]">
-                  {step.title}
-                </h3>
-                <p className="mt-6 text-sm leading-5">{step.text}</p>
-              </li>
-            ))}
+            {keyed(steps.items, (item) => item.title).map(
+              ({ item: step, key }, index) => {
+                const StepIcon = stepIcons[index % stepIcons.length];
+                return (
+                  <li
+                    key={key}
+                    className="rounded-2xl border border-line bg-white p-4"
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <StepNumber>{index + 1}</StepNumber>
+                      <StepIcon
+                        aria-hidden
+                        className="size-9 text-ink"
+                        strokeWidth={1.75}
+                      />
+                    </div>
+                    <h3 className="mt-8 text-xl font-extrabold leading-7 tracking-[-0.01em]">
+                      {step.title}
+                    </h3>
+                    <p className="mt-6 text-sm leading-5">{step.text}</p>
+                  </li>
+                );
+              },
+            )}
           </ol>
         </Container>
       </Section>
@@ -299,12 +231,16 @@ export default function JoinPage() {
         <Container>
           <SectionHeading
             id="work-heading"
-            title="What types of work can you receive?"
-            lead="Choose the types of electrical work you want to receive enquiries for."
+            title={work.title}
+            lead={work.lead}
           />
           {/* This design sets the column titles smaller than the shared default so each fits on one line. */}
           <IconColumns
-            items={workTypes}
+            items={work.items.map((item, index) => ({
+              ...workStyles[index % workStyles.length],
+              title: item.title,
+              text: item.text,
+            }))}
             className="mt-8 md:mt-10 lg:[&_h3]:text-sm"
           />
         </Container>
@@ -319,8 +255,8 @@ export default function JoinPage() {
         <Container>
           <SectionHeading
             id="plans-heading"
-            title="Membership options"
-            lead="Choose the plan that works for your business. Simple and transparent pricing."
+            title={content.plans.title}
+            lead={content.plans.lead}
           />
           <PricingCards className="mt-10" />
         </Container>
@@ -333,10 +269,10 @@ export default function JoinPage() {
             id="faq-heading"
             className="text-2xl font-extrabold tracking-[-0.01em] sm:text-[28px]"
           >
-            Frequently asked questions
+            {faq.title}
           </h2>
           <FaqList
-            items={joinFaqs}
+            items={faq.items}
             columns={2}
             withSchema
             className="mt-7 gap-4 md:gap-x-6 [&_summary]:py-4 [&_summary]:text-[15px] [&_summary]:leading-6 sm:[&_summary]:text-base"
@@ -346,8 +282,13 @@ export default function JoinPage() {
 
       <LocationsDirectory />
 
-      <PageSchema {...page} crumb="Join as an Installer" />
-      <JsonLd data={membershipSchema} />
+      <PageSchema
+        title={seo.title}
+        description={seo.description}
+        path={routes.join}
+        crumb="Join as an Installer"
+      />
+      <JsonLd data={membershipSchema(seo.description)} />
     </>
   );
 }

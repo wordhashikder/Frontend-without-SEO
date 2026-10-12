@@ -11,7 +11,7 @@ import type { Metadata } from "next";
 import { guideArticleSchema } from "@/components/about/guide-schema";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
 import { CtaBand } from "@/components/sections/cta-band";
-import { type FaqItem, FaqList } from "@/components/sections/faq";
+import { FaqList } from "@/components/sections/faq";
 import {
   Callout,
   FeatureCard,
@@ -21,123 +21,41 @@ import { JsonLd } from "@/components/sections/json-ld";
 import { PageHero } from "@/components/sections/page-hero";
 import { PageSchema } from "@/components/sections/page-schema";
 import { Container, Section, SectionHeading } from "@/components/ui/layout";
+import { getContent } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
+import { keyed } from "@/lib/utils";
 
-const description =
-  "A plain-English guide to UK electrical safety: Part P of the Building Regulations, BS 7671, Competent Person Schemes, EICRs and when to use an electrician.";
+export async function generateMetadata(): Promise<Metadata> {
+  const { seo } = await getContent("safety");
+  return pageMetadata({ ...seo, path: routes.safety });
+}
 
-const page = {
-  title: "Electrical Safety Regulations UK: Simple Guide",
-  description,
-  path: routes.safety,
-};
-
-export const metadata: Metadata = pageMetadata(page);
-
-const regulations = [
-  {
-    icon: FileText,
-    iconTone: "mint",
-    title: "Building Regulations (Part P)",
-    text: "Covers electrical safety in dwellings. Most electrical work in homes must comply with Part P of the Building Regulations.",
-  },
-  {
-    icon: FileText,
-    iconTone: "mint",
-    title: "BS 7671 (IET Wiring Regulations)",
-    text: "The national standard for electrical installations in the UK. It sets out the requirements for the design, installation and inspection of electrical systems.",
-  },
-  {
-    icon: Shield,
-    iconTone: "coral",
-    title: "Competent Person Schemes",
-    text: "Schemes such as NICEIC and NAPIT allow qualified electricians to self-certify that their work complies with Building Regulations.",
-  },
-  {
-    icon: ClipboardCheck,
-    iconTone: "mint",
-    title: "Electrical Installation Condition Report (EICR)",
-    text: "A thorough inspection and test of an existing electrical installation to assess its safety and condition. Commonly required for rented properties and recommended for older homes.",
-  },
+/* Icons and colours pair with the editable cards by position. */
+const regulationStyles = [
+  { icon: FileText, iconTone: "mint" },
+  { icon: FileText, iconTone: "mint" },
+  { icon: Shield, iconTone: "coral" },
+  { icon: ClipboardCheck, iconTone: "mint" },
 ] as const;
 
-const jobs = [
-  {
-    icon: House,
-    tone: "peach" as const,
-    title: "New installations",
-    text: "e.g. new builds, extensions or additional circuits",
-  },
-  {
-    icon: Wrench,
-    title: "Major electrical work",
-    text: "e.g. rewiring, consumer unit upgrades",
-  },
-  {
-    icon: Plug,
-    title: "Work in special locations",
-    text: "e.g. bathrooms, kitchens or outdoor areas",
-  },
-  {
-    icon: FileText,
-    tone: "sand" as const,
-    title: "Safety inspections",
-    text: "e.g. EICR for landlords or older properties",
-  },
-  {
-    icon: TriangleAlert,
-    tone: "coral" as const,
-    title: "Fault finding and repairs",
-    text: "to keep your home or business safe",
-  },
+const jobStyles = [
+  { icon: House, tone: "peach" as const },
+  { icon: Wrench },
+  { icon: Plug },
+  { icon: FileText, tone: "sand" as const },
+  { icon: TriangleAlert, tone: "coral" as const },
 ];
 
-/*
- * Regulatory answers stay within well-established facts and are phrased
- * conservatively: no fine amounts, amendment dates or legal advice.
- */
-const faqs: FaqItem[] = [
-  {
-    question: "What is Part P of the Building Regulations?",
-    answer:
-      "Part P is the part of the Building Regulations that covers electrical safety in dwellings in England and Wales. It requires electrical work in homes to be designed and installed so that people are protected from fire and injury. Some types of work are notifiable, which means they must be certified as compliant, for example by an electrician registered with a Competent Person Scheme. Scotland and Northern Ireland have their own building standards.",
-  },
-  {
-    question: "Do I need a qualified electrician for small jobs?",
-    answer:
-      "We recommend using a qualified electrician for any work on fixed wiring, however small. Not every small job is notifiable under the Building Regulations, but electrical work in a home should still be carried out safely and to BS 7671, the IET Wiring Regulations. If you are not sure whether a job needs to be notified, ask a registered electrician or your local authority building control before work starts.",
-  },
-  {
-    question: "What is an Electrical Installation Condition Report (EICR)?",
-    answer:
-      "An Electrical Installation Condition Report (EICR) is the report produced after a qualified person inspects and tests the existing electrical installation in a property. It records the condition of the installation and notes any damage, deterioration or defects that could be a safety risk and need attention.",
-  },
-  {
-    question: "How often should an EICR be carried out?",
-    answer:
-      "It depends on the property. In the private rented sector in England, an EICR is required at least every 5 years. For owner-occupied homes, a periodic inspection is commonly recommended about every 10 years, or when the occupancy changes. Other parts of the UK have their own rules for rented homes, and the electrician carrying out the inspection may recommend a shorter interval for an older installation.",
-  },
-  {
-    question:
-      "What happens if electrical work doesn’t comply with regulations?",
-    answer:
-      "Non-compliant electrical work can be unsafe and may need to be put right. Where notifiable work does not comply with the Building Regulations, local authority building control can take enforcement action. Missing certificates can also cause problems when you come to sell the property.",
-  },
-  {
-    question: "How can I check if an electrician is qualified?",
-    answer:
-      "Ask which scheme the electrician is registered with, then check that scheme’s own register. Schemes such as NICEIC and NAPIT have a search on their website where you can look up a business and confirm its current status. Make sure the registration covers the type of work you need, and ask for the relevant certificate when the work is finished.",
-  },
-];
-
-export default function ElectricalSafetyPage() {
+export default async function ElectricalSafetyPage() {
+  const { seo, hero, why, regulations, when, faq, cta } =
+    await getContent("safety");
   return (
     <>
       <PageHero
-        eyebrow="Electrical safety & regulations"
-        title="A simple guide to UK electrical safety and regulations"
-        lead="Understand the key rules, standards and legal requirements for electrical work in the UK. Whether you’re a homeowner or looking for an electrician, this guide explains what you need to know to stay safe and compliant."
+        eyebrow={hero.eyebrow}
+        title={hero.title}
+        lead={hero.lead}
         image={{
           src: "/images/illustrations/electrical-safety.png",
           width: 380,
@@ -155,21 +73,14 @@ export default function ElectricalSafetyPage() {
               id="why-heading"
               className="text-[26px] font-extrabold leading-tight tracking-[-0.02em] sm:text-[32px] md:text-4xl"
             >
-              Why electrical safety matters
+              {why.title}
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed sm:text-base sm:leading-8">
-              Electrical work that isn’t carried out correctly can be dangerous
-              and may lead to electric shocks, fires or damage to property. UK
-              regulations and standards are in place to ensure electrical
-              installations are safe, reliable and carried out by competent
-              people.
+              {why.text}
             </p>
           </div>
-          <Callout title="Use a qualified electrician">
-            <p>
-              Always choose an electrician who is properly registered and
-              qualified for the type of work you need.
-            </p>
+          <Callout title={why.callout_title}>
+            <p>{why.callout_text}</p>
           </Callout>
         </Container>
       </Section>
@@ -177,20 +88,20 @@ export default function ElectricalSafetyPage() {
       {/* Key regulations */}
       <Section spacing="sm" aria-labelledby="regulations-heading">
         <Container>
-          <SectionHeading
-            id="regulations-heading"
-            title="Key regulations and standards"
-          />
-          <p className="mt-4 text-[15px] leading-relaxed">
-            Electrical work in the UK is covered by a number of regulations and
-            standards. Here are the most important ones to know about.
-          </p>
+          <SectionHeading id="regulations-heading" title={regulations.title} />
+          <p className="mt-4 text-[15px] leading-relaxed">{regulations.lead}</p>
           <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-            {regulations.map((item) => (
-              <li key={item.title}>
-                <FeatureCard {...item} />
-              </li>
-            ))}
+            {keyed(regulations.cards, (card) => card.title).map(
+              ({ item, key }, index) => (
+                <li key={key}>
+                  <FeatureCard
+                    {...regulationStyles[index % regulationStyles.length]}
+                    title={item.title}
+                    text={item.text}
+                  />
+                </li>
+              ),
+            )}
           </ul>
         </Container>
       </Section>
@@ -200,38 +111,47 @@ export default function ElectricalSafetyPage() {
         <Container>
           <SectionHeading
             id="when-heading"
-            title="When do you need an electrician?"
-            lead="You should always use a qualified electrician for:"
+            title={when.title}
+            lead={when.lead}
           />
-          <IconColumns items={jobs} className="mt-8 lg:mt-10" />
+          <IconColumns
+            items={when.items.map((item, index) => ({
+              ...jobStyles[index % jobStyles.length],
+              title: item.title,
+              text: item.text,
+            }))}
+            className="mt-8 lg:mt-10"
+          />
         </Container>
       </Section>
 
       {/* FAQ */}
       <Section spacing="sm" aria-labelledby="faq-heading" className="md:pb-20">
         <Container>
-          <SectionHeading
-            id="faq-heading"
-            title="Frequently asked questions"
-            lead="Get answers to common questions about electrical safety and regulations in the UK."
-          />
-          <FaqList items={faqs} withSchema className="mt-6 gap-4" />
+          <SectionHeading id="faq-heading" title={faq.title} lead={faq.lead} />
+          <FaqList items={faq.items} withSchema className="mt-6 gap-4" />
         </Container>
       </Section>
 
       <CtaBand
-        eyebrow="Need a qualified electrician?"
-        title="Get quotes from trusted electricians"
-        lead="Find vetted electricians in your area and get up to 5 quotes for your project."
+        eyebrow={cta.eyebrow}
+        title={cta.title}
+        lead={cta.lead}
+        buttonLabel={cta.button}
       />
 
       <LocationsDirectory />
 
-      <PageSchema {...page} crumb="Electrical Safety & Regulations" />
+      <PageSchema
+        title={seo.title}
+        description={seo.description}
+        path={routes.safety}
+        crumb="Electrical Safety & Regulations"
+      />
       <JsonLd
         data={guideArticleSchema({
-          headline: "A simple guide to UK electrical safety and regulations",
-          description,
+          headline: hero.title,
+          description: seo.description,
           path: routes.safety,
           image: "/images/illustrations/electrical-safety.png",
           about: [

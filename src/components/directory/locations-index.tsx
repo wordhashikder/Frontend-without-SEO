@@ -23,7 +23,11 @@ function groupByRegion(locations: LocationSummary[]) {
 /** Every location page with its installer count, as crawlable link lists under a heading per region (two columns of regions on desktop). */
 export function LocationsIndex({
   locations,
+  title = "EV charger installers by town and city",
+  lead = "Choose your nearest town or city to see the installers who cover it.",
 }: {
+  title?: string;
+  lead?: string;
   locations: LocationSummary[];
 }) {
   const groups = groupByRegion(locations);
@@ -31,11 +35,7 @@ export function LocationsIndex({
   return (
     <Section aria-labelledby="browse-heading">
       <Container>
-        <SectionHeading
-          id="browse-heading"
-          title="EV charger installers by town and city"
-          lead="Choose your nearest town or city to see the installers who cover it."
-        />
+        <SectionHeading id="browse-heading" title={title} lead={lead} />
 
         {groups.length === 0 ? (
           <div className="mt-10 rounded-2xl bg-mint-soft px-6 py-12 text-center sm:px-10 sm:py-14">

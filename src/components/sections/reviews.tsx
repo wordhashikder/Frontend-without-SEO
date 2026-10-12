@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { CheckBullet } from "@/components/ui/icon-badge";
 import { StarRating } from "@/components/ui/star-rating";
+import { getSiteContent } from "@/lib/content";
 import type { Review } from "@/lib/types";
 import { cn, timeAgo } from "@/lib/utils";
 
@@ -130,8 +131,9 @@ function Row({ reviews, reverse }: { reviews: Review[]; reverse?: boolean }) {
  * "Real people. Real results." Two rows of published reviews drifting in
  * opposite directions. Renders nothing until real reviews exist.
  */
-export function ReviewsMarquee({ reviews }: { reviews: Review[] }) {
+export async function ReviewsMarquee({ reviews }: { reviews: Review[] }) {
   if (reviews.length === 0) return null;
+  const { reviews: heading } = await getSiteContent();
   const split = Math.ceil(reviews.length / 2);
   const rows =
     reviews.length >= 6
@@ -148,12 +150,9 @@ export function ReviewsMarquee({ reviews }: { reviews: Review[] }) {
           id="reviews-heading"
           className="text-[28px] font-bold leading-tight sm:text-4xl"
         >
-          Real people. Real results.
+          {heading.title}
         </h2>
-        <p className="mt-3 text-[15px]">
-          See what homeowners and businesses say about finding EV charger
-          installers through PickASparky.
-        </p>
+        <p className="mt-3 text-[15px]">{heading.lead}</p>
       </div>
       {/*
         Pause control for keyboard and screen-reader users (WCAG 2.2.2). It is

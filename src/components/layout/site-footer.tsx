@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { HomeLink } from "@/components/layout/home-link";
 import { Container } from "@/components/ui/layout";
+import { getOrganisation, getSiteContent } from "@/lib/content";
 import { legalLinks, navigation, site } from "@/lib/site";
 
 function XIcon() {
@@ -23,15 +24,23 @@ function LinkedInIcon() {
 
 /**
  * Both icons are always shown, as in the design. An icon becomes a link once its
- * profile URL is set (see `.env.example`); until then it is decorative, so the
- * footer never links to a profile that does not exist.
+ * profile URL is set (Dashboard → Website content → Site-wide, or the
+ * NEXT_PUBLIC_SOCIAL_* variables); until then it is decorative, so the footer
+ * never links to a profile that does not exist.
  */
-const socials = [
-  { name: "X", href: site.social.x, icon: XIcon },
-  { name: "LinkedIn", href: site.social.linkedin, icon: LinkedInIcon },
-];
-
-export function SiteFooter() {
+export async function SiteFooter() {
+  const [content, organisation] = await Promise.all([
+    getSiteContent(),
+    getOrganisation(),
+  ]);
+  const socials = [
+    { name: "X", href: content.social.x_url || site.social.x, icon: XIcon },
+    {
+      name: "LinkedIn",
+      href: content.social.linkedin_url || site.social.linkedin,
+      icon: LinkedInIcon,
+    },
+  ];
   return (
     <footer>
       <div className="bg-footer">
@@ -48,11 +57,10 @@ export function SiteFooter() {
               />
             </HomeLink>
             <p className="mt-4 max-w-68 text-sm leading-relaxed text-ink/80">
-              {site.tagline}
+              {content.brand.tagline}
             </p>
             <p className="mt-3 max-w-68 text-xs leading-relaxed">
-              Compare up to 5 quotes from verified installers and get the right
-              charger for your home or business.
+              {content.brand.footer_text}
             </p>
           </div>
 
@@ -88,7 +96,7 @@ export function SiteFooter() {
                       href={href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={`${site.name} on ${name}`}
+                      aria-label={`${organisation.name} on ${name}`}
                       className="inline-flex size-10 items-center justify-center rounded-md text-ink hover:bg-white/60"
                     >
                       <Icon />
@@ -102,7 +110,7 @@ export function SiteFooter() {
               ))}
             </ul>
             <p className="mt-1 max-w-44 text-xs leading-relaxed">
-              Get the latest EV news, tips and updates.
+              {content.social.follow_text}
             </p>
           </div>
         </Container>
@@ -112,7 +120,8 @@ export function SiteFooter() {
         <Container className="flex flex-col gap-3 py-5 text-xs sm:flex-row sm:items-center sm:justify-between">
           {/* The year is fixed at build time; pages are rebuilt well within a year. */}
           <p>
-            © {new Date().getFullYear()} {site.name}. All rights reserved.
+            © {new Date().getFullYear()} {organisation.name}. All rights
+            reserved.
           </p>
           <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 sm:divide-x sm:divide-white/20 sm:gap-x-0">
             {legalLinks.map((link) => (

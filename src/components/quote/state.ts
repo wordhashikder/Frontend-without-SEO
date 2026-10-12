@@ -66,6 +66,8 @@ export type QuoteResult = {
   reference: string;
   postcode: string;
   matchedInstallers: number;
+  /** Our team is choosing the installers (automatic matching is off). */
+  held: boolean;
   firstName: string;
   email: string;
   /** Whether the customer gave a phone number (it is optional). */

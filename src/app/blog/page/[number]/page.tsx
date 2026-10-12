@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import {
   BlogListing,
-  blogPage,
   MAX_BLOG_PAGE,
   POSTS_PER_PAGE,
 } from "@/components/blog/blog-listing";
 import { api } from "@/lib/api";
+import { getContent } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
 import { blogListingPath, routes } from "@/lib/site";
 
@@ -37,11 +37,14 @@ async function load({ params }: Pick<Props, "params">) {
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const { page, listing } = await load(props);
+  const [{ page, listing }, { seo }] = await Promise.all([
+    load(props),
+    getContent("blog"),
+  ]);
   return {
     ...pageMetadata({
-      title: `${blogPage.title}: Page ${page}`,
-      description: blogPage.description,
+      title: `${seo.title}: Page ${page}`,
+      description: seo.description,
       path: blogListingPath(page),
     }),
     pagination: {

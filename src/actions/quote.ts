@@ -108,6 +108,8 @@ export type QuoteSubmitResult =
       reference: string;
       postcode: string;
       matchedInstallers: number;
+      /** Our team is choosing the installers (automatic matching is off). */
+      held: boolean;
     }
   | { ok: false; message: string; fieldErrors?: QuoteFieldErrors };
 
@@ -231,6 +233,7 @@ export async function submitQuote(input: unknown): Promise<QuoteSubmitResult> {
       reference: String(created.reference),
       postcode: String(created.postcode ?? body.postcode),
       matchedInstallers: Math.max(0, Number(created.matched_installers) || 0),
+      held: created.held === true,
     };
   } catch (error) {
     if (!(error instanceof ApiError)) {

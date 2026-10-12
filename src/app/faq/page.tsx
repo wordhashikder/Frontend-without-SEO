@@ -7,19 +7,34 @@ import { PageHero } from "@/components/sections/page-hero";
 import { PageSchema } from "@/components/sections/page-schema";
 import { IconBadge } from "@/components/ui/icon-badge";
 import { Container, Eyebrow } from "@/components/ui/layout";
-import { homeownerFaqs, installerFaqs } from "@/content/faqs";
+import { getContent } from "@/lib/content";
 import { faqEntities, pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-const page = {
-  title: "FAQs for Homeowners and Electricians",
-  description:
-    "Answers to common questions about PickASparky: free quotes for homeowners, how installers are vetted, how your details are shared and how electricians join.",
-  path: routes.faq,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { seo } = await getContent("faq");
+  return pageMetadata({ ...seo, path: routes.faq });
+}
 
-export const metadata: Metadata = pageMetadata(page);
+/** The hero's "get in touch" (if the wording keeps it) links to the contact page. */
+function withContactLink(text: string) {
+  const phrase = "get in touch";
+  const at = text.toLowerCase().indexOf(phrase);
+  if (at < 0) return text;
+  return (
+    <>
+      {text.slice(0, at)}
+      <Link
+        href={routes.contact}
+        className="text-primary underline-offset-4 hover:underline"
+      >
+        {text.slice(at, at + phrase.length)}
+      </Link>
+      {text.slice(at + phrase.length)}
+    </>
+  );
+}
 
 type FaqGroupProps = {
   id: string;
@@ -71,12 +86,13 @@ function FaqGroup({
   );
 }
 
-export default function FaqPage() {
+export default async function FaqPage() {
+  const { seo, hero, homeowners, electricians } = await getContent("faq");
   return (
     <>
       <PageHero
-        eyebrow="FAQ"
-        title="Frequently Asked Questions"
+        eyebrow={hero.eyebrow}
+        title={hero.title}
         image={{
           src: "/images/illustrations/faq.png",
           width: 163,
@@ -87,15 +103,7 @@ export default function FaqPage() {
         className="sm:[&>div]:grid-cols-[minmax(0,1fr)_auto] md:pt-[100px] md:pb-[92px]"
       >
         <p className="mt-3 max-w-[900px] text-base leading-relaxed sm:text-lg sm:leading-8">
-          Find answers to common questions from homeowners and electricians. If
-          you can&apos;t find what you&apos;re looking for, feel free to{" "}
-          <Link
-            href={routes.contact}
-            className="text-primary underline-offset-4 hover:underline"
-          >
-            get in touch
-          </Link>
-          .
+          {withContactLink(hero.lead)}
         </p>
       </PageHero>
 
@@ -104,30 +112,32 @@ export default function FaqPage() {
           id="for-homeowners"
           icon={House}
           badgeClassName="bg-peach text-ink"
-          eyebrow="For homeowners"
-          title="Frequently asked questions for homeowners"
-          lead="Everything you need to know about finding and comparing electricians through PickASparky."
-          items={homeownerFaqs}
+          eyebrow={homeowners.eyebrow}
+          title={homeowners.title}
+          lead={homeowners.lead}
+          items={homeowners.items}
         />
         <FaqGroup
           id="for-electricians"
           icon={HardHat}
           badgeClassName="bg-mint-soft text-ink"
-          eyebrow="For electricians"
-          title="Frequently asked questions for electricians"
-          lead="Learn more about joining PickASparky and how it works for electricians."
-          items={installerFaqs}
+          eyebrow={electricians.eyebrow}
+          title={electricians.title}
+          lead={electricians.lead}
+          items={electricians.items}
         />
       </Container>
 
       <LocationsDirectory />
 
       <PageSchema
-        {...page}
+        title={seo.title}
+        description={seo.description}
+        path={routes.faq}
         type="FAQPage"
         crumb="FAQ"
         extra={{
-          mainEntity: faqEntities([...homeownerFaqs, ...installerFaqs]),
+          mainEntity: faqEntities([...homeowners.items, ...electricians.items]),
         }}
       />
     </>

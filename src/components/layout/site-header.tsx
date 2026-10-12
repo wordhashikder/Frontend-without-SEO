@@ -3,9 +3,11 @@ import { HomeLink } from "@/components/layout/home-link";
 import { SiteMenu } from "@/components/layout/site-menu";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/layout";
+import { getSiteContent } from "@/lib/content";
 import { routes, site } from "@/lib/site";
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const { brand } = await getSiteContent();
   return (
     <header className="sticky top-0 z-50 border-b border-black/5 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
       <Container
@@ -30,7 +32,7 @@ export function SiteHeader() {
             size="md"
             className="h-10 px-3 text-xs min-[360px]:px-4 min-[360px]:text-[13px] sm:px-5 sm:text-sm"
           >
-            Get Free Quotes
+            {brand.header_cta}
           </ButtonLink>
         </div>
       </Container>

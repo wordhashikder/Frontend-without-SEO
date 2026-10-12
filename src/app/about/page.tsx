@@ -24,46 +24,22 @@ import {
   Section,
   SectionHeading,
 } from "@/components/ui/layout";
+import { getContent } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
 import { routes, site } from "@/lib/site";
+import { keyed } from "@/lib/utils";
 
-const title = "About Us: The UK Electrician Marketplace";
-const description =
-  "PickASparky is an independent UK marketplace that helps homeowners and businesses find, compare and get quotes from suitable electricians in their area.";
+export async function generateMetadata(): Promise<Metadata> {
+  const { seo } = await getContent("about");
+  return pageMetadata({ ...seo, path: routes.about });
+}
 
-const page = {
-  title,
-  description,
-  path: routes.about,
-};
-
-export const metadata: Metadata = pageMetadata(page);
-
-const differences = [
-  {
-    icon: FileText,
-    iconTone: "coral",
-    title: "Better information",
-    text: "Useful electrician profiles instead of just a business name and phone number.",
-  },
-  {
-    icon: MapPin,
-    iconTone: "green",
-    title: "Relevant matches",
-    text: "Connect customers with electricians who provide the service you need and cover your area.",
-  },
-  {
-    icon: ShieldCheck,
-    iconTone: "green",
-    title: "More transparency",
-    text: "Make services, coverage and relevant accreditations easier to understand.",
-  },
-  {
-    icon: Users,
-    iconTone: "coral",
-    title: "Customer control",
-    text: "You decide who you want to contact and who you ultimately choose to hire.",
-  },
+/* Icons pair with the editable cards by position. */
+const differenceIcons = [
+  { icon: FileText, iconTone: "coral" },
+  { icon: MapPin, iconTone: "green" },
+  { icon: ShieldCheck, iconTone: "green" },
+  { icon: Users, iconTone: "coral" },
 ] as const;
 
 const schemeLogos = [
@@ -73,36 +49,22 @@ const schemeLogos = [
   { name: "MCS Certified", src: "mcs.png", width: 90, height: 100 },
 ];
 
-const boundaries = [
-  {
-    icon: Wrench,
-    title: "We don’t carry out electrical work",
-    text: "PickASparky doesn’t provide electrical services and we don’t employ electricians.",
-  },
-  {
-    icon: UsersRound,
-    title: "We don’t choose an electrician for you",
-    text: "You stay in control and decide who you want to contact and hire.",
-  },
-  {
-    icon: Search,
-    title: "We help you discover, compare and connect",
-    text: "Our role is to make it easier to find suitable electricians and get the information you need.",
-  },
-];
+const boundaryIcons = [Wrench, UsersRound, Search];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const content = await getContent("about");
+  const { hero, why, different, electricians, trust, cta, isnt } = content;
   return (
     <>
       <PhotoBanner
         id="about-heading"
         as="h1"
-        eyebrow="About PickASparky"
-        title="Making it easier to find the right electrician"
-        lead="PickASparky is an independent UK marketplace that connects homeowners and businesses with electricians. Our goal is to make it simpler to find, compare and get quotes from suitable electricians in your area."
+        eyebrow={hero.eyebrow}
+        title={hero.title}
+        lead={hero.lead}
         image={{
-          src: "/images/about/hero-electrician.jpg",
-          alt: "Smiling electrician on a stepladder fitting a ceiling light in a home",
+          src: hero.image || "/images/about/hero-electrician.jpg",
+          alt: hero.image_alt,
         }}
         preload
         className="mt-6 lg:mt-10"
@@ -112,25 +74,23 @@ export default function AboutPage() {
       <Section aria-labelledby="why-heading">
         <Container className="grid items-start gap-8 sm:grid-cols-[minmax(0,294px)_minmax(0,1fr)] sm:gap-10">
           <Image
-            src="/images/about/homeowner-searching.jpg"
-            alt="Homeowner at a desk searching for an electrician on a laptop"
+            src={why.image || "/images/about/homeowner-searching.jpg"}
+            alt={why.image_alt}
             width={294}
             height={248}
             sizes="(min-width: 640px) 294px, 100vw"
             className="h-auto w-full rounded-2xl"
           />
           <div>
-            <Eyebrow className="mb-2">Why we built PickASparky</Eyebrow>
+            <Eyebrow className="mb-2">{why.eyebrow}</Eyebrow>
             <h2
               id="why-heading"
               className="text-[26px] font-extrabold leading-[1.3] tracking-[-0.02em] sm:text-[32px]"
             >
-              Finding a good electrician shouldn’t be this difficult.
+              {why.title}
             </h2>
             <p className="mt-5 text-lg leading-relaxed sm:mt-6 lg:text-2xl lg:leading-[1.5]">
-              Searching for an electrician often means checking multiple
-              websites, contacting businesses one by one and trying to work out
-              who covers your area and provides the service you need.
+              {why.text}
             </p>
           </div>
         </Container>
@@ -141,40 +101,46 @@ export default function AboutPage() {
         <Container>
           <SectionHeading
             id="different-heading"
-            eyebrow="What we’re trying to do differently"
-            title="A more transparent and useful marketplace"
+            eyebrow={different.eyebrow}
+            title={different.title}
             size="lg"
           />
           <ul className="mt-8 grid gap-4 sm:grid-cols-2 md:mt-10 lg:grid-cols-4 lg:gap-6">
-            {differences.map((item) => (
-              <li key={item.title}>
-                <FeatureCard
-                  icon={item.icon}
-                  iconTone={item.iconTone}
-                  title={item.title}
-                  text={item.text}
-                  tone="sand"
-                  className="bg-stone lg:min-h-[288px]"
-                />
-              </li>
-            ))}
+            {keyed(different.cards, (card) => card.title).map(
+              ({ item, key }, index) => {
+                const style = differenceIcons[index % differenceIcons.length];
+                return (
+                  <li key={key}>
+                    <FeatureCard
+                      icon={style.icon}
+                      iconTone={style.iconTone}
+                      title={item.title}
+                      text={item.text}
+                      tone="sand"
+                      className="bg-stone lg:min-h-[288px]"
+                    />
+                  </li>
+                );
+              },
+            )}
           </ul>
         </Container>
       </Section>
 
       <PhotoBanner
         id="electricians-heading"
-        eyebrow="Built for electricians too"
-        title="Supporting independent electricians"
-        lead="PickASparky helps electricians connect with customers looking for the services they provide in the areas they cover. It’s a straightforward way to showcase your business, share your services and reach relevant customers."
+        eyebrow={electricians.eyebrow}
+        title={electricians.title}
+        lead={electricians.lead}
         image={{
-          src: "/images/about/independent-electrician.jpg",
-          alt: "Electrician working on the wiring of a consumer unit",
+          src:
+            electricians.image || "/images/about/independent-electrician.jpg",
+          alt: electricians.image_alt,
         }}
         contentClassName="lg:min-h-[552px] lg:py-20"
       >
         <ButtonLink href={routes.join} size="lg" arrow>
-          Join PickASparky
+          {electricians.button}
         </ButtonLink>
       </PhotoBanner>
 
@@ -182,24 +148,21 @@ export default function AboutPage() {
       <Section aria-labelledby="trust-heading">
         <Container className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-14">
           <div>
-            <Eyebrow className="mb-4">Trust &amp; transparency</Eyebrow>
+            <Eyebrow className="mb-4">{trust.eyebrow}</Eyebrow>
             <h2
               id="trust-heading"
               className="text-[26px] font-extrabold leading-[1.3] tracking-[-0.02em] sm:text-[32px] sm:leading-[1.5]"
             >
-              Making electrician information easier to understand
+              {trust.title}
             </h2>
             <p className="mt-5 text-lg leading-relaxed sm:text-[22px] sm:leading-[1.5]">
-              Electrician profiles can display relevant accreditations and
-              registrations so you can make a more informed choice. We also
-              explain what common accreditations mean, such as NICEIC, NAPIT,
-              TrustMark and others.
+              {trust.text}
             </p>
             <Link
               href={routes.accreditations}
               className="mt-7 inline-flex min-h-10 items-center gap-2.5 text-sm font-semibold text-primary hover:text-primary-dark"
             >
-              Learn about electrician accreditations
+              {trust.link}
               <ArrowRight aria-hidden className="size-4" strokeWidth={2.25} />
             </Link>
           </div>
@@ -223,16 +186,17 @@ export default function AboutPage() {
       </Section>
 
       <CtaBand
-        eyebrow="Ready to find an electrician?"
-        title="Get quotes from trusted electricians in your area"
+        eyebrow={cta.eyebrow}
+        title={cta.title}
+        buttonLabel={cta.button}
         footnote={
           <p className="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 font-semibold text-ink">
-            Are you an electrician?
+            {cta.footnote}
             <Link
               href={routes.join}
               className="inline-flex min-h-10 items-center gap-2 text-primary hover:text-primary-dark"
             >
-              Join PickASparky
+              {cta.footnote_link}
               <ArrowRight aria-hidden className="size-4" strokeWidth={2.25} />
             </Link>
           </p>
@@ -246,36 +210,35 @@ export default function AboutPage() {
         className="my-14 md:my-20"
       >
         <Container>
-          <Eyebrow className="mb-4">What PickASparky isn’t</Eyebrow>
+          <Eyebrow className="mb-4">{isnt.eyebrow}</Eyebrow>
           <h2
             id="independent-heading"
             className="text-[26px] font-extrabold leading-[1.3] tracking-[-0.02em] sm:text-[32px]"
           >
-            We’re not an electrical contractor.
+            {isnt.title}
           </h2>
           <p className="mt-5 max-w-[900px] text-lg leading-relaxed sm:text-[22px] sm:leading-[1.5]">
-            PickASparky is an independent marketplace. We don’t carry out
-            electrical work ourselves and we don’t choose an electrician on your
-            behalf. Our role is to make it easier to discover, compare and
-            connect with electricians.
+            {isnt.text}
           </p>
           <ul className="mt-10 grid gap-10 sm:grid-cols-3 sm:gap-6 lg:mt-12 lg:gap-0">
-            {boundaries.map((item) => (
-              <li key={item.title} className="lg:px-6">
-                <IconBadge
-                  icon={item.icon}
-                  tone="coral"
-                  size="lg"
-                  className="bg-[#f0d0bf]"
-                />
-                <h3 className="mt-6 max-w-[340px] text-xl font-extrabold leading-[1.5] tracking-[-0.01em] lg:mt-8 lg:text-[22px] lg:leading-[1.75]">
-                  {item.title}
-                </h3>
-                <p className="mt-3 max-w-[340px] text-sm leading-relaxed lg:mt-5">
-                  {item.text}
-                </p>
-              </li>
-            ))}
+            {keyed(isnt.items, (item) => item.title).map(
+              ({ item, key }, index) => (
+                <li key={key} className="lg:px-6">
+                  <IconBadge
+                    icon={boundaryIcons[index % boundaryIcons.length]}
+                    tone="coral"
+                    size="lg"
+                    className="bg-[#f0d0bf]"
+                  />
+                  <h3 className="mt-6 max-w-[340px] text-xl font-extrabold leading-[1.5] tracking-[-0.01em] lg:mt-8 lg:text-[22px] lg:leading-[1.75]">
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 max-w-[340px] text-sm leading-relaxed lg:mt-5">
+                    {item.text}
+                  </p>
+                </li>
+              ),
+            )}
           </ul>
         </Container>
       </Section>
@@ -283,7 +246,9 @@ export default function AboutPage() {
       <LocationsDirectory />
 
       <PageSchema
-        {...page}
+        title={content.seo.title}
+        description={content.seo.description}
+        path={routes.about}
         type="AboutPage"
         crumb="About"
         extra={{

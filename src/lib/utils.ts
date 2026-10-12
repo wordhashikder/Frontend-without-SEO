@@ -50,3 +50,17 @@ export function initials(name: string, max = 3) {
     .slice(0, max)
     .join("");
 }
+
+/**
+ * React keys for editable content lists, where items have no ids and two can
+ * share the same text: the item's text, plus a counter for repeats.
+ */
+export function keyed<T>(items: readonly T[], text: (item: T) => string) {
+  const seen = new Map<string, number>();
+  return items.map((item) => {
+    const base = text(item);
+    const count = seen.get(base) ?? 0;
+    seen.set(base, count + 1);
+    return { item, key: count ? `${base}-${count}` : base };
+  });
+}

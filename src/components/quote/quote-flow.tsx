@@ -223,6 +223,7 @@ export function QuoteFlow({ entry, intro, outro }: QuoteFlowProps) {
               reference: outcome.reference,
               postcode: outcome.postcode,
               matchedInstallers: outcome.matchedInstallers,
+              held: outcome.held,
               firstName: answers.first_name.trim(),
               email: answers.email.trim(),
               hasPhone: answers.phone.trim().length > 0,

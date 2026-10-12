@@ -62,6 +62,21 @@ export interface LocationDetail extends LocationSummary {
   /** Search snippet overrides set in the Dashboard; null uses the standard wording. */
   seo_title?: string | null;
   seo_description?: string | null;
+  /** Heading override; null uses the location template's heading. */
+  h1_heading?: string | null;
+  updated_at?: string | null;
+}
+
+/** A page's editable content (see `@/lib/content`). */
+export interface PublicContent {
+  key: string;
+  content: Record<string, unknown>;
+  updated_at: string | null;
+}
+
+export interface PublicPlatform {
+  platform_name: string;
+  support_email: string;
 }
 
 /** The four directory columns, each in display order; no location appears twice. */
@@ -204,6 +219,8 @@ export interface QuoteRequestCreated {
   reference: string;
   postcode: string;
   matched_installers: number;
+  /** Automatic matching is off: the team picks the installers and emails the homeowner. */
+  held?: boolean;
 }
 
 export type ContactSubject =
