@@ -6,6 +6,7 @@ import {
   StepFlow,
 } from "@/components/how-it-works/step-flow";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
+import { ClosingSection } from "@/components/sections/closing-section";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PageHero } from "@/components/sections/page-hero";
 import { PageSchema } from "@/components/sections/page-schema";
@@ -105,6 +106,8 @@ export default async function HowItWorksPage() {
           </FlowActions>
         </Container>
       </Section>
+
+      <ClosingSection page="how-it-works" />
 
       <LocationsDirectory />
 

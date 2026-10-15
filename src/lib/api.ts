@@ -10,6 +10,10 @@ import type {
   ConversationOffer,
   ConversationThread,
   CurrentUser,
+  Customer,
+  CustomerConversation,
+  CustomerOverview,
+  CustomerSessionResponse,
   InstallerCard,
   InstallerDetail,
   InstallerEnquiryCreate,
@@ -25,6 +29,7 @@ import type {
   QuoteRequestCreate,
   QuoteRequestCreated,
   RegisterRequest,
+  RequestDetail,
   Review,
   ReviewCreate,
   ReviewInvite,
@@ -459,6 +464,70 @@ export const api = {
       `/conversation-links/quotes/${encodeURIComponent(offerId)}`,
       { method: "POST", body: { token, decision, note }, clientIp },
     ),
+
+  // ---- Customer quote dashboard (magic link, then a session) ----------------
+  customerRequestLink: (email: string, clientIp?: string) =>
+    request<{ sent: boolean }>("/customer/auth/request-link", {
+      method: "POST",
+      body: { email },
+      clientIp,
+    }),
+
+  customerVerify: (token: string, clientIp?: string) =>
+    request<CustomerSessionResponse>("/customer/auth/verify", {
+      method: "POST",
+      body: { token },
+      clientIp,
+    }),
+
+  customerLogout: (token: string) =>
+    request<void>("/customer/auth/logout", { method: "POST", token }),
+
+  customerOverview: (token: string) =>
+    request<CustomerOverview>("/customer/overview", { token }),
+
+  customerRequest: (token: string, id: string) =>
+    request<RequestDetail>(`/customer/requests/${encodeURIComponent(id)}`, {
+      token,
+    }),
+
+  customerConversations: (token: string) =>
+    request<Paginated<CustomerConversation>>("/customer/conversations", {
+      token,
+      query: { page_size: 100 },
+    }),
+
+  customerConversation: (token: string, id: string) =>
+    request<ConversationThread & { homeowner_email: null }>(
+      `/customer/conversations/${encodeURIComponent(id)}`,
+      { token },
+    ),
+
+  customerSendMessage: (token: string, id: string, body: string) =>
+    request<ConversationMessage>(
+      `/customer/conversations/${encodeURIComponent(id)}/messages`,
+      { method: "POST", token, body: { body } },
+    ),
+
+  customerRespond: (
+    token: string,
+    offerId: string,
+    decision: "accept" | "decline",
+    note: string | null,
+  ) =>
+    request<ConversationOffer>(
+      `/customer/quotes/${encodeURIComponent(offerId)}/respond`,
+      { method: "POST", token, body: { decision, note } },
+    ),
+
+  customerUpdate: (
+    token: string,
+    data: { first_name?: string; phone: string | null },
+  ) =>
+    request<Customer>("/customer/me", { method: "PATCH", token, body: data }),
+
+  customerErase: (token: string) =>
+    request<void>("/customer/me", { method: "DELETE", token }),
 
   // ---- Billing -----------------------------------------------------------
   createCheckoutSession: (token: string, plan: Exclude<Plan, "free">) =>

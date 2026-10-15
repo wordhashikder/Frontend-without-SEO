@@ -10,6 +10,7 @@ import {
 import type { Metadata } from "next";
 import { guideArticleSchema } from "@/components/about/guide-schema";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
+import { ClosingSection } from "@/components/sections/closing-section";
 import { CtaBand } from "@/components/sections/cta-band";
 import { FaqList } from "@/components/sections/faq";
 import {
@@ -139,6 +140,8 @@ export default async function ElectricalSafetyPage() {
         lead={cta.lead}
         buttonLabel={cta.button}
       />
+
+      <ClosingSection page="safety" />
 
       <LocationsDirectory />
 

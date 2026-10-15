@@ -18,6 +18,7 @@ import Image from "next/image";
 import type { ComponentProps } from "react";
 import { PricingCards } from "@/components/join/pricing-cards";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
+import { ClosingSection } from "@/components/sections/closing-section";
 import { FaqList } from "@/components/sections/faq";
 import { IconColumns, StepNumber } from "@/components/sections/feature-blocks";
 import { JsonLd } from "@/components/sections/json-ld";
@@ -279,6 +280,8 @@ export default async function JoinPage() {
           />
         </Container>
       </Section>
+
+      <ClosingSection page="join" />
 
       <LocationsDirectory />
 

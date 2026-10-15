@@ -18,6 +18,7 @@ import Link from "next/link";
 import { LocationsIndex } from "@/components/directory/locations-index";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
+import { ClosingSection } from "@/components/sections/closing-section";
 import { FaqList } from "@/components/sections/faq";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PageSchema } from "@/components/sections/page-schema";
@@ -87,10 +88,10 @@ export default async function InstallersHubPage() {
   return (
     <>
       {/* Hero: copy and postcode search on the left, photo on the right */}
-      <section className="relative overflow-hidden bg-linear-to-b from-surface to-white">
+      <section className="relative overflow-hidden bg-gradient-to-b from-surface to-white">
         <div
           aria-hidden
-          className="absolute -top-30 right-[24%] hidden size-105 rounded-full bg-mint-soft lg:block"
+          className="absolute top-[-120px] right-[24%] hidden size-[420px] rounded-full bg-mint-soft lg:block"
         />
         <div className="absolute inset-y-0 right-0 hidden w-[36%] overflow-hidden rounded-bl-[240px] lg:block">
           <Image
@@ -102,14 +103,14 @@ export default async function InstallersHubPage() {
             className="object-cover"
           />
         </div>
-        <Container className="relative pt-5 pb-12 md:pb-16 lg:pb-hub-hero-bottom">
+        <Container className="relative pt-5 pb-12 md:pb-[180px]">
           <Breadcrumbs
             items={[
               { name: "Home", path: routes.home },
               { name: "EV Charger Installers", path: routes.installers },
             ]}
           />
-          <div className="mt-8 max-w-155 md:mt-12 lg:max-w-[58%]">
+          <div className="mt-8 max-w-[620px] md:mt-12 lg:max-w-[58%]">
             <Eyebrow className="mb-2">{hero.eyebrow}</Eyebrow>
             <h1 className="text-[32px] font-extrabold leading-[1.15] tracking-[-0.01em] sm:text-[40px] md:text-5xl">
               {hero.title}
@@ -117,7 +118,7 @@ export default async function InstallersHubPage() {
             <p className="mt-4 max-w-xl text-base leading-relaxed sm:text-lg">
               {hero.lead}
             </p>
-            <PostcodeForm id="hub-postcode" className="mt-8 max-w-140" />
+            <PostcodeForm id="hub-postcode" className="mt-8 max-w-[560px]" />
           </div>
         </Container>
       </section>
@@ -264,6 +265,8 @@ export default async function InstallersHubPage() {
           <FaqList items={faq.items} columns={2} withSchema className="mt-10" />
         </Container>
       </Section>
+
+      <ClosingSection page="installers-hub" />
 
       <LocationsDirectory />
 

@@ -19,7 +19,7 @@ export function Confirmation({ headingRef, result }: ConfirmationProps) {
     ? [
         {
           title: "Check your inbox",
-          text: `We're sending a confirmation of your request to ${result.email}.`,
+          text: `We're emailing ${result.email} a confirmation with a secure View My Quotes link. One click opens your quotes and messages. No password needed.`,
         },
         {
           title: "We choose your installers",
@@ -34,7 +34,7 @@ export function Confirmation({ headingRef, result }: ConfirmationProps) {
       ? [
           {
             title: "Check your inbox",
-            text: `We're sending a confirmation of your request to ${result.email}.`,
+            text: `We're emailing ${result.email} a confirmation with a secure View My Quotes link. One click opens your quotes and messages. No password needed.`,
           },
           {
             title: "Installers get in touch",
@@ -50,7 +50,7 @@ export function Confirmation({ headingRef, result }: ConfirmationProps) {
       : [
           {
             title: "Check your inbox",
-            text: `We're sending a confirmation of your request to ${result.email}.`,
+            text: `We're emailing ${result.email} a confirmation with a secure View My Quotes link. One click opens your quotes and messages. No password needed.`,
           },
           {
             title: "We'll be in touch",

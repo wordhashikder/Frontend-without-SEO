@@ -55,6 +55,8 @@ export const routes = {
   privacy: "/privacy-policy/",
   terms: "/terms-and-conditions/",
   cookies: "/cookie-policy/",
+  /** The homeowner's quote dashboard (opened by the emailed magic link). */
+  myQuotes: "/uk/my-quotes/",
   /** Blog listing (page 1). Articles live directly under it. */
   blog: "/blog/",
 } as const;
@@ -119,8 +121,9 @@ export const legalLinks: NavLink[] = [
   { label: "Cookie Policy", href: routes.cookies },
 ];
 
-/** The two options behind the header's menu button, on every screen size. */
+/** The options behind the header's menu button, on every screen size. */
 export const headerMenu = [
+  { label: "My Quotes", href: routes.myQuotes, icon: "quotes" },
   { label: "Join as an Electrician", href: routes.register, icon: "join" },
   { label: "Electrician Login", href: routes.login, icon: "login" },
 ] as const;

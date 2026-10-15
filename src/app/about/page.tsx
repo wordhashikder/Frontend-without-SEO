@@ -13,6 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PhotoBanner } from "@/components/about/photo-banner";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
+import { ClosingSection } from "@/components/sections/closing-section";
 import { CtaBand } from "@/components/sections/cta-band";
 import { FeatureCard } from "@/components/sections/feature-blocks";
 import { PageSchema } from "@/components/sections/page-schema";
@@ -242,6 +243,8 @@ export default async function AboutPage() {
           </ul>
         </Container>
       </Section>
+
+      <ClosingSection page="about" />
 
       <LocationsDirectory />
 

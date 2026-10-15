@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight, Newspaper } from "lucide-react";
 import Link from "next/link";
 import { FeaturedPost, PostCard } from "@/components/blog/post-card";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
+import { ClosingSection } from "@/components/sections/closing-section";
 import { CtaBand } from "@/components/sections/cta-band";
 import { PageHero } from "@/components/sections/page-hero";
 import { PageSchema } from "@/components/sections/page-schema";
@@ -158,6 +159,8 @@ export async function BlogListing({
         lead={cta.lead}
         buttonLabel={cta.button}
       />
+
+      <ClosingSection page="blog" />
 
       <LocationsDirectory />
 

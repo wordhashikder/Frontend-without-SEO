@@ -8,6 +8,7 @@ import {
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact/contact-form";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
+import { ClosingSection } from "@/components/sections/closing-section";
 import { PageSchema } from "@/components/sections/page-schema";
 import { IconBadge } from "@/components/ui/icon-badge";
 import { Container, Eyebrow } from "@/components/ui/layout";
@@ -146,6 +147,8 @@ export default async function ContactPage() {
           </div>
         </Container>
       </section>
+
+      <ClosingSection page="contact" />
 
       <LocationsDirectory />
 

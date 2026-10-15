@@ -51,9 +51,14 @@ export function LocationsIndex({
             </ButtonLink>
           </div>
         ) : (
-          <div className="mt-10 grid grid-cols-1 gap-x-16 gap-y-10 md:grid-cols-2">
+          // CSS columns balance the two sides, so short regions never leave gaps.
+          <div className="mt-10 md:columns-2 md:gap-x-16">
             {groups.map(({ region, items }) => (
-              <section key={region} aria-label={region}>
+              <section
+                key={region}
+                aria-label={region}
+                className="mb-10 break-inside-avoid"
+              >
                 <h3 className="text-lg font-extrabold tracking-[-0.01em] sm:text-xl">
                   {region}
                 </h3>

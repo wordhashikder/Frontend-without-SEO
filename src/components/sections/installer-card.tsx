@@ -6,7 +6,23 @@ import { installerPath } from "@/lib/site";
 import type { InstallerCard as Installer } from "@/lib/types";
 import { cn, initials } from "@/lib/utils";
 
-/** Square logo tile; falls back to the business initials on brand green. */
+/** Brand-safe dark tones, so a page of listings does not look like one block of green. */
+const MONOGRAM_TONES = [
+  "bg-forest",
+  "bg-[#1c4f6b]",
+  "bg-[#35505f]",
+  "bg-[#2f5d3a]",
+  "bg-[#4a3f6b]",
+  "bg-[#6b4a2f]",
+] as const;
+
+function monogramTone(name: string) {
+  let hash = 0;
+  for (const char of name) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  return MONOGRAM_TONES[hash % MONOGRAM_TONES.length];
+}
+
+/** Square logo tile; falls back to the business initials on a tone chosen from its name. */
 export function InstallerLogo({
   name,
   logoUrl,
@@ -21,7 +37,8 @@ export function InstallerLogo({
   return (
     <span
       className={cn(
-        "relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-lg bg-forest font-bold text-white",
+        "relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-lg font-bold text-white",
+        logoUrl ? "bg-forest" : monogramTone(name),
         className,
       )}
       style={{ width: size, height: size, fontSize: Math.max(12, size / 4.5) }}

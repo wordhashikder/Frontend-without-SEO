@@ -2,6 +2,7 @@ import { HardHat, House, type LucideIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
+import { ClosingSection } from "@/components/sections/closing-section";
 import { type FaqItem, FaqList } from "@/components/sections/faq";
 import { PageHero } from "@/components/sections/page-hero";
 import { PageSchema } from "@/components/sections/page-schema";
@@ -127,6 +128,8 @@ export default async function FaqPage() {
           items={electricians.items}
         />
       </Container>
+
+      <ClosingSection page="faq" />
 
       <LocationsDirectory />
 

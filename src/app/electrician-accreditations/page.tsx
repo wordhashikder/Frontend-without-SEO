@@ -15,6 +15,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { guideArticleSchema } from "@/components/about/guide-schema";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
+import { ClosingSection } from "@/components/sections/closing-section";
 import { CtaBand } from "@/components/sections/cta-band";
 import { FaqList } from "@/components/sections/faq";
 import { FeatureCard, IconColumns } from "@/components/sections/feature-blocks";
@@ -182,6 +183,8 @@ export default async function AccreditationsPage() {
           buttonLabel={cta.button}
         />
       </div>
+
+      <ClosingSection page="accreditations" />
 
       <LocationsDirectory />
 

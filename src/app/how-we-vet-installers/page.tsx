@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import type { Metadata } from "next";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
+import { ClosingSection } from "@/components/sections/closing-section";
 import { FaqList } from "@/components/sections/faq";
 import { Callout, StepNumber } from "@/components/sections/feature-blocks";
 import { PageHero } from "@/components/sections/page-hero";
@@ -130,6 +131,8 @@ export default async function VettingPage() {
           <FaqList items={faq.items} withSchema className="mt-6 gap-4" />
         </Container>
       </Section>
+
+      <ClosingSection page="how-we-vet" />
 
       <LocationsDirectory />
 

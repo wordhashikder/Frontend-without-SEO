@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { QuoteComparisonArt } from "@/components/home/quote-comparison-art";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
+import { ClosingSection } from "@/components/sections/closing-section";
 import { InstallerLogo } from "@/components/sections/installer-card";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PageSchema } from "@/components/sections/page-schema";
@@ -53,22 +54,22 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-linear-to-b from-surface to-white">
+      <section className="bg-gradient-to-b from-surface to-white">
         <Container
           size="narrow"
-          className="py-20 text-center sm:py-28 lg:pt-hero-top lg:pb-28"
+          className="pt-[98px] pb-20 text-center sm:pb-28 lg:pb-[176px]"
         >
           <h1 className="text-[34px] font-bold leading-[1.15] tracking-[-0.01em] sm:text-5xl sm:leading-[1.17]">
             {hero.line1} <br />
             {hero.line2} <br />
             <span className="text-primary">{hero.highlight}</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-140 text-[15px] leading-relaxed">
+          <p className="mx-auto mt-6 max-w-[560px] text-[15px] leading-relaxed">
             {hero.lead}
           </p>
           <PostcodeCard
             id="hero-postcode"
-            className="mx-auto mt-8 max-w-2xl"
+            className="mx-auto mt-8 max-w-[672px]"
           />
         </Container>
       </section>
@@ -88,7 +89,7 @@ export default async function HomePage() {
                 <li key={key}>
                   <Link
                     href={`${routes.quotes}?type=${installTypeLinks[index] ?? "new_home"}`}
-                    className="group relative block aspect-261/208 overflow-hidden rounded-2xl bg-ink"
+                    className="group relative block aspect-[261/208] overflow-hidden rounded-2xl bg-ink"
                   >
                     <Image
                       src={
@@ -100,7 +101,7 @@ export default async function HomePage() {
                       sizes="(min-width: 1024px) 262px, 50vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <span className="absolute inset-0 bg-linear-to-t from-ink via-ink/70 via-35% to-transparent to-70%" />
+                    <span className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 via-35% to-transparent to-70%" />
                     <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3 sm:p-5">
                       <span>
                         <span className="block text-[13px] font-medium leading-tight text-white sm:text-[15px]">
@@ -171,7 +172,7 @@ export default async function HomePage() {
                     alt="Electric car driving on an open road"
                     fill
                     sizes="(min-width: 1024px) 220px, 40vw"
-                    className="object-cover mask-[linear-gradient(to_right,transparent,black_30%)]"
+                    className="object-cover [mask-image:linear-gradient(to_right,transparent,black_30%)]"
                   />
                   <ShieldTick className="absolute top-7 -left-8 hidden size-14 drop-shadow-md sm:block" />
                   <p className="absolute top-[41%] -left-11 hidden rounded-lg bg-white px-3 py-2 text-[11px] font-semibold leading-snug text-ink shadow-card sm:block">
@@ -188,7 +189,7 @@ export default async function HomePage() {
                   <h3 className="text-2xl font-bold leading-[1.1] sm:text-[28px]">
                     {why.local_title}
                   </h3>
-                  <p className="mt-4 max-w-70 text-[15px] leading-relaxed">
+                  <p className="mt-4 max-w-[280px] text-[15px] leading-relaxed">
                     {why.local_text}
                   </p>
                   <ButtonLink
@@ -204,7 +205,7 @@ export default async function HomePage() {
                   alt="Map with pins showing nearby EV charger installers"
                   width={206}
                   height={236}
-                  className="hidden h-auto w-[36%] max-w-51.5 shrink-0 rounded-xl min-[420px]:block"
+                  className="hidden h-auto w-[36%] max-w-[206px] shrink-0 rounded-xl min-[420px]:block"
                 />
               </div>
             </div>
@@ -231,7 +232,7 @@ export default async function HomePage() {
                       alt=""
                       width={96}
                       height={130}
-                      className="h-32.5 w-24 shrink-0 rounded-lg object-cover"
+                      className="h-[130px] w-24 shrink-0 rounded-lg object-cover"
                     />
                     <div className="py-1.5">
                       <h3 className="text-sm font-semibold leading-snug">
@@ -291,11 +292,11 @@ export default async function HomePage() {
               id="map-postcode"
               variant="inline"
               buttonLabel={request.button}
-              className="mt-6 max-w-95"
+              className="mt-6 max-w-[380px]"
             />
           </div>
 
-          <div className="relative mx-auto w-full max-w-67.5 lg:-my-10">
+          <div className="relative mx-auto w-full max-w-[270px] lg:-my-10">
             <Image
               src="/images/home/uk-map.svg"
               alt="Map of the United Kingdom showing cities covered by PickASparky installers"
@@ -305,7 +306,7 @@ export default async function HomePage() {
               className="h-auto w-full"
             />
             {spotlight ? (
-              <article className="absolute top-[36%] left-1/2 flex w-66 -translate-x-1/2 items-center gap-3 rounded-xl bg-white p-3 shadow-float">
+              <article className="absolute top-[36%] left-1/2 flex w-[264px] -translate-x-1/2 items-center gap-3 rounded-xl bg-white p-3 shadow-float">
                 <InstallerLogo
                   name={spotlight.business_name}
                   logoUrl={spotlight.logo_url}
@@ -363,6 +364,7 @@ export default async function HomePage() {
       </Section>
 
       <ReviewsMarquee reviews={reviews} />
+      <ClosingSection page="home" />
       <LocationsDirectory />
 
       <PageSchema

@@ -64,6 +64,9 @@ export interface LocationDetail extends LocationSummary {
   seo_description?: string | null;
   /** Heading override; null uses the location template's heading. */
   h1_heading?: string | null;
+  /** This town's own closing section; null uses the location template's. */
+  extra_title?: string | null;
+  extra_body?: string | null;
   updated_at?: string | null;
 }
 
@@ -128,6 +131,15 @@ export interface InstallerDetail extends InstallerCard {
   photos: InstallerPhoto[];
   /** True when the installer's plan lets homeowners request a quote directly. */
   accepts_direct_quotes: boolean;
+  /** "M20": the outward part of the base postcode. */
+  postcode_district: string;
+  listed_since: string | null;
+  /** The town's photo, shown behind a profile with no photos of its own. */
+  cover_image: {
+    url: string;
+    alt: string | null;
+    credit: string | null;
+  } | null;
 }
 
 export interface Review {
@@ -386,4 +398,106 @@ export interface ConversationThread {
   messages: ConversationMessage[];
   offers: ConversationOffer[];
   created_at: string;
+}
+
+// ---- Customer quote dashboard (magic-link sign-in) ----------------------------
+
+export interface Customer {
+  id: string;
+  email: string;
+  first_name: string;
+  phone: string | null;
+  created_at: string;
+}
+
+export interface CustomerSessionResponse {
+  session_token: string;
+  expires_in: number;
+  customer: Customer;
+}
+
+export interface InstallerBrief {
+  slug: string;
+  business_name: string;
+  town: string;
+  logo_url: string | null;
+  rating_avg: number | null;
+  review_count: number;
+  verified: boolean;
+  years_experience: number | null;
+  accreditations: string[];
+  plan: string;
+}
+
+export interface JourneyStep {
+  key: string;
+  label: string;
+  state: "done" | "current" | "upcoming";
+}
+
+export interface CustomerQuote {
+  id: string;
+  reference: string;
+  amount: string;
+  includes_vat: boolean;
+  description: string;
+  valid_until: string | null;
+  status: OfferStatus;
+  created_at: string;
+  conversation_id: string;
+  installer: InstallerBrief;
+  highlight: "lowest" | null;
+}
+
+export interface MatchedInstaller {
+  installer: InstallerBrief;
+  state: "awaiting_quote" | "quoted" | "declined" | "accepted";
+  conversation_id: string | null;
+}
+
+export interface RequestSummary {
+  id: string;
+  reference: string;
+  postcode: string;
+  district: string | null;
+  installation_type: string;
+  timing: string;
+  status: string;
+  status_label: string;
+  status_detail: string;
+  created_at: string;
+  installers_matched: number;
+  quotes_received: number;
+  slots_total: number;
+  average_price: string | null;
+  lowest_price: string | null;
+  unread_messages: number;
+}
+
+export interface RequestDetail extends RequestSummary {
+  answers: [string, string][];
+  journey: JourneyStep[];
+  quotes: CustomerQuote[];
+  installers: MatchedInstaller[];
+  conversation_ids: string[];
+}
+
+export interface CustomerOverview {
+  customer: Customer;
+  requests: RequestSummary[];
+  unread_messages: number;
+}
+
+export interface CustomerConversation {
+  id: string;
+  installer_id: string;
+  installer_name: string;
+  installer_slug: string;
+  kind: "lead" | "enquiry";
+  last_message_at: string;
+  last_message: string | null;
+  last_sender: MessageSender | null;
+  unread: boolean;
+  offer_count: number;
+  latest_offer_status: OfferStatus | null;
 }

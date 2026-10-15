@@ -15,11 +15,6 @@
 }
 
 @theme {
-
-  /* Layout */
-  --spacing-hero-top: 98px;
-  --spacing-hub-hero-bottom: 180px;
-
   /* Brand */
   --color-primary: #0a9b53;
   --color-primary-dark: #088246;

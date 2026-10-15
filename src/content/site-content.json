@@ -137,6 +137,15 @@
           "text": "Supporting the UK's transition to cleaner transport"
         }
       ]
+    },
+    "closing": {
+      "eyebrow": "",
+      "title": "",
+      "body": "",
+      "image": "",
+      "image_alt": "",
+      "button_label": "",
+      "button_link": ""
     }
   },
   "installers-hub": {
@@ -248,6 +257,15 @@
           "answer": "Yes. Tell installers which charger you want when you request quotes, or ask them to recommend one. Many installers fit several brands, and they can check the model you like suits your car and your electricity supply."
         }
       ]
+    },
+    "closing": {
+      "eyebrow": "",
+      "title": "",
+      "body": "",
+      "image": "",
+      "image_alt": "",
+      "button_label": "",
+      "button_link": ""
     }
   },
   "location": {
@@ -314,6 +332,15 @@
       "intro": "Whether you need a home charger, a workplace installation or a larger commercial solution, PickASparky helps you find trusted EV charger installers covering {city} and the surrounding areas.",
       "closing": "Compare up to 5 quotes from qualified electricians in {city} and find the right installer for your needs.",
       "button": "Search in Your Area"
+    },
+    "closing": {
+      "eyebrow": "",
+      "title": "",
+      "body": "",
+      "image": "",
+      "image_alt": "",
+      "button_label": "",
+      "button_link": ""
     }
   },
   "get-quotes": {
@@ -424,6 +451,15 @@
           "text": "Our role is to make it easier to find suitable electricians and get the information you need."
         }
       ]
+    },
+    "closing": {
+      "eyebrow": "",
+      "title": "",
+      "body": "",
+      "image": "",
+      "image_alt": "",
+      "button_label": "",
+      "button_link": ""
     }
   },
   "how-it-works": {
@@ -497,6 +533,15 @@
         }
       ],
       "button": "Join as an Installer"
+    },
+    "closing": {
+      "eyebrow": "",
+      "title": "",
+      "body": "",
+      "image": "",
+      "image_alt": "",
+      "button_label": "",
+      "button_link": ""
     }
   },
   "contact": {
@@ -529,6 +574,15 @@
           "text": "Get the information you need about quotes, listings and memberships."
         }
       ]
+    },
+    "closing": {
+      "eyebrow": "",
+      "title": "",
+      "body": "",
+      "image": "",
+      "image_alt": "",
+      "button_label": "",
+      "button_link": ""
     }
   },
   "faq": {
@@ -634,6 +688,15 @@
           "answer": "Email {email} and our support team will help. We are available Monday to Friday, 9:00am to 5:00pm UK time, and aim to reply within 1 working day. You can also send us a message from the Contact page."
         }
       ]
+    },
+    "closing": {
+      "eyebrow": "",
+      "title": "",
+      "body": "",
+      "image": "",
+      "image_alt": "",
+      "button_label": "",
+      "button_link": ""
     }
   },
   "join": {
@@ -760,6 +823,15 @@
           "answer": "Email {email} and our support team will help. We are available Monday to Friday, 9:00am to 5:00pm UK time, and aim to reply within 1 working day. You can also send us a message from the Contact page."
         }
       ]
+    },
+    "closing": {
+      "eyebrow": "",
+      "title": "",
+      "body": "",
+      "image": "",
+      "image_alt": "",
+      "button_label": "",
+      "button_link": ""
     }
   },
   "blog": {
@@ -781,6 +853,15 @@
       "title": "Compare up to 5 free quotes from trusted EV charger installers",
       "lead": "Answer six quick questions and get quotes from vetted installers who cover your postcode.",
       "button": "Get Free Quotes"
+    },
+    "closing": {
+      "eyebrow": "",
+      "title": "",
+      "body": "",
+      "image": "",
+      "image_alt": "",
+      "button_label": "",
+      "button_link": ""
     }
   },
   "how-we-vet": {
@@ -876,6 +957,15 @@
           "answer": "Yes. Email {email} with the name of the electrician and a short description of the issue. Our support team is available Monday to Friday, 9:00am to 5:00pm UK time, and replies within 1 working day. We will review the listing and may update or remove it."
         }
       ]
+    },
+    "closing": {
+      "eyebrow": "",
+      "title": "",
+      "body": "",
+      "image": "",
+      "image_alt": "",
+      "button_label": "",
+      "button_link": ""
     }
   },
   "accreditations": {
@@ -988,6 +1078,15 @@
       "title": "Get quotes from trusted electricians",
       "lead": "Compare up to 5 quotes from vetted electricians in your area. It’s free, with no obligation.",
       "button": "Get Free Quotes"
+    },
+    "closing": {
+      "eyebrow": "",
+      "title": "",
+      "body": "",
+      "image": "",
+      "image_alt": "",
+      "button_label": "",
+      "button_link": ""
     }
   },
   "safety": {
@@ -1089,6 +1188,15 @@
       "title": "Get quotes from trusted electricians",
       "lead": "Find vetted electricians in your area and get up to 5 quotes for your project.",
       "button": "Get Free Quotes"
+    },
+    "closing": {
+      "eyebrow": "",
+      "title": "",
+      "body": "",
+      "image": "",
+      "image_alt": "",
+      "button_label": "",
+      "button_link": ""
     }
   },
   "privacy": {

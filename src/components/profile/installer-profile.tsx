@@ -9,6 +9,7 @@ import {
   Sun,
   Zap,
 } from "lucide-react";
+import Image from "next/image";
 import type { ReactNode } from "react";
 import { ClaimListing } from "@/components/claim/claim-listing";
 import { CoverageMap } from "@/components/profile/coverage-map";
@@ -93,6 +94,41 @@ export function InstallerProfile({
     .map((text) => text.trim())
     .filter(Boolean);
 
+  const listedSince = installer.listed_since
+    ? new Intl.DateTimeFormat("en-GB", {
+        month: "long",
+        year: "numeric",
+        timeZone: "Europe/London",
+      }).format(new Date(installer.listed_since))
+    : null;
+  const facts: [string, string][] = [
+    ["Based in", `${installer.town} (${installer.postcode_district})`],
+    [
+      "Service area",
+      `Within ${installer.coverage.radius_miles} ${installer.coverage.radius_miles === 1 ? "mile" : "miles"} of ${installer.town}`,
+    ],
+    [
+      "Services",
+      installer.services.map((key) => serviceLabels[key] ?? key).join(", ") ||
+        "EV charger installation",
+    ],
+    ...(installer.years_experience
+      ? [
+          ["Experience", `${installer.years_experience}+ years`] as [
+            string,
+            string,
+          ],
+        ]
+      : []),
+    ...(listedSince ? [["Listed since", listedSince] as [string, string]] : []),
+    [
+      "Profile",
+      installer.is_claimed
+        ? "Managed by the business"
+        : "Basic listing. The business can claim it to add photos and accreditations",
+    ],
+  ];
+
   const about =
     paragraphs.length > 0 ? (
       <section aria-labelledby="about-heading">
@@ -104,6 +140,14 @@ export function InstallerProfile({
             </p>
           ))}
         </div>
+        <dl className="mt-5 grid grid-cols-1 gap-x-8 gap-y-2.5 rounded-xl border border-line bg-white p-5 text-sm shadow-soft sm:grid-cols-[130px_1fr]">
+          {facts.map(([label, value]) => (
+            <div key={label} className="contents">
+              <dt className="text-subtle">{label}</dt>
+              <dd className="font-medium text-ink">{value}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
     ) : null;
 
@@ -206,7 +250,31 @@ export function InstallerProfile({
             {hasPhotos ? (
               <Gallery photos={installer.photos} name={name} />
             ) : (
-              about
+              <>
+                {installer.cover_image ? (
+                  <figure className="mb-8">
+                    <div className="relative aspect-[16/6] overflow-hidden rounded-xl bg-surface">
+                      <Image
+                        src={installer.cover_image.url}
+                        alt={
+                          installer.cover_image.alt ??
+                          `${installer.town} street scene`
+                        }
+                        fill
+                        sizes="(min-width: 1024px) 760px, 100vw"
+                        className="object-cover"
+                      />
+                    </div>
+                    <figcaption className="mt-2 text-xs text-subtle">
+                      {installer.town}, where {name} is based.
+                      {installer.cover_image.credit
+                        ? ` Photo: ${installer.cover_image.credit}.`
+                        : ""}
+                    </figcaption>
+                  </figure>
+                ) : null}
+                {about}
+              </>
             )}
           </div>
 

@@ -9,6 +9,9 @@ export const ACCESS_COOKIE = "pas_access";
 /** Opaque, rotating refresh token issued by the API. */
 export const REFRESH_COOKIE = "pas_refresh";
 
+/** The homeowner's session after a magic link (opaque token, httpOnly). */
+export const CUSTOMER_COOKIE = "pas_customer";
+
 /** Matches the API's REFRESH_TOKEN_EXPIRE_DAYS (30 days). */
 const REFRESH_MAX_AGE = 60 * 60 * 24 * 30;
 /**
@@ -27,6 +30,12 @@ const baseOptions = {
 export const accessCookieOptions = (expiresIn: number) => ({
   ...baseOptions,
   maxAge: Math.max(Math.floor(expiresIn) - ACCESS_EXPIRY_MARGIN, 1),
+});
+
+/** Sliding: the proxy re-issues it on every visit to the dashboard. */
+export const customerCookieOptions = (maxAgeSeconds: number) => ({
+  ...baseOptions,
+  maxAge: Math.max(Math.floor(maxAgeSeconds), 60),
 });
 
 export const refreshCookieOptions = () => ({

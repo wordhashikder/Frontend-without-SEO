@@ -2,6 +2,8 @@ import { type NextRequest, NextResponse } from "next/server";
 import {
   ACCESS_COOKIE,
   accessCookieOptions,
+  CUSTOMER_COOKIE,
+  customerCookieOptions,
   REFRESH_COOKIE,
   refreshCookieOptions,
 } from "@/lib/session-cookies";
@@ -94,7 +96,29 @@ function redirectToLogin(request: NextRequest) {
   return NextResponse.redirect(login);
 }
 
+/** The customer dashboard: keep the session sliding while it is being used. */
+const CUSTOMER_IDLE_SECONDS = 60 * 60 * 24 * 30;
+
+function keepCustomerSession(request: NextRequest) {
+  const response = NextResponse.next();
+  const token = request.cookies.get(CUSTOMER_COOKIE)?.value;
+  if (token && request.method === "GET") {
+    response.cookies.set(
+      CUSTOMER_COOKIE,
+      token,
+      customerCookieOptions(CUSTOMER_IDLE_SECONDS),
+    );
+  }
+  // The address of this area can carry private tokens: no referrers, no caching.
+  response.headers.set("Referrer-Policy", "no-referrer");
+  response.headers.set("Cache-Control", "private, no-store");
+  return response;
+}
+
 export async function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith("/uk/my-quotes")) {
+    return keepCustomerSession(request);
+  }
   if (request.cookies.get(ACCESS_COOKIE)?.value) return NextResponse.next();
 
   // Server Actions post to this route. They are never redirected from here:
@@ -138,5 +162,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/installer/account/:path*"],
+  matcher: ["/installer/account/:path*", "/uk/my-quotes/:path*"],
 };

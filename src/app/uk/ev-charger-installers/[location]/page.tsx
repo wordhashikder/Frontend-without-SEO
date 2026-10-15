@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { LocationView } from "@/components/directory/location-view";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
+import { ClosingBlock } from "@/components/sections/closing-section";
 import { loadLocation, locationMetadata } from "./location-data";
 
 // Rendered on first request, then cached and refreshed every 5 minutes (ISR).
@@ -30,6 +31,18 @@ export default async function LocationPage({ params }: Props) {
   return (
     <>
       <LocationView {...data} page={1} />
+      <ClosingBlock
+        closing={{
+          ...data.content.closing,
+          // A town's own text replaces the template's title and text.
+          ...(data.location.extra_title || data.location.extra_body
+            ? {
+                title: data.location.extra_title ?? "",
+                body: data.location.extra_body ?? "",
+              }
+            : {}),
+        }}
+      />
       <LocationsDirectory />
     </>
   );
