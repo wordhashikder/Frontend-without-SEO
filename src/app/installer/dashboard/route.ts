@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { api } from "@/lib/api";
+import { publicUrl } from "@/lib/public-url";
 import { getClientIp } from "@/lib/request";
 import { getAccessToken, loginPath } from "@/lib/session";
 import { routes } from "@/lib/site";
@@ -18,7 +19,7 @@ export async function GET(request: NextRequest) {
   const token = await getAccessToken();
   if (!token) {
     return NextResponse.redirect(
-      new URL(loginPath(routes.dashboard), request.url),
+      publicUrl(loginPath(routes.dashboard), request),
     );
   }
   try {
@@ -29,6 +30,6 @@ export async function GET(request: NextRequest) {
     response.headers.set("Referrer-Policy", "no-referrer");
     return response;
   } catch {
-    return NextResponse.redirect(new URL(routes.account, request.url));
+    return NextResponse.redirect(publicUrl(routes.account, request));
   }
 }

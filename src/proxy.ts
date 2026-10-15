@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { publicUrl } from "@/lib/public-url";
 import {
   ACCESS_COOKIE,
   accessCookieOptions,
@@ -88,7 +89,7 @@ function refreshOnce(refreshToken: string) {
 }
 
 function redirectToLogin(request: NextRequest) {
-  const login = new URL(routes.login, request.url);
+  const login = publicUrl(routes.login, request);
   login.searchParams.set(
     "next",
     `${request.nextUrl.pathname}${request.nextUrl.search}`,

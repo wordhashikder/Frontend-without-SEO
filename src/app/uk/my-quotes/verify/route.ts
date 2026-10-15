@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { ApiError, api } from "@/lib/api";
 import { setCustomerSession } from "@/lib/customer-session";
+import { publicUrl } from "@/lib/public-url";
 import { getClientIp } from "@/lib/request";
 
 /*
@@ -15,7 +16,7 @@ const DASHBOARD = "/uk/my-quotes/";
 
 function redirectTo(request: NextRequest, search = "") {
   const response = NextResponse.redirect(
-    new URL(`${DASHBOARD}${search}`, request.url),
+    publicUrl(`${DASHBOARD}${search}`, request),
     303,
   );
   response.headers.set("Referrer-Policy", "no-referrer");
