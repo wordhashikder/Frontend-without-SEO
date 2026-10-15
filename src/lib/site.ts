@@ -48,6 +48,8 @@ export const routes = {
   login: "/installer/login/",
   forgotPassword: "/installer/forgot-password/",
   account: "/installer/account/",
+  /** Hands a signed-in installer to the Dashboard (see app/installer/dashboard/route.ts). */
+  dashboard: "/installer/dashboard/",
   /** Directory hub. Location pages live directly under it. */
   installers: "/uk/ev-charger-installers/",
   /** Parent of every installer profile. Profiles are never nested under a location. */

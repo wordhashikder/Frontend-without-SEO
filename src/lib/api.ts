@@ -420,6 +420,14 @@ export const api = {
 
   me: (token: string) => request<CurrentUser>("/auth/me", { token }),
 
+  /** The Dashboard address that opens already signed in (a one-minute, one-time code). */
+  dashboardHandoff: (token: string, clientIp?: string) =>
+    request<{ url: string }>("/auth/dashboard-handoff", {
+      method: "POST",
+      token,
+      clientIp,
+    }),
+
   // ---- Claiming a free listing ---------------------------------------------
   requestClaim: (slug: string, email: string, clientIp?: string) =>
     request<MessageResponse>(`/installers/${encodeURIComponent(slug)}/claim`, {

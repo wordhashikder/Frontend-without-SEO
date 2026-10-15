@@ -4,7 +4,7 @@ import {
   CircleCheck,
   CreditCard,
   Hourglass,
-  LifeBuoy,
+  LayoutDashboard,
   type LucideIcon,
   TriangleAlert,
 } from "lucide-react";
@@ -378,20 +378,23 @@ export function AccountOverview({
           </Card>
         )}
 
-        <aside className="mt-6 flex gap-4 rounded-2xl bg-mint-soft p-6">
-          <IconBadge icon={LifeBuoy} tone="mint" size="sm" />
-          <div className="text-sm leading-relaxed">
-            <h2 className="text-base font-bold">
-              The full installer dashboard is on its way
-            </h2>
+        <aside className="mt-6 flex flex-col gap-4 rounded-2xl bg-mint-soft p-6 sm:flex-row sm:items-center">
+          <IconBadge icon={LayoutDashboard} tone="mint" size="sm" />
+          <div className="flex-1 text-sm leading-relaxed">
+            <h2 className="text-base font-bold">Your installer dashboard</h2>
             <p className="mt-2">
-              Soon you&apos;ll be able to edit your profile and manage enquiries
-              here. Until then, if you need to change your business details or
-              have a question, email {supportLink}. We&apos;re available{" "}
+              Edit your profile, answer enquiries and send quotes from your
+              dashboard. Need a hand? Email {supportLink}. We&apos;re available{" "}
               {site.hours.days}, {site.hours.time} and reply within 1 working
               day.
             </p>
           </div>
+          <a
+            href={routes.dashboard}
+            className="inline-flex h-11 shrink-0 items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-white hover:bg-primary-dark"
+          >
+            Open dashboard
+          </a>
         </aside>
       </div>
     </Container>

@@ -330,7 +330,7 @@ export async function login(
 
   await setSession(tokens);
   // Only same-site paths are honoured (open-redirect protection).
-  redirect(safeNextPath(field(formData, "next")) ?? routes.account);
+  redirect(safeNextPath(field(formData, "next")) ?? routes.dashboard);
 }
 
 export async function signOut() {

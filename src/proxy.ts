@@ -162,5 +162,9 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/installer/account/:path*", "/uk/my-quotes/:path*"],
+  matcher: [
+    "/installer/account/:path*",
+    "/installer/dashboard/:path*",
+    "/uk/my-quotes/:path*",
+  ],
 };

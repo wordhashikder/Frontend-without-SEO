@@ -34,7 +34,7 @@ export default async function LoginPage({
 
   // Already signed in: skip the form. An unreachable API just shows the form.
   const user = await getCurrentUser().catch(() => null);
-  if (user) redirect(next ?? routes.account);
+  if (user) redirect(next ?? routes.dashboard);
 
   // A refresh token without an access token can be renewed, but only by the
   // proxy in front of the account page. Skipped when the proxy sent us here
@@ -44,7 +44,7 @@ export default async function LoginPage({
     !(await getAccessToken()) &&
     (await getRefreshToken())
   ) {
-    redirect(routes.account);
+    redirect(routes.dashboard);
   }
 
   const notice =
