@@ -12,6 +12,13 @@ export const REFRESH_COOKIE = "pas_refresh";
 /** The homeowner's session after a magic link (opaque token, httpOnly). */
 export const CUSTOMER_COOKIE = "pas_customer";
 
+/**
+ * A plain yes/no flag, readable by scripts, set once a visitor has asked for a
+ * quote. It only decides whether the footer shows a "My Quotes" link; it holds
+ * no personal data and grants no access (that is `CUSTOMER_COOKIE`).
+ */
+export const QUOTED_COOKIE = "pas_quoted";
+
 /** Matches the API's REFRESH_TOKEN_EXPIRE_DAYS (30 days). */
 const REFRESH_MAX_AGE = 60 * 60 * 24 * 30;
 /**
@@ -36,6 +43,14 @@ export const accessCookieOptions = (expiresIn: number) => ({
 export const customerCookieOptions = (maxAgeSeconds: number) => ({
   ...baseOptions,
   maxAge: Math.max(Math.floor(maxAgeSeconds), 60),
+});
+
+export const quotedCookieOptions = () => ({
+  httpOnly: false,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax" as const,
+  path: "/",
+  maxAge: 60 * 60 * 24 * 365,
 });
 
 export const refreshCookieOptions = () => ({

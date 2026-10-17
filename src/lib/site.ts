@@ -50,6 +50,8 @@ export const routes = {
   account: "/installer/account/",
   /** Hands a signed-in installer to the Dashboard (see app/installer/dashboard/route.ts). */
   dashboard: "/installer/dashboard/",
+  /** Ends the website session (see app/installer/sign-out/route.ts). */
+  signOut: "/installer/sign-out/",
   /** Directory hub. Location pages live directly under it. */
   installers: "/uk/ev-charger-installers/",
   /** Parent of every installer profile. Profiles are never nested under a location. */
@@ -125,7 +127,6 @@ export const legalLinks: NavLink[] = [
 
 /** The options behind the header's menu button, on every screen size. */
 export const headerMenu = [
-  { label: "My Quotes", href: routes.myQuotes, icon: "quotes" },
   { label: "Join as an Electrician", href: routes.register, icon: "join" },
   { label: "Electrician Login", href: routes.login, icon: "login" },
 ] as const;

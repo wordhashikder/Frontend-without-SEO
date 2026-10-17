@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { z } from "zod";
 import {
   isFollowupAllowed,
@@ -12,6 +13,7 @@ import {
 } from "@/content/quote-questions";
 import { ApiError, api } from "@/lib/api";
 import { getClientIp } from "@/lib/request";
+import { QUOTED_COOKIE, quotedCookieOptions } from "@/lib/session-cookies";
 import type { QuoteRequestCreate } from "@/lib/types";
 import { formatPostcode, isUkPostcode } from "@/lib/utils";
 
@@ -228,6 +230,9 @@ export async function submitQuote(input: unknown): Promise<QuoteSubmitResult> {
 
   try {
     const created = await api.createQuote(body, await getClientIp());
+    // Remember (without any personal data) that this visitor has asked for a
+    // quote, so the footer can offer a "My Quotes" link.
+    (await cookies()).set(QUOTED_COOKIE, "1", quotedCookieOptions());
     return {
       ok: true,
       reference: String(created.reference),

@@ -1,16 +1,15 @@
 "use client";
 
-import { FileText, LogIn, Menu, UserRound } from "lucide-react";
+import { LogIn, Menu, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { headerMenu } from "@/lib/site";
 
-const icons = { join: UserRound, login: LogIn, quotes: FileText } as const;
+const icons = { join: UserRound, login: LogIn } as const;
 
 /**
- * The header's menu button: homeowners' quotes, and joining or signing in as
- * an electrician. The same dropdown is used on every screen size.
+ * The header's menu button: joining or signing in as an electrician. The same dropdown is used on every screen size.
  * The links are always in the HTML (hidden when closed) so crawlers can follow them.
  */
 export function SiteMenu() {

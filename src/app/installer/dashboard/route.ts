@@ -23,6 +23,12 @@ export async function GET(request: NextRequest) {
     );
   }
   try {
+    // The installer dashboard is for installers: a session of any other kind is ended
+    // and the person signs in again, rather than being opened into the wrong dashboard.
+    const user = await api.me(token);
+    if (user.role !== "installer") {
+      return NextResponse.redirect(publicUrl(routes.signOut, request));
+    }
     const { url } = await api.dashboardHandoff(token, await getClientIp());
     const response = NextResponse.redirect(url, 303);
     // The address carries a secret code: never cache it or leak it in a referrer.

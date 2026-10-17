@@ -2,6 +2,7 @@ import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { HomeLink } from "@/components/layout/home-link";
+import { MyQuotesFooterLink } from "@/components/layout/my-quotes-footer-link";
 import { Container } from "@/components/ui/layout";
 import { getOrganisation, getSiteContent } from "@/lib/content";
 import { legalLinks, navigation, site } from "@/lib/site";
@@ -82,6 +83,9 @@ export async function SiteFooter() {
                     </Link>
                   </li>
                 ))}
+                {group.title === "For Homeowners" ? (
+                  <MyQuotesFooterLink />
+                ) : null}
               </ul>
             </nav>
           ))}

@@ -3,7 +3,12 @@ import "server-only";
 import { cookies } from "next/headers";
 import { cache } from "react";
 import { ApiError, api } from "@/lib/api";
-import { CUSTOMER_COOKIE, customerCookieOptions } from "@/lib/session-cookies";
+import {
+  CUSTOMER_COOKIE,
+  customerCookieOptions,
+  QUOTED_COOKIE,
+  quotedCookieOptions,
+} from "@/lib/session-cookies";
 import type { CustomerOverview } from "@/lib/types";
 
 /*
@@ -14,11 +19,10 @@ import type { CustomerOverview } from "@/lib/types";
  */
 
 export async function setCustomerSession(token: string, expiresIn: number) {
-  (await cookies()).set(
-    CUSTOMER_COOKIE,
-    token,
-    customerCookieOptions(expiresIn),
-  );
+  const store = await cookies();
+  store.set(CUSTOMER_COOKIE, token, customerCookieOptions(expiresIn));
+  // Someone who opens their quote link has asked for a quote (e.g. on another device).
+  store.set(QUOTED_COOKIE, "1", quotedCookieOptions());
 }
 
 export async function clearCustomerSession() {

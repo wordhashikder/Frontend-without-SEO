@@ -121,12 +121,6 @@ export function InstallerProfile({
         ]
       : []),
     ...(listedSince ? [["Listed since", listedSince] as [string, string]] : []),
-    [
-      "Profile",
-      installer.is_claimed
-        ? "Managed by the business"
-        : "Basic listing. The business can claim it to add photos and accreditations",
-    ],
   ];
 
   const about =

@@ -47,8 +47,12 @@ export default function CoverageMapLeaflet({
         style={{ background: "#e9efec" }}
       >
         <TileLayer
-          // Subdomain form: the CSP allows https://*.tile.openstreetmap.org
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          // OpenStreetMap's current single-host address (the a/b/c subdomains are
+          // retired). Keep it in step with `img-src` in next.config.ts.
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          // The tile policy requires a valid Referer on every tile request, so
+          // it is set here rather than left to the page's default policy.
+          referrerPolicy="strict-origin-when-cross-origin"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           maxZoom={19}
         />

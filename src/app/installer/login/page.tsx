@@ -33,8 +33,10 @@ export default async function LoginPage({
   const next = safeNextPath(query.next);
 
   // Already signed in: skip the form. An unreachable API just shows the form.
+  // Only an installer's session skips the form: any other session on this browser must
+  // never be carried into an installer's dashboard.
   const user = await getCurrentUser().catch(() => null);
-  if (user) redirect(next ?? routes.dashboard);
+  if (user?.role === "installer") redirect(next ?? routes.dashboard);
 
   // A refresh token without an access token can be renewed, but only by the
   // proxy in front of the account page. Skipped when the proxy sent us here

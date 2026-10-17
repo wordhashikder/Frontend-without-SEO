@@ -328,6 +328,24 @@ export async function login(
     return failure(error, { values });
   }
 
+  // This sign-in is for installers. The team signs in to the Dashboard itself; letting a
+  // team member in here would leave an admin session behind that the next installer
+  // sign-in on the same browser (a claimed listing, say) could open by mistake.
+  try {
+    const user = await api.me(tokens.access_token);
+    if (user.role !== "installer") {
+      await api.logout(tokens.refresh_token).catch(() => undefined);
+      return {
+        ok: false,
+        message:
+          "This is the installer sign-in. PickASparky team members sign in to the Dashboard instead.",
+        values,
+      };
+    }
+  } catch (error) {
+    return failure(error, { values });
+  }
+
   await setSession(tokens);
   // Only same-site paths are honoured (open-redirect protection).
   redirect(safeNextPath(field(formData, "next")) ?? routes.dashboard);

@@ -19,7 +19,7 @@ export function Confirmation({ headingRef, result }: ConfirmationProps) {
     ? [
         {
           title: "Check your inbox",
-          text: `We're emailing ${result.email} a confirmation with a secure View My Quotes link. One click opens your quotes and messages. No password needed.`,
+          text: `We've sent a confirmation email to ${result.email}. You'll find a personal link inside to view your quotes, read messages from installers and keep track of your request all in one place.`,
         },
         {
           title: "We choose your installers",
@@ -34,7 +34,7 @@ export function Confirmation({ headingRef, result }: ConfirmationProps) {
       ? [
           {
             title: "Check your inbox",
-            text: `We're emailing ${result.email} a confirmation with a secure View My Quotes link. One click opens your quotes and messages. No password needed.`,
+            text: `We've sent a confirmation email to ${result.email}. You'll find a personal link inside to view your quotes, read messages from installers and keep track of your request all in one place.`,
           },
           {
             title: "Installers get in touch",
@@ -50,15 +50,15 @@ export function Confirmation({ headingRef, result }: ConfirmationProps) {
       : [
           {
             title: "Check your inbox",
-            text: `We're emailing ${result.email} a confirmation with a secure View My Quotes link. One click opens your quotes and messages. No password needed.`,
+            text: `We've sent a confirmation email to ${result.email}. You'll find a personal link inside to view your quotes, read messages from installers and keep track of your request all in one place.`,
           },
           {
-            title: "We'll be in touch",
-            text: `When an installer covering ${result.postcode} is available, we'll let you know by email.`,
+            title: "We've notified local installers",
+            text: `Qualified installers covering ${result.postcode} will be notified of your enquiry and can respond with a quote as soon as they're available. We'll send you an email whenever a new quote arrives, so you won't miss a thing.`,
           },
           {
-            title: "Nothing to pay",
-            text: "PickASparky is free for homeowners, and there's no obligation to accept a quote.",
+            title: "Compare with confidence",
+            text: "PickASparky is completely free for homeowners, with no hidden fees or obligation. Compare your quotes and choose the right installer for your project.",
           },
         ];
 
@@ -87,17 +87,14 @@ export function Confirmation({ headingRef, result }: ConfirmationProps) {
           </>
         ) : matched > 0 ? (
           <>
-            We&apos;ve matched you with{" "}
+            We&apos;ve matched your request with{" "}
             <strong className="font-semibold text-ink">
               {matched} {matched === 1 ? "installer" : "installers"}
             </strong>{" "}
             covering {result.postcode}.
           </>
         ) : (
-          <>
-            We&apos;ll email you as soon as an installer in your area is
-            available.
-          </>
+          <>We&apos;ll notify you as soon as an installer responds.</>
         )}
       </p>
 
