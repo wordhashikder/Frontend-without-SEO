@@ -13,54 +13,22 @@ type ConfirmationProps = {
 
 /** Shown once the request has been accepted. There is nothing here to resubmit. */
 export function Confirmation({ headingRef, result }: ConfirmationProps) {
-  const matched = result.matchedInstallers;
-  const held = result.held && matched === 0;
-  const steps = held
-    ? [
-        {
-          title: "Check your inbox",
-          text: `We've sent a confirmation email to ${result.email}. You'll find a personal link inside to view your quotes, read messages from installers and keep track of your request all in one place.`,
-        },
-        {
-          title: "We choose your installers",
-          text: `Our team picks the best-placed installers covering ${result.postcode} and emails you who they are, usually within one working day.`,
-        },
-        {
-          title: "Compare and choose",
-          text: "Installers send you their quotes. Compare them and choose the one that suits you, with no obligation.",
-        },
-      ]
-    : matched > 0
-      ? [
-          {
-            title: "Check your inbox",
-            text: `We've sent a confirmation email to ${result.email}. You'll find a personal link inside to view your quotes, read messages from installers and keep track of your request all in one place.`,
-          },
-          {
-            title: "Installers get in touch",
-            text: result.hasPhone
-              ? "Your matched installers will contact you by email or phone with their quotes."
-              : "Your matched installers will email you their quotes.",
-          },
-          {
-            title: "Compare and choose",
-            text: "Compare the quotes and choose the installer that suits you. There's no obligation to accept any of them.",
-          },
-        ]
-      : [
-          {
-            title: "Check your inbox",
-            text: `We've sent a confirmation email to ${result.email}. You'll find a personal link inside to view your quotes, read messages from installers and keep track of your request all in one place.`,
-          },
-          {
-            title: "We've notified local installers",
-            text: `Qualified installers covering ${result.postcode} will be notified of your enquiry and can respond with a quote as soon as they're available. We'll send you an email whenever a new quote arrives, so you won't miss a thing.`,
-          },
-          {
-            title: "Compare with confidence",
-            text: "PickASparky is completely free for homeowners, with no hidden fees or obligation. Compare your quotes and choose the right installer for your project.",
-          },
-        ];
+  // One message for every request, however it was matched behind the scenes:
+  // homeowners are never told how many installers, or which, received it.
+  const steps = [
+    {
+      title: "Check your inbox",
+      text: `We've sent a confirmation email to ${result.email}. You'll find a personal link inside to view your quotes, read messages from installers and keep track of your request all in one place.`,
+    },
+    {
+      title: "We've notified local installers",
+      text: `Qualified installers covering ${result.postcode} will be notified of your enquiry and can respond with a quote as soon as they're available. We'll send you an email whenever a new quote arrives, so you won't miss a thing.`,
+    },
+    {
+      title: "Compare with confidence",
+      text: "PickASparky is completely free for homeowners, with no hidden fees or obligation. Compare your quotes and choose the right installer for your project.",
+    },
+  ];
 
   return (
     <div>
@@ -80,22 +48,7 @@ export function Confirmation({ headingRef, result }: ConfirmationProps) {
         received your request
       </h1>
       <p className="mt-3 text-[15px] leading-relaxed sm:text-base">
-        {held ? (
-          <>
-            Our team is choosing the best local installers for your job and will
-            email you as soon as your request has been shared.
-          </>
-        ) : matched > 0 ? (
-          <>
-            We&apos;ve matched your request with{" "}
-            <strong className="font-semibold text-ink">
-              {matched} {matched === 1 ? "installer" : "installers"}
-            </strong>{" "}
-            covering {result.postcode}.
-          </>
-        ) : (
-          <>We&apos;ll notify you as soon as an installer responds.</>
-        )}
+        We&apos;ll notify you as soon as an installer responds.
       </p>
 
       <dl className="mt-6 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-xl bg-mint-soft px-5 py-4">
@@ -114,7 +67,7 @@ export function Confirmation({ headingRef, result }: ConfirmationProps) {
               <h3 className="text-[15px] font-semibold leading-snug">
                 {step.title}
               </h3>
-              <p className="mt-1 break-words text-sm leading-relaxed">
+              <p className="mt-1 wrap-break-word text-sm leading-relaxed">
                 {step.text}
               </p>
             </div>

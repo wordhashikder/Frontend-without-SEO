@@ -23,7 +23,7 @@ export function DetailsForm({ customer }: { customer: Customer }) {
       >
         <Input id="detail-email" value={customer.email} readOnly disabled />
       </Field>
-      <Field label="First name" htmlFor="detail-name" error={errors.first_name}>
+      <Field label="Name" htmlFor="detail-name" error={errors.first_name}>
         <Input
           id="detail-name"
           name="first_name"

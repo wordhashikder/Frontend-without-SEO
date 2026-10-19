@@ -170,7 +170,7 @@ export const notesField = {
 
 export const contactStep = {
   title: "Where should we send your quotes?",
-  firstName: "First name",
+  firstName: "Name",
   email: "Email",
   /** Optional: the label is followed by "(optional)". */
   phone: "Phone number",
@@ -285,7 +285,7 @@ export const quoteMessages = {
   choose: "Choose an option to continue.",
   vehicleLength: `Please keep this under ${quoteLimits.vehicle} characters.`,
   notesLength: `Please keep this under ${quoteLimits.notes} characters.`,
-  firstName: "Enter your first name.",
+  firstName: "Enter your name.",
   firstNameLength: `Please keep your name under ${quoteLimits.firstName} characters.`,
   email: "Enter a valid email address, for example name@example.com.",
   phone: "Enter a valid phone number, or leave this blank.",
