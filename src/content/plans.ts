@@ -5,17 +5,18 @@ export type PlanContent = {
   name: string;
   /** Monthly price in pounds. Billing itself is handled by Stripe. */
   price: number;
+  tagline?: string;
   features: string[];
   cta: string;
   popular?: boolean;
 };
 
 /**
- * Membership copy shown on /join and during sign-up.
- * Prices are display values: the amounts charged are the Stripe prices
- * configured on the API (STRIPE_PRICE_PRO / STRIPE_PRICE_PREMIUM). Keep them in step.
+ * Only a fallback. Plans, prices and perks are managed in the Dashboard (Plans & pricing) and
+ * read from the API by `getPlans()` (lib/plans.ts). These values are shown only while the API
+ * cannot be reached, so /join still renders; they are never what is charged.
  */
-export const plans: PlanContent[] = [
+export const fallbackPlans: PlanContent[] = [
   {
     key: "free",
     name: "Free",
@@ -54,6 +55,3 @@ export const plans: PlanContent[] = [
     cta: "Join Premium",
   },
 ];
-
-export const planByKey = (key: string | undefined) =>
-  plans.find((plan) => plan.key === key);

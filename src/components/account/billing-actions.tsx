@@ -10,10 +10,11 @@ import {
 import { SubmitButton } from "@/components/auth/submit-button";
 import { Button } from "@/components/ui/button";
 import { FormMessage } from "@/components/ui/form";
+import { formatPrice } from "@/lib/plans-format";
 
 const initialState: BillingState = { ok: false };
 
-type PaidPlan = { key: "pro" | "premium"; name: string; price: number };
+type PaidPlan = { key: string; name: string; price: number };
 
 /** One button per paid plan; the pressed button's value names the plan. */
 function UpgradeButton({
@@ -37,12 +38,12 @@ function UpgradeButton({
     >
       {chosen
         ? "Opening secure checkout…"
-        : `Upgrade to ${plan.name} £${plan.price}/month`}
+        : `Upgrade to ${plan.name} ${formatPrice(plan.price)}/month`}
     </Button>
   );
 }
 
-/** Starts Stripe Checkout for Pro or Premium. */
+/** Starts Stripe Checkout for one of the paid plans. */
 export function UpgradeActions({ plans }: { plans: PaidPlan[] }) {
   const [state, action] = useActionState(startCheckout, initialState);
   return (

@@ -3,7 +3,27 @@
  * Keep these in step with the API; the OpenAPI document lives at {API_URL}/docs.
  */
 
-export type Plan = "free" | "pro" | "premium";
+/** A plan's key ("free", "pro"...). Plans are managed in the Dashboard, so keys are not fixed. */
+export type Plan = string;
+
+/** A membership plan as the API publishes it (GET /plans). */
+export interface PublicPlan {
+  key: Plan;
+  name: string;
+  tagline: string | null;
+  features: string[];
+  is_popular: boolean;
+  is_default: boolean;
+  /** Monthly price in pence; null for the free plan. */
+  price_pence: number | null;
+  currency: string;
+  sort_rank: number;
+}
+
+export interface CheckoutStatus {
+  state: "paid" | "processing" | "open" | "expired";
+  plan: { key: Plan; name: string } | null;
+}
 export type InstallerStatus = "pending" | "approved" | "rejected" | "suspended";
 export type SubscriptionStatus =
   | "none"
@@ -294,6 +314,7 @@ export interface CurrentUser {
     business_name: string;
     status: InstallerStatus;
     plan: Plan;
+    plan_name: string;
     subscription_status: SubscriptionStatus;
   } | null;
 }

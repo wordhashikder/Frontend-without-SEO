@@ -85,7 +85,10 @@ const registerSchema = z.object({
     .refine(isUkPostcode, "Enter a full UK postcode, like M1 1AA.")
     .transform(formatPostcode),
   password: newPassword,
-  plan: z.enum(["free", "pro", "premium"], "Choose a plan."),
+  // Plans are managed in the Dashboard; the API checks the plan exists and is on sale.
+  plan: z
+    .string("Choose a plan.")
+    .regex(/^[a-z][a-z0-9-]{0,38}[a-z0-9]$/, "Choose a plan."),
   accept_terms: z.literal(
     "on",
     "You need to agree to the terms to create an account.",

@@ -9,7 +9,8 @@ import { site } from "@/lib/site";
 /** Result of a billing action, consumed by `useActionState`. */
 export type BillingState = { ok: boolean; message?: string };
 
-const paidPlan = z.enum(["pro", "premium"]);
+// A plan key (plans are managed in the Dashboard); the API refuses ones that are not on sale.
+const paidPlan = z.string().regex(/^[a-z][a-z0-9-]{0,38}[a-z0-9]$/);
 
 /** Stripe-hosted pages we are prepared to send an installer to. */
 const STRIPE_HOSTS = ["checkout.stripe.com", "billing.stripe.com"];
@@ -103,7 +104,7 @@ export async function startCheckout(
 ): Promise<BillingState> {
   const plan = paidPlan.safeParse(formData.get("plan"));
   if (!plan.success) {
-    return { ok: false, message: "Choose Pro or Premium to upgrade." };
+    return { ok: false, message: "Choose a plan to upgrade." };
   }
 
   const session = await installerSession();

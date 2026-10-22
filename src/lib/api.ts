@@ -4,6 +4,7 @@ import type {
   ApiErrorBody,
   BlogPostDetail,
   BlogPostSummary,
+  CheckoutStatus,
   ClaimPreview,
   ContactMessageCreate,
   ConversationMessage,
@@ -25,6 +26,7 @@ import type {
   Plan,
   PostcodeLookup,
   PublicContent,
+  PublicPlan,
   PublicPlatform,
   QuoteRequestCreate,
   QuoteRequestCreated,
@@ -188,6 +190,19 @@ export const api = {
       request<PublicContent>(`/content/${encodeURIComponent(key)}`, {
         revalidate: HOUR,
         tags: ["content", `content:${key}`],
+      }),
+      null,
+    ),
+
+  /**
+   * The membership plans on sale, with live prices (Dashboard → Plans & pricing). Cached for
+   * an hour; the API refreshes the "plans" tag the moment the team saves a change.
+   */
+  plans: () =>
+    safe(
+      request<PublicPlan[]>("/plans", {
+        revalidate: HOUR,
+        tags: ["plans"],
       }),
       null,
     ),
@@ -538,16 +553,25 @@ export const api = {
     request<void>("/customer/me", { method: "DELETE", token }),
 
   // ---- Billing -----------------------------------------------------------
-  createCheckoutSession: (token: string, plan: Exclude<Plan, "free">) =>
+  createCheckoutSession: (token: string, plan: Plan) =>
     request<UrlResponse>("/billing/checkout-session", {
       method: "POST",
       token,
-      body: { plan },
+      // Stripe brings the installer back to this site's account page.
+      body: { plan, return_to: "website" },
+    }),
+
+  /** Where a returning checkout stands; also applies the plan if the payment went through. */
+  checkoutStatus: (token: string, sessionId: string) =>
+    request<CheckoutStatus>("/billing/checkout-status", {
+      token,
+      query: { session_id: sessionId },
     }),
 
   createPortalSession: (token: string) =>
     request<UrlResponse>("/billing/portal-session", {
       method: "POST",
       token,
+      body: { return_to: "website" },
     }),
 };

@@ -19,7 +19,8 @@ import { Card, textLink } from "@/components/auth/auth-card";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { IconBadge } from "@/components/ui/icon-badge";
 import { Container, Eyebrow } from "@/components/ui/layout";
-import { planByKey, plans } from "@/content/plans";
+import type { PlanContent } from "@/content/plans";
+import { formatPrice } from "@/lib/plans-format";
 import { routes, site } from "@/lib/site";
 import type {
   CurrentUser,
@@ -186,14 +187,20 @@ const subscriptionLabels: Record<
   canceled: { label: "Cancelled", tone: "neutral" },
 };
 
-const paidPlans = plans.flatMap((plan) =>
-  plan.key === "free"
-    ? []
-    : [{ key: plan.key, name: plan.name, price: plan.price }],
-);
-
-function Membership({ installer }: { installer: Installer }) {
-  const plan = planByKey(installer.plan);
+function Membership({
+  installer,
+  plans,
+}: {
+  installer: Installer;
+  plans: PlanContent[];
+}) {
+  const plan = plans.find((item) => item.key === installer.plan);
+  const planName = installer.plan_name;
+  const paidPlans = plans.flatMap((item) =>
+    item.price > 0
+      ? [{ key: item.key, name: item.name, price: item.price }]
+      : [],
+  );
   const status = installer.subscription_status;
   const subscription = subscriptionLabels[status];
   const paid = installer.plan !== "free";
@@ -207,7 +214,7 @@ function Membership({ installer }: { installer: Installer }) {
       <>
         <Notice tone="warning">
           We couldn&apos;t take your last payment. Update your payment method to
-          keep your {plan?.name ?? "paid"} plan.
+          keep your {planName} plan.
         </Notice>
         <div className="mt-auto">
           <PortalAction label="Update payment method" />
@@ -268,10 +275,12 @@ function Membership({ installer }: { installer: Installer }) {
     >
       <p className="flex items-baseline gap-2 text-ink">
         <span className="text-[26px] font-extrabold leading-none tracking-[-0.02em]">
-          {plan?.name ?? installer.plan}
+          {planName}
         </span>
         {plan ? (
-          <span className="text-sm text-muted">£{plan.price} / month</span>
+          <span className="text-sm text-muted">
+            {formatPrice(plan.price)} / month
+          </span>
         ) : null}
       </p>
       {actions}
@@ -295,9 +304,11 @@ function SignOutButton() {
  */
 export function AccountOverview({
   user,
+  plans,
   checkout,
 }: {
   user: CurrentUser;
+  plans: PlanContent[];
   /** `?checkout=` value Stripe Checkout returns the installer with. */
   checkout?: string;
 }) {
@@ -330,7 +341,7 @@ export function AccountOverview({
               {installer && upgraded ? (
                 <>
                   <span className="font-semibold">Payment received.</span> Your{" "}
-                  {planByKey(installer.plan)?.name} plan is now active.
+                  {installer.plan_name} plan is now active.
                 </>
               ) : (
                 <>
@@ -369,7 +380,7 @@ export function AccountOverview({
             >
               {listingStatus[installer.status].body}
             </Panel>
-            <Membership installer={installer} />
+            <Membership installer={installer} plans={plans} />
           </div>
         ) : (
           <Card className="mt-8 text-sm leading-relaxed">

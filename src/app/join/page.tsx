@@ -31,8 +31,9 @@ import {
   Section,
   SectionHeading,
 } from "@/components/ui/layout";
-import { plans } from "@/content/plans";
+import type { PlanContent } from "@/content/plans";
 import { getContent } from "@/lib/content";
+import { getPlans } from "@/lib/plans";
 import { absoluteUrl, pageMetadata } from "@/lib/seo";
 import { routes, site } from "@/lib/site";
 import { keyed } from "@/lib/utils";
@@ -64,7 +65,7 @@ const workStyles = [
 >[];
 
 /** Memberships as schema.org offers; prices come from the same data as the cards. */
-const membershipSchema = (description: string) => ({
+const membershipSchema = (description: string, plans: PlanContent[]) => ({
   "@context": "https://schema.org",
   "@type": "Service",
   name: "PickASparky installer membership",
@@ -96,7 +97,7 @@ const membershipSchema = (description: string) => ({
 });
 
 export default async function JoinPage() {
-  const content = await getContent("join");
+  const [content, plans] = await Promise.all([getContent("join"), getPlans()]);
   const { seo, hero, benefits, steps, work, faq } = content;
   return (
     <>
@@ -291,7 +292,7 @@ export default async function JoinPage() {
         path={routes.join}
         crumb="Join as an Installer"
       />
-      <JsonLd data={membershipSchema(seo.description)} />
+      <JsonLd data={membershipSchema(seo.description, plans)} />
     </>
   );
 }

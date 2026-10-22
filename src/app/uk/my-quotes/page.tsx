@@ -169,12 +169,12 @@ export default async function MyRequestPage({
           className="rounded-2xl border border-line bg-white p-6 shadow-soft"
         >
           <h2 id="installers-heading" className="text-lg font-bold">
-            Installers with your request
+            Installers who have responded
           </h2>
           {detail.installers.length === 0 ? (
             <p className="mt-4 text-sm">
-              Nobody has your request yet. We'll email you the moment installers
-              are lined up.
+              No installer has responded yet. We'll email you the moment one
+              does.
             </p>
           ) : (
             <ul className="mt-4 space-y-3">

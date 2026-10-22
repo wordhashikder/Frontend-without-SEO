@@ -1,6 +1,8 @@
 import { Check } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
-import { type PlanContent, plans } from "@/content/plans";
+import type { PlanContent } from "@/content/plans";
+import { getPlans } from "@/lib/plans";
+import { formatPrice } from "@/lib/plans-format";
 import { routes } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -22,10 +24,11 @@ function PlanCard({ plan }: { plan: PlanContent }) {
       <h3 className="text-xl font-bold leading-7">{plan.name}</h3>
       <p className="mt-1 flex items-baseline gap-2">
         <span className="text-[30px] font-extrabold leading-10 text-ink">
-          £{plan.price}
+          {formatPrice(plan.price)}
         </span>
         <span className="text-[15px]">/ month</span>
       </p>
+      {plan.tagline ? <p className="mt-2 text-[13px]">{plan.tagline}</p> : null}
       <ul className="mt-5 mb-7 space-y-3 text-[13px] leading-[18px] text-slate-600 lg:text-xs lg:leading-[18px]">
         {plan.features.map((feature) => (
           <li key={feature} className="flex gap-3">
@@ -54,10 +57,20 @@ function PlanCard({ plan }: { plan: PlanContent }) {
   );
 }
 
-/** Membership cards for /join, built from the shared plan content. */
-export function PricingCards({ className }: { className?: string }) {
+/** Membership cards for /join, built from the live plans (Dashboard > Plans & pricing). */
+export async function PricingCards({ className }: { className?: string }) {
+  const plans = await getPlans();
   return (
-    <ul className={cn("grid gap-6 md:grid-cols-3", className)}>
+    <ul
+      className={cn(
+        "grid gap-6",
+        plans.length === 1 && "mx-auto max-w-sm",
+        plans.length === 2 && "md:grid-cols-2",
+        plans.length === 3 && "md:grid-cols-3",
+        plans.length >= 4 && "md:grid-cols-2 lg:grid-cols-4",
+        className,
+      )}
+    >
       {plans.map((plan) => (
         <PlanCard key={plan.key} plan={plan} />
       ))}

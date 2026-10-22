@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/form";
 import { IconBadge } from "@/components/ui/icon-badge";
 import { Eyebrow } from "@/components/ui/layout";
-import { plans } from "@/content/plans";
+import type { PlanContent } from "@/content/plans";
+import { formatPrice } from "@/lib/plans-format";
 import { routes } from "@/lib/site";
 import type { Plan } from "@/lib/types";
 import { cn, UK_POSTCODE_PATTERN } from "@/lib/utils";
@@ -35,7 +36,13 @@ const planInputId = (plan: Plan) => `plan-${plan}`;
  * Installer sign-up. Field names match the API's register payload so its
  * validation errors map straight back onto the inputs.
  */
-export function RegisterForm({ initialPlan }: { initialPlan: Plan }) {
+export function RegisterForm({
+  initialPlan,
+  plans,
+}: {
+  initialPlan: Plan;
+  plans: PlanContent[];
+}) {
   const [state, action] = useActionState(register, initialState);
   const errors = state.fieldErrors ?? {};
   const values = state.values ?? {};
@@ -211,7 +218,14 @@ export function RegisterForm({ initialPlan }: { initialPlan: Plan }) {
           <legend className="mb-2 block text-sm font-semibold text-ink">
             Membership plan
           </legend>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div
+            className={cn(
+              "grid gap-3",
+              plans.length === 2 && "sm:grid-cols-2",
+              plans.length === 3 && "sm:grid-cols-3",
+              plans.length >= 4 && "sm:grid-cols-2 lg:grid-cols-4",
+            )}
+          >
             {plans.map((plan) => (
               <label
                 key={plan.key}
@@ -239,7 +253,9 @@ export function RegisterForm({ initialPlan }: { initialPlan: Plan }) {
                   <span className="block text-sm font-semibold text-ink">
                     {plan.name}
                   </span>
-                  <span className="block text-[13px]">£{plan.price}/month</span>
+                  <span className="block text-[13px]">
+                    {formatPrice(plan.price)}/month
+                  </span>
                 </span>
               </label>
             ))}

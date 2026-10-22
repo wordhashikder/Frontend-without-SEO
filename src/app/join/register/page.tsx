@@ -4,16 +4,16 @@ import { Card } from "@/components/auth/auth-card";
 import { RegisterForm } from "@/components/auth/register-form";
 import { StepNumber } from "@/components/sections/feature-blocks";
 import { Container, Eyebrow } from "@/components/ui/layout";
-import { planByKey, plans } from "@/content/plans";
+import type { PlanContent } from "@/content/plans";
+import { findPlan, getPlans } from "@/lib/plans";
+import { formatPrice } from "@/lib/plans-format";
 import { pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
-import type { Plan } from "@/lib/types";
-import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = pageMetadata({
   title: "Create Your Installer Account",
   description:
-    "Create a PickASparky installer account: add your business details, choose a Free, Pro or Premium plan and verify your email to start your listing review.",
+    "Create a PickASparky installer account: add your business details, choose a membership plan and verify your email to start your listing review.",
   path: routes.register,
   index: false,
 });
@@ -34,32 +34,42 @@ const steps = [
 ];
 
 /*
- * The summary follows the plan radio in the form without any JavaScript:
- * each block is shown while its radio (#plan-free, #plan-pro, #plan-premium,
- * rendered by RegisterForm) is checked. Class names are written out in full
- * so Tailwind can see them.
+ * The summary follows the plan radio in the form without any JavaScript: each plan's block
+ * is shown while its radio (#plan-<key>, rendered by RegisterForm) is checked. The plans are
+ * managed in the Dashboard, so these rules are generated from them (the keys are validated
+ * first: lower-case letters, numbers and dashes only).
  */
-const showForPlan: Record<Plan, string> = {
-  free: "group-has-[#plan-free:checked]/register:block",
-  pro: "group-has-[#plan-pro:checked]/register:block",
-  premium: "group-has-[#plan-premium:checked]/register:block",
-};
-const showForPaidPlan =
-  "group-has-[#plan-pro:checked]/register:flex group-has-[#plan-premium:checked]/register:flex";
+const SAFE_KEY = /^[a-z][a-z0-9-]*$/;
+function summaryRules(plans: PlanContent[]) {
+  return plans
+    .filter((plan) => SAFE_KEY.test(plan.key))
+    .map(
+      (plan) =>
+        `.register-root:has(#plan-${plan.key}:checked) #summary-${plan.key}{display:block}` +
+        (plan.price > 0
+          ? `.register-root:has(#plan-${plan.key}:checked) .register-paid-note{display:flex}`
+          : ""),
+    )
+    .join("");
+}
 
 export default async function RegisterPage({
   searchParams,
 }: PageProps<"/join/register">) {
-  const { plan } = await searchParams;
+  const [{ plan }, plans] = await Promise.all([searchParams, getPlans()]);
   const initialPlan =
-    planByKey(typeof plan === "string" ? plan : undefined)?.key ?? "free";
+    findPlan(plans, typeof plan === "string" ? plan : undefined)?.key ??
+    plans[0]?.key ??
+    "free";
 
   return (
     <div className="bg-surface">
+      {/* biome-ignore lint/security/noDangerouslySetInnerHtml: CSS built only from validated plan keys */}
+      <style dangerouslySetInnerHTML={{ __html: summaryRules(plans) }} />
       <Container className="py-10 sm:py-14 md:py-16">
-        <div className="group/register grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,400px)] lg:gap-12">
+        <div className="register-root grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,400px)] lg:gap-12">
           <Card>
-            <RegisterForm initialPlan={initialPlan} />
+            <RegisterForm initialPlan={initialPlan} plans={plans} />
           </Card>
 
           <aside
@@ -82,12 +92,7 @@ export default async function RegisterPage({
               ))}
             </ol>
 
-            <p
-              className={cn(
-                "mt-6 hidden gap-3 rounded-xl bg-mint-soft p-4 text-sm leading-relaxed",
-                showForPaidPlan,
-              )}
-            >
+            <p className="register-paid-note mt-6 hidden gap-3 rounded-xl bg-mint-soft p-4 text-sm leading-relaxed">
               <Lock
                 aria-hidden
                 className="mt-0.5 size-4 shrink-0 text-primary"
@@ -105,21 +110,19 @@ export default async function RegisterPage({
             {plans.map((item) => (
               <section
                 key={item.key}
-                aria-labelledby={`summary-${item.key}`}
-                className={cn(
-                  "mt-6 hidden rounded-2xl border border-line bg-white p-6 shadow-soft",
-                  showForPlan[item.key],
-                )}
+                aria-labelledby={`summary-title-${item.key}`}
+                id={`summary-${item.key}`}
+                className="mt-6 hidden rounded-2xl border border-line bg-white p-6 shadow-soft"
               >
                 <h3
-                  id={`summary-${item.key}`}
+                  id={`summary-title-${item.key}`}
                   className="text-lg font-bold tracking-[-0.01em]"
                 >
                   {item.name} plan
                 </h3>
                 <p className="mt-1 flex items-baseline gap-2 text-ink">
                   <span className="text-[28px] font-extrabold tracking-[-0.02em]">
-                    £{item.price}
+                    {formatPrice(item.price)}
                   </span>
                   <span className="text-sm text-muted">/ month</span>
                 </p>
