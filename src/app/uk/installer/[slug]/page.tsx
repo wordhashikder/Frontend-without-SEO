@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
 import { InstallerProfile } from "@/components/profile/installer-profile";
 import { api } from "@/lib/api";
+import { areaLinks } from "@/lib/area-links";
 import { pageMetadata } from "@/lib/seo";
 import { installerPath } from "@/lib/site";
 
@@ -84,11 +85,13 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
 export default async function InstallerPage(props: Props) {
   const installer = await loadInstaller(props);
-  const [location, reviews, similar] = await Promise.all([
+  const [location, reviews, similar, locations] = await Promise.all([
     // Only for the breadcrumb label; an outage here must not take the page down.
     api.location(installer.location_slug).catch(() => null),
     api.installerReviews(installer.slug, 1, 6),
     api.similarInstallers(installer.slug, 4),
+    // The published town pages, so each area can link to its page (none if the API is down).
+    api.locations(),
   ]);
 
   return (
@@ -98,6 +101,7 @@ export default async function InstallerPage(props: Props) {
         locationName={location?.name ?? installer.town}
         reviews={reviews?.items ?? []}
         similar={similar}
+        areaLinks={areaLinks(installer.areas_covered, locations)}
       />
       <LocationsDirectory />
     </>

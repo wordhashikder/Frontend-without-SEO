@@ -9,6 +9,8 @@ type PostcodeFormProps = {
   buttonLabel?: string;
   /** Pre-select an installer when the form sits on a profile page. */
   installerSlug?: string;
+  /** `inline` only: a taller field and button, for a banner. */
+  large?: boolean;
   id?: string;
   className?: string;
 };
@@ -21,6 +23,7 @@ export function PostcodeForm({
   variant = "hero",
   buttonLabel = "Get Free Quotes",
   installerSlug,
+  large = false,
   id = "postcode",
   className,
 }: PostcodeFormProps) {
@@ -34,6 +37,7 @@ export function PostcodeForm({
         hero
           ? "p-2 shadow-card sm:flex-row sm:items-center"
           : "p-1.5 shadow-soft min-[400px]:flex-row min-[400px]:items-center",
+        large && !hero && "rounded-2xl p-2 shadow-card",
         className,
       )}
     >
@@ -71,7 +75,11 @@ export function PostcodeForm({
             placeholder={hero ? "e.g. SW1A 1AA" : "Enter your postcode"}
             className={cn(
               "w-full min-w-0 bg-transparent text-ink uppercase placeholder:normal-case placeholder:text-subtle focus:outline-none",
-              hero ? "text-[13px] leading-tight" : "h-9 text-[13px]",
+              hero
+                ? "text-[13px] leading-tight"
+                : large
+                  ? "h-11 text-sm sm:text-[15px]"
+                  : "h-9 text-[13px]",
             )}
           />
         </span>
@@ -79,7 +87,7 @@ export function PostcodeForm({
       <Button
         type="submit"
         arrow
-        size={hero ? "lg" : "md"}
+        size={hero || large ? "lg" : "md"}
         className="shrink-0"
       >
         {buttonLabel}

@@ -2,14 +2,18 @@ import {
   BadgeCheck,
   ClipboardCheck,
   Clock,
+  FileText,
   Leaf,
   type LucideIcon,
   MapPin,
+  MapPinned,
+  PoundSterling,
   ShieldCheck,
   Sun,
   Zap,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { ClaimListing } from "@/components/claim/claim-listing";
 import { CoverageMap } from "@/components/profile/coverage-map";
@@ -53,7 +57,13 @@ type InstallerProfileProps = {
   /** The reviews to render (first page). */
   reviews: Review[];
   similar: InstallerSummary[];
+  /** Page path of each listed area that has a published location page, by area name. */
+  areaLinks?: Record<string, string>;
 };
+
+/** The page's H2 style: also used by the "We cover ..." title in Areas covered. */
+const H2_CLASS =
+  "text-2xl font-bold leading-tight tracking-[-0.01em] sm:text-[28px]";
 
 function Heading({
   id,
@@ -65,17 +75,18 @@ function Heading({
   className?: string;
 }) {
   return (
-    <h2
-      id={id}
-      className={cn(
-        "text-2xl font-bold leading-tight tracking-[-0.01em] sm:text-[28px]",
-        className,
-      )}
-    >
+    <h2 id={id} className={cn(H2_CLASS, className)}>
       {children}
     </h2>
   );
 }
+
+/** The three reassurances under the closing banner's headline. */
+const ctaPoints: { icon: LucideIcon; title: string; text: string }[] = [
+  { icon: Zap, title: "Trusted", text: "installers" },
+  { icon: FileText, title: "Compare", text: "multiple quotes" },
+  { icon: PoundSterling, title: "Free", text: "to use" },
+];
 
 /** Everything on an installer profile between the header and the locations directory. */
 export function InstallerProfile({
@@ -83,6 +94,7 @@ export function InstallerProfile({
   locationName,
   reviews,
   similar,
+  areaLinks = {},
 }: InstallerProfileProps) {
   const name = installer.business_name;
   const path = installerPath(installer.slug);
@@ -332,26 +344,33 @@ export function InstallerProfile({
 
           <section aria-labelledby="areas-heading">
             <Heading id="areas-heading">Areas covered</Heading>
-            <div className="mt-5 grid grid-cols-1 items-center gap-8 lg:grid-cols-[minmax(0,543fr)_minmax(0,520fr)] lg:gap-10">
-              <figure>
-                <CoverageMap
-                  latitude={installer.coverage.latitude}
-                  longitude={installer.coverage.longitude}
-                  radiusMiles={installer.coverage.radius_miles}
-                  label={`Map of the area covered by ${name}`}
-                />
-                <figcaption className="mt-2 text-xs">
-                  Approximate coverage: within {installer.coverage.radius_miles}{" "}
-                  {installer.coverage.radius_miles === 1 ? "mile" : "miles"} of{" "}
-                  {installer.town}.
-                </figcaption>
-              </figure>
-              <div>
-                <h3 className="text-[22px] font-medium leading-[1.5] text-ink sm:text-[28px]">
+            <span
+              aria-hidden
+              className="mt-2 block h-1 w-[60px] rounded-full bg-primary"
+            />
+            <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,543fr)_minmax(0,520fr)] lg:items-stretch lg:gap-8">
+              <CoverageMap
+                latitude={installer.coverage.latitude}
+                longitude={installer.coverage.longitude}
+                radiusMiles={installer.coverage.radius_miles}
+                label={`Map of the area covered by ${name}`}
+              />
+              <div className="flex flex-col justify-center rounded-2xl bg-[#f9f1ea] p-6 sm:p-8">
+                <span
+                  aria-hidden
+                  className="flex size-14 items-center justify-center rounded-full bg-[#cdebdb] text-ink"
+                >
+                  <MapPinned className="size-7" strokeWidth={1.5} />
+                </span>
+                <h3 className={cn(H2_CLASS, "mt-5")}>
                   We cover {installer.town} and surrounding areas
                 </h3>
+                <p className="mt-2.5 text-[15px] leading-relaxed">
+                  This installer&apos;s service area includes {installer.town}{" "}
+                  and the surrounding locations.
+                </p>
                 {installer.areas_covered.length > 0 ? (
-                  <ul className="mt-6 columns-2 gap-x-8 text-[15px] sm:text-base">
+                  <ul className="mt-6 columns-1 gap-x-8 text-[15px] min-[420px]:columns-2 sm:text-base">
                     {[...installer.areas_covered, "and nearby areas"].map(
                       (area) => (
                         <li
@@ -359,7 +378,16 @@ export function InstallerProfile({
                           className="mb-3.5 flex break-inside-avoid items-start gap-2.5"
                         >
                           <CheckBullet className="mt-[3px] size-4 sm:mt-1" />
-                          {area}
+                          {areaLinks[area] ? (
+                            <Link
+                              href={areaLinks[area]}
+                              className="font-medium text-ink underline decoration-primary/40 decoration-1 underline-offset-4 transition-colors hover:text-primary-dark hover:decoration-primary"
+                            >
+                              {area}
+                            </Link>
+                          ) : (
+                            area
+                          )}
                         </li>
                       ),
                     )}
@@ -367,6 +395,11 @@ export function InstallerProfile({
                 ) : null}
               </div>
             </div>
+            <p className="mt-2 text-xs">
+              Approximate coverage: within {installer.coverage.radius_miles}{" "}
+              {installer.coverage.radius_miles === 1 ? "mile" : "miles"} of{" "}
+              {installer.town}.
+            </p>
           </section>
 
           <section id="reviews" aria-labelledby="reviews-heading">
@@ -430,28 +463,82 @@ export function InstallerProfile({
         {/* Closing call to action */}
         <section
           aria-labelledby="profile-cta-heading"
-          className="mt-14 flex flex-col gap-6 rounded-xl border border-[#e0f5ea] bg-mint-soft p-6 sm:p-8 lg:mt-[76px] lg:flex-row lg:items-center lg:justify-between lg:gap-10"
+          className="relative isolate mt-14 overflow-hidden rounded-2xl border border-[#d9efe6] bg-gradient-to-r from-[#f2f9f8] via-[#f2f9f7] to-[#e9f5f1] lg:mt-[76px]"
         >
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-primary-dark">
-              Ready to get started?
-            </p>
-            <h2
-              id="profile-cta-heading"
-              className="mt-2.5 max-w-[440px] text-[22px] font-bold leading-8 tracking-[-0.01em] sm:text-2xl"
-            >
-              Compare up to 5 quotes from trusted EV charger installers in your
-              area
-            </h2>
-            <p className="mt-2.5 text-sm">
-              It&apos;s free, fast and there&apos;s no obligation.
-            </p>
+          <svg
+            aria-hidden
+            viewBox="0 0 600 300"
+            preserveAspectRatio="none"
+            className="pointer-events-none absolute inset-y-0 right-0 -z-10 hidden h-full w-[48%] text-[#e1f2ec] lg:block"
+          >
+            <path
+              d="M330 0H600V300H0C70 215 215 145 330 0Z"
+              fill="currentColor"
+            />
+          </svg>
+          <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,430px)] lg:items-center lg:gap-8 lg:px-9 lg:py-10">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-primary-dark">
+                Ready to get started?
+              </p>
+              <h2
+                id="profile-cta-heading"
+                className="mt-2.5 max-w-[640px] text-[24px] font-bold leading-[1.25] tracking-[-0.01em] sm:text-[28px] lg:text-[24px] xl:text-[26px]"
+              >
+                Compare up to 5 quotes from trusted EV charger installers in
+                your area
+              </h2>
+              <p className="mt-3 text-[15px]">
+                It&apos;s free, fast and there&apos;s no obligation.
+              </p>
+              <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-4 sm:flex-nowrap sm:gap-x-0">
+                {ctaPoints.map((point, index) => (
+                  <li
+                    key={point.title}
+                    className={cn(
+                      "flex items-center gap-2.5 sm:pr-4 xl:gap-3 xl:pr-5",
+                      index > 0 &&
+                        "sm:border-l sm:border-[#d7efe6] sm:pl-4 xl:pl-5",
+                    )}
+                  >
+                    <span
+                      aria-hidden
+                      className="flex size-9 shrink-0 items-center xl:size-10 justify-center rounded-full bg-[#ddf2ea] text-primary"
+                    >
+                      <point.icon className="size-5" strokeWidth={1.75} />
+                    </span>
+                    <span className="text-[13px] leading-[1.35] whitespace-nowrap xl:text-sm">
+                      <span className="block font-semibold text-ink">
+                        {point.title}
+                      </span>
+                      {point.text}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="relative">
+              <svg
+                aria-hidden
+                viewBox="0 0 40 44"
+                className="pointer-events-none absolute -top-9 -right-3 hidden h-11 w-10 text-primary lg:block"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+              >
+                <path d="M9 4 6 17" />
+                <path d="M32 14 21 22" />
+                <path d="M36 30 27 31" />
+              </svg>
+              <PostcodeForm
+                id="profile-cta-postcode"
+                variant="inline"
+                large
+                className="w-full"
+              />
+            </div>
           </div>
-          <PostcodeForm
-            id="profile-cta-postcode"
-            variant="inline"
-            className="w-full lg:max-w-[442px]"
-          />
         </section>
       </Container>
 
