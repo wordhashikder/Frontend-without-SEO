@@ -135,10 +135,12 @@ export function InstallerProfile({
     ...(listedSince ? [["Listed since", listedSince] as [string, string]] : []),
   ];
 
-  const about =
-    paragraphs.length > 0 ? (
-      <section aria-labelledby="about-heading">
-        <Heading id="about-heading">About {name}</Heading>
+  // The facts card (including "Experience") shows even when the business has not written an
+  // About text yet, so what they enter on their profile always reaches the public page.
+  const about = (
+    <section aria-labelledby="about-heading">
+      <Heading id="about-heading">About {name}</Heading>
+      {paragraphs.length > 0 ? (
         <div className="mt-3 space-y-3 text-sm leading-[1.65]">
           {paragraphs.map((text) => (
             <p key={text} className="whitespace-pre-line">
@@ -146,16 +148,19 @@ export function InstallerProfile({
             </p>
           ))}
         </div>
-        <dl className="mt-5 grid grid-cols-1 gap-x-8 gap-y-2.5 rounded-xl border border-line bg-white p-5 text-sm shadow-soft sm:grid-cols-[130px_1fr]">
-          {facts.map(([label, value]) => (
-            <div key={label} className="contents">
-              <dt className="text-subtle">{label}</dt>
-              <dd className="font-medium text-ink">{value}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
-    ) : null;
+      ) : null}
+      <dl
+        className={`${paragraphs.length > 0 ? "mt-5" : "mt-3"} grid grid-cols-1 gap-x-8 gap-y-2.5 rounded-xl border border-line bg-white p-5 text-sm shadow-soft sm:grid-cols-[130px_1fr]`}
+      >
+        {facts.map(([label, value]) => (
+          <div key={label} className="contents">
+            <dt className="text-subtle">{label}</dt>
+            <dd className="font-medium text-ink">{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
 
   return (
     <div>
