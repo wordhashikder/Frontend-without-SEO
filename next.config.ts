@@ -6,13 +6,22 @@ type Redirect = Awaited<
 
 const isDev = process.env.NODE_ENV === "development";
 
+// Google Analytics hosts are allowed only where a Measurement ID is configured
+// (same rule as src/lib/analytics.ts), so staging keeps the stricter policy.
+const analyticsOn = /^G-[A-Z0-9]{4,20}$/.test(
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() ?? "",
+);
+const gtm = analyticsOn ? " https://*.googletagmanager.com" : "";
+const ga = analyticsOn ? " https://*.google-analytics.com" : "";
+const gaApi = analyticsOn ? " https://*.analytics.google.com" : "";
+
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}${gtm}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' blob: data: https://res.cloudinary.com https://tile.openstreetmap.org",
+  `img-src 'self' blob: data: https://res.cloudinary.com https://tile.openstreetmap.org${gtm}${ga}`,
   "font-src 'self'",
-  "connect-src 'self'",
+  `connect-src 'self'${gtm}${ga}${gaApi}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self' https://checkout.stripe.com https://billing.stripe.com",

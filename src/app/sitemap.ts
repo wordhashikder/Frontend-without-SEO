@@ -62,9 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     allInstallers(),
     allPosts(),
   ]);
-
-  // Each installer appears once, at its one canonical profile URL, however
-  // many location pages list it.
+ 
   return [
     ...staticPages.map(({ path, priority }) => ({
       url: absoluteUrl(path),
