@@ -13,6 +13,15 @@ export const gaMeasurementId =
   rawId && /^G-[A-Z0-9]{4,20}$/.test(rawId) ? rawId : undefined;
 
 /**
+ * The cookie banner is on whenever analytics is on (a Measurement ID is set), so
+ * no environment can measure visitors without asking. Set
+ * `NEXT_PUBLIC_COOKIE_BANNER=on` to preview the banner where analytics is off
+ * (for example on staging). Build-time value, like the ID.
+ */
+export const cookieBannerEnabled =
+  Boolean(gaMeasurementId) || process.env.NEXT_PUBLIC_COOKIE_BANNER === "on";
+
+/**
  * Pages that are private to a signed-in person or reached through a one-time
  * link. They are never measured: their URLs can carry tokens.
  */

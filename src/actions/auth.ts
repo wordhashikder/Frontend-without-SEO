@@ -23,9 +23,7 @@ export type AuthState = {
   ok: boolean;
   message?: string;
   fieldErrors?: Record<string, string>;
-  /** A reason the form reacts to, beyond showing the message. */
   code?: "email_not_verified" | "invalid_token" | "rate_limited";
-  /** What the visitor typed (never the password), to refill the form. */
   values?: Record<string, string>;
 };
 
@@ -85,7 +83,7 @@ const registerSchema = z.object({
     .refine(isUkPostcode, "Enter a full UK postcode, like M1 1AA.")
     .transform(formatPostcode),
   password: newPassword,
-  // Plans are managed in the Dashboard; the API checks the plan exists and is on sale.
+
   plan: z
     .string("Choose a plan.")
     .regex(/^[a-z][a-z0-9-]{0,38}[a-z0-9]$/, "Choose a plan."),
@@ -107,7 +105,6 @@ function field(formData: FormData, name: string) {
   return typeof value === "string" ? value : "";
 }
 
-/** First message per field, in the `{ field: message }` shape the forms use. */
 function fieldErrorsOf(error: z.ZodError) {
   const errors: Record<string, string> = {};
   for (const issue of error.issues) {
@@ -208,7 +205,6 @@ export async function register(
     return failure(error, { values, fields: Object.keys(raw) });
   }
 
-  // The same confirmation whether or not the address was already registered.
   return sent;
 }
 
@@ -331,9 +327,6 @@ export async function login(
     return failure(error, { values });
   }
 
-  // This sign-in is for installers. The team signs in to the Dashboard itself; letting a
-  // team member in here would leave an admin session behind that the next installer
-  // sign-in on the same browser (a claimed listing, say) could open by mistake.
   try {
     const user = await api.me(tokens.access_token);
     if (user.role !== "installer") {

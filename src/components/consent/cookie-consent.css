@@ -1,0 +1,406 @@
+/*
+ * Cookie banner theme: maps the site's own colours, type and shapes onto the
+ * consent library (vanilla-cookieconsent). Everything is scoped to #cc-main,
+ * which the library creates, so no other part of the site is affected.
+ * Values mirror the tokens in globals.css (primary, forest, ink, muted, line).
+ *
+ * Layout: a wide floating bar at the bottom of the page (illustration, message,
+ * three actions); on phones the same content stacks into a compact card.
+ */
+#cc-main {
+  --cc-font-family: var(--font-poppins), system-ui, sans-serif;
+  --cc-z-index: 90;
+
+  --cc-bg: #fff;
+  --cc-primary-color: #10263f;
+  --cc-secondary-color: #5c6b7a;
+  --cc-link-color: #088246;
+  --cc-separator-border-color: #e5e9ee;
+  --cc-overlay-bg: rgb(16 38 63 / 0.5);
+
+  --cc-modal-border-radius: 1rem;
+  --cc-btn-border-radius: 0.5rem;
+  --cc-modal-margin: 1rem;
+  --cc-pm-toggle-border-radius: 999px;
+
+  --cc-btn-primary-bg: #0a9b53;
+  --cc-btn-primary-color: #fff;
+  --cc-btn-primary-border-color: #0a9b53;
+  --cc-btn-primary-hover-bg: #088246;
+  --cc-btn-primary-hover-color: #fff;
+  --cc-btn-primary-hover-border-color: #088246;
+
+  --cc-btn-secondary-bg: #fff;
+  --cc-btn-secondary-color: #10263f;
+  --cc-btn-secondary-border-color: #cdd5dd;
+  --cc-btn-secondary-hover-bg: #f3f6f8;
+  --cc-btn-secondary-hover-color: #10263f;
+  --cc-btn-secondary-hover-border-color: #b4bfca;
+
+  --cc-toggle-on-bg: #0a9b53;
+  --cc-toggle-off-bg: #9aa7b4;
+  --cc-toggle-on-knob-bg: #fff;
+  --cc-toggle-off-knob-bg: #fff;
+  --cc-toggle-readonly-bg: #b9dfc9;
+  --cc-toggle-readonly-knob-bg: #fff;
+  --cc-toggle-readonly-knob-icon-color: #088246;
+
+  --cc-section-category-border: #e5e9ee;
+  --cc-cookie-category-block-bg: #f6f9fa;
+  --cc-cookie-category-block-border: #e5e9ee;
+  --cc-cookie-category-block-hover-bg: #eef3f5;
+  --cc-cookie-category-block-hover-border: #e5e9ee;
+  --cc-cookie-category-expanded-block-bg: #fff;
+  --cc-cookie-category-expanded-block-hover-bg: #f6f9fa;
+
+  --cc-footer-bg: #f6f9fa;
+  --cc-footer-color: #5c6b7a;
+  --cc-footer-border-color: #e5e9ee;
+
+  --cc-webkit-scrollbar-bg: #e5e9ee;
+  --cc-webkit-scrollbar-hover-bg: #9aa7b4;
+
+  /* Small line icons, tinted with the current text colour. */
+  --cc-icon-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
+  --cc-icon-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 5l7 7-7 7'/%3E%3C/svg%3E");
+  --cc-icon-gear: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z'/%3E%3C/svg%3E");
+  --cc-icon-shield: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l7.5 3v5.5c0 4.6-3.1 8.1-7.5 9.5-4.4-1.4-7.5-4.9-7.5-9.5V6L12 3z'/%3E%3Cpath d='M8.6 12.2l2.5 2.5 4.4-4.9'/%3E%3C/svg%3E");
+}
+
+/* ---- Preferences window and shared details -------------------------------- */
+
+#cc-main .pm {
+  box-shadow:
+    0 18px 48px -12px rgb(16 38 63 / 0.28),
+    0 2px 6px rgb(16 38 63 / 0.06);
+}
+
+#cc-main .pm__title {
+  color: #153a2c;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+#cc-main .pm__section-desc,
+#cc-main .pm__section-title {
+  line-height: 1.6;
+}
+
+#cc-main .pm__btn {
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+/* Keyboard focus: the site's own green outline. */
+#cc-main button:focus-visible,
+#cc-main a:focus-visible,
+#cc-main input:focus-visible + .toggle__icon {
+  outline: 2px solid #0a9b53;
+  outline-offset: 2px;
+}
+
+/* ---- The banner ------------------------------------------------------------ */
+
+#cc-main .cm {
+  box-shadow:
+    0 24px 60px -16px rgb(16 38 63 / 0.3),
+    0 4px 14px rgb(16 38 63 / 0.06);
+  border: 1px solid #e5e9ee;
+  padding: 0;
+}
+
+#cc-main .cm__body {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  align-items: center;
+  padding: 1.25rem 1.25rem 1.5rem;
+}
+
+/*
+ * Illustration (decorative): cookie in front of a shield, over a soft backdrop.
+ * Public assets, so there is nothing for assistive technology to announce.
+ */
+#cc-main .cm__body::before {
+  content: "";
+  display: none;
+  background:
+    url("/images/cookie-consent-cookie.png") left 4% bottom 6% / 52% auto
+    no-repeat,
+    url("/images/cookie-consent-shield.png") right 2% top 0 / 58% auto no-repeat,
+    url("/images/cookie-consent-backdrop.svg") center / contain no-repeat;
+}
+
+#cc-main .cm__title {
+  margin: 0 0 0.5rem;
+  color: #10263f;
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+#cc-main .cm__desc {
+  margin: 0;
+  color: #5c6b7a;
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+#cc-main .cm__desc strong {
+  color: #10263f;
+  font-weight: 600;
+}
+
+/* "Learn more about our cookie policy" with a shield and a chevron. */
+#cc-main .cc__policy {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.875rem;
+  color: #088246;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  background: none;
+}
+
+#cc-main .cc__policy::before,
+#cc-main .cc__policy::after {
+  content: "";
+  flex: none;
+  background: currentColor;
+  mask: var(--cc-icon-shield) center / contain no-repeat;
+}
+
+#cc-main .cc__policy::before {
+  width: 1.375rem;
+  height: 1.375rem;
+}
+
+#cc-main .cc__policy::after {
+  width: 0.75rem;
+  height: 0.75rem;
+  mask-image: var(--cc-icon-chevron);
+}
+
+#cc-main .cc__policy:hover {
+  color: #067a43;
+}
+
+/* Actions: Accept (filled), Customize (outlined), Reject (text), stacked. */
+#cc-main .cm .cm__btns {
+  display: flex;
+  flex-direction: column !important;
+  align-items: stretch;
+  gap: 0.625rem;
+  padding: 0;
+  border: 0 !important;
+}
+
+#cc-main .cm .cm__btn-group {
+  display: contents !important;
+}
+
+#cc-main .cm__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  margin: 0;
+  min-height: 3rem;
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+#cc-main .cm__btn > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+#cc-main .cm__btn[data-role="all"] {
+  order: 1;
+  box-shadow: 0 8px 18px -8px rgb(10 155 83 / 0.7);
+}
+
+#cc-main .cm__btn[data-role="show"] {
+  order: 2;
+  border: 1.5px solid #10263f;
+  background: #fff;
+}
+
+#cc-main .cm__btn[data-role="show"]:hover {
+  background: #f3f6f8;
+  border-color: #10263f;
+}
+
+#cc-main .cm__btn[data-role="necessary"] {
+  order: 3;
+  min-height: 2.25rem;
+  border-color: transparent;
+  background: transparent;
+  color: #10263f;
+}
+
+#cc-main .cm__btn[data-role="necessary"]:hover {
+  background: #f3f6f8;
+  border-color: transparent;
+}
+
+#cc-main .cm__btn > span::after {
+  content: "";
+  flex: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  background: currentColor;
+  mask: center / contain no-repeat;
+}
+
+#cc-main .cm__btn[data-role="all"] > span::after {
+  mask-image: var(--cc-icon-arrow);
+}
+
+#cc-main .cm__btn[data-role="show"] > span::after {
+  mask-image: var(--cc-icon-gear);
+}
+
+#cc-main .cm__btn[data-role="necessary"] > span::after {
+  width: 0.875rem;
+  height: 0.875rem;
+  mask-image: var(--cc-icon-chevron);
+}
+
+/* Close (X): same as "Reject Non-Essential". */
+#cc-main .cm__btn--close {
+  position: absolute;
+  top: 0.875rem;
+  right: 0.875rem;
+  width: 2rem;
+  min-width: 0;
+  height: 2rem;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #8a97a5;
+}
+
+#cc-main .cm__btn--close:hover {
+  background: #f3f6f8;
+  color: #10263f;
+}
+
+#cc-main .cm__btn--close > svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  stroke: currentColor;
+  stroke-width: 1.75;
+}
+
+/* Wide screens: a floating bar, illustration | message | actions. */
+@media (min-width: 900px) {
+  #cc-main .cm.cm--wide {
+    width: min(68.75rem, calc(100% - 3rem)); /* = the site's content column */
+    max-width: none;
+    margin-bottom: 1.5rem;
+    border-radius: 1.5rem;
+  }
+
+  #cc-main .cm__body {
+    grid-template-columns: 14rem minmax(0, 1fr) 18.5rem;
+    gap: 1.5rem;
+    padding: 1.5rem 2.25rem 1.5rem 1.25rem;
+  }
+
+  #cc-main .cm__body::before {
+    display: block;
+    align-self: stretch;
+    min-height: 10.5rem;
+  }
+
+  #cc-main .cm__title {
+    font-size: 1.75rem;
+  }
+
+  #cc-main .cm__desc {
+    font-size: 0.9375rem;
+  }
+
+  #cc-main .cm__btn--close {
+    top: 1.25rem;
+    right: 1.25rem;
+  }
+}
+
+/* Phones and small tablets: a compact card, art hidden, full-width actions. */
+@media (max-width: 899px) {
+  #cc-main .cm.cm--wide {
+    border-radius: 1.25rem;
+  }
+
+  #cc-main .cm__body {
+    gap: 0.75rem;
+    padding: 1.125rem 1.125rem 1rem;
+  }
+
+  #cc-main .cm__texts {
+    padding-right: 2rem;
+  }
+
+  #cc-main .cm__title {
+    margin-bottom: 0.375rem;
+    font-size: 1.125rem;
+  }
+
+  #cc-main .cm__desc {
+    font-size: 0.8125rem;
+    line-height: 1.55;
+  }
+
+  #cc-main .cc__policy {
+    margin-top: 0.625rem;
+    font-size: 0.8125rem;
+  }
+
+  #cc-main .cc__policy::before {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  #cc-main .cm .cm__btns {
+    gap: 0.5rem;
+  }
+
+  #cc-main .cm__btn[data-role="all"],
+  #cc-main .cm__btn[data-role="show"] {
+    min-height: 2.625rem;
+    font-size: 0.875rem;
+  }
+
+  #cc-main .cm__btn[data-role="necessary"] {
+    min-height: 2rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* While the preferences window is open, the banner steps aside. */
+html.show--preferences #cc-main .cc--anim .cm {
+  visibility: hidden !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #cc-main * {
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+  }
+}

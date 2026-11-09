@@ -1,9 +1,11 @@
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { CookieSettingsButton } from "@/components/consent/cookie-settings-button";
 import { HomeLink } from "@/components/layout/home-link";
 import { MyQuotesFooterLink } from "@/components/layout/my-quotes-footer-link";
 import { Container } from "@/components/ui/layout";
+import { cookieBannerEnabled } from "@/lib/analytics";
 import { getOrganisation, getSiteContent } from "@/lib/content";
 import { legalLinks, navigation, site } from "@/lib/site";
 
@@ -138,6 +140,11 @@ export async function SiteFooter() {
                 </Link>
               </li>
             ))}
+            {cookieBannerEnabled ? (
+              <li className="sm:px-6 sm:first:pl-0 sm:last:pr-0">
+                <CookieSettingsButton />
+              </li>
+            ) : null}
           </ul>
         </Container>
       </div>

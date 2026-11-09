@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Script from "next/script";
 import { useEffect, useRef } from "react";
 import { isTrackedPath, measuredLocation } from "@/lib/analytics";
+import { useAnalyticsConsent } from "@/lib/consent";
 
 declare global {
   interface Window {
@@ -14,7 +15,11 @@ declare global {
 }
 
 /**
- * Google tag (gtag.js) for every public page.
+ * Google tag (gtag.js) for every public page, once the visitor has accepted
+ * analytics cookies (see lib/consent.ts). Before that, and again if they
+ * withdraw, nothing is loaded or sent: the Google script is not even requested
+ * until the first Accept, and Google's own opt-out switch pauses a script that
+ * is already running.
  *
  * - The script loads only on public pages: a visit that starts on a private
  *   page (account, one-time links, messages) never loads it.
@@ -28,13 +33,15 @@ declare global {
 export function GoogleAnalytics({ measurementId }: { measurementId: string }) {
   const pathname = usePathname();
   const started = useRef(false);
+  const consented = useAnalyticsConsent();
   const tracked = isTrackedPath(pathname);
+  const active = tracked && consented;
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: `pathname` is the trigger, so every navigation sends one page view
   useEffect(() => {
     const disableKey = `ga-disable-${measurementId}` as const;
-    window[disableKey] = !tracked;
-    if (!tracked) return;
+    window[disableKey] = !active;
+    if (!active) return;
 
     window.dataLayer = window.dataLayer ?? [];
     if (!window.gtag) {
@@ -53,9 +60,9 @@ export function GoogleAnalytics({ measurementId }: { measurementId: string }) {
       page_location: measuredLocation(window.location),
       page_path: window.location.pathname,
     });
-  }, [pathname, tracked, measurementId]);
+  }, [pathname, active, measurementId]);
 
-  if (!tracked && !started.current) return null;
+  if (!consented || (!tracked && !started.current)) return null;
   return (
     <Script
       id="google-tag"
