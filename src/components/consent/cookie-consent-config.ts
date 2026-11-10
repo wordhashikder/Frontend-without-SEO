@@ -17,7 +17,7 @@ export function consentConfig(
     guiOptions: {
       consentModal: {
         layout: "box wide",
-        position: "bottom center",
+        position: "bottom left",
         equalWeightButtons: false,
         flipButtons: false,
       },

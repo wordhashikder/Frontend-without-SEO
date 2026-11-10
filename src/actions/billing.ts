@@ -22,6 +22,7 @@ const UNAVAILABLE =
  * The API returns a Stripe URL. It is still checked before redirecting, so a
  * misconfigured or compromised upstream cannot turn this into an open redirect.
  */
+
 function stripeUrl(value: string) {
   try {
     const url = new URL(value);
@@ -80,11 +81,6 @@ const NOT_AN_INSTALLER: BillingState = {
   message: "This account isn't linked to an installer business.",
 };
 
-/**
- * Every billing action starts here: the session is re-verified with the API
- * (the page having rendered proves nothing about this request). Redirects to
- * the login page when signed out; an API outage becomes a message.
- */
 async function installerSession(): Promise<
   { token: string } | { failed: BillingState }
 > {

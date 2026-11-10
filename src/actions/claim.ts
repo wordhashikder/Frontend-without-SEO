@@ -10,14 +10,6 @@ import { ApiError, api } from "@/lib/api";
 import { getClientIp } from "@/lib/request";
 import { routes } from "@/lib/site";
 
-/*
- * Claiming a free listing PickASparky added for a business:
- * 1. "Is this your business?" on the profile asks for the business email; the
- *    API emails a claim link when it matches the one on file (otherwise the
- *    team checks the request by hand). The answer never says which happened.
- * 2. The link opens /installer/claim/, where the business sets a password.
- */
-
 export type ClaimState = {
   ok: boolean;
   message?: string;

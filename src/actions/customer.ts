@@ -17,7 +17,6 @@ export type CustomerActionState = {
   ok: boolean;
   message?: string;
   fieldErrors?: Record<string, string>;
-  /** Bumped on every success, so a form can reset itself. */
   sentAt?: number;
 };
 

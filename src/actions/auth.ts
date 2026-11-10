@@ -183,8 +183,7 @@ export async function register(
 
   const sent: AuthState = { ok: true, values: { email: parsed.data.email } };
 
-  // Honeypot: a bot that fills the hidden field gets the normal confirmation
-  // and nothing is created.
+  // Honeypot: a bot that fills the hidden field gets the normal confirmation and nothing is created.
   if (field(formData, "website")) return sent;
 
   try {

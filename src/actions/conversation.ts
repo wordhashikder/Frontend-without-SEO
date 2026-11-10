@@ -14,7 +14,6 @@ export type ConversationState = {
   ok: boolean;
   message?: string;
   fieldErrors?: Record<string, string>;
-  /** Bumped on every success, so the form can reset itself. */
   sentAt?: number;
 };
 
@@ -102,6 +101,7 @@ export async function respondToOffer(
       fieldErrors: { note: parsedNote.error.issues[0]?.message ?? "" },
     };
   }
+
   try {
     await api.respondToOffer(
       parsedToken.data,
