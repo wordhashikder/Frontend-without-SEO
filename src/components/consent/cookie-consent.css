@@ -4,8 +4,8 @@
  * which the library creates, so no other part of the site is affected.
  * Values mirror the tokens in globals.css (primary, forest, ink, muted, line).
  *
- * Layout: a wide floating bar at the bottom of the page (illustration, message,
- * three actions); on phones the same content stacks into a compact card.
+ * Layout: a wide floating bar at the bottom of the page (message | three
+ * actions); on phones the same content stacks into a compact card.
  */
 #cc-main {
   --cc-font-family: var(--font-poppins), system-ui, sans-serif;
@@ -115,20 +115,6 @@
   gap: 1rem;
   align-items: center;
   padding: 1.25rem 1.25rem 1.5rem;
-}
-
-/*
- * Illustration (decorative): cookie in front of a shield, over a soft backdrop.
- * Public assets, so there is nothing for assistive technology to announce.
- */
-#cc-main .cm__body::before {
-  content: "";
-  display: none;
-  background:
-    url("/images/cookie-consent-cookie.png") left 4% bottom 6% / 52% auto
-    no-repeat,
-    url("/images/cookie-consent-shield.png") right 2% top 0 / 58% auto no-repeat,
-    url("/images/cookie-consent-backdrop.svg") center / contain no-repeat;
 }
 
 #cc-main .cm__title {
@@ -307,33 +293,43 @@
   stroke-width: 1.75;
 }
 
-/* Wide screens: a floating bar, illustration | message | actions. */
+/* Wide screens: a floating bar, message | divider | actions. */
 @media (min-width: 900px) {
   #cc-main .cm.cm--wide {
-    width: min(68.75rem, calc(100% - 3rem)); /* = the site's content column */
+    width: min(62.5rem, calc(100% - 3rem));
     max-width: none;
     margin-bottom: 1.5rem;
     border-radius: 1.5rem;
   }
 
   #cc-main .cm__body {
-    grid-template-columns: 14rem minmax(0, 1fr) 18.5rem;
-    gap: 1.5rem;
-    padding: 1.5rem 2.25rem 1.5rem 1.25rem;
-  }
-
-  #cc-main .cm__body::before {
-    display: block;
-    align-self: stretch;
-    min-height: 10.5rem;
+    grid-template-columns: minmax(0, 1fr) 21rem;
+    column-gap: 2.75rem;
+    padding: 1.75rem 4.25rem 1.75rem 2.5rem;
   }
 
   #cc-main .cm__title {
-    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.875rem;
   }
 
   #cc-main .cm__desc {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  #cc-main .cc__policy {
+    margin-top: 1.125rem;
     font-size: 0.9375rem;
+  }
+
+  /* A hairline between the message and the actions. */
+  #cc-main .cm .cm__btns {
+    align-self: stretch;
+    justify-content: center !important;
+    gap: 0.875rem;
+    padding-left: 2.75rem;
+    border-left: 1px solid #e5e9ee !important;
   }
 
   #cc-main .cm__btn--close {
@@ -342,7 +338,7 @@
   }
 }
 
-/* Phones and small tablets: a compact card, art hidden, full-width actions. */
+/* Phones and small tablets: a compact card with full-width actions. */
 @media (max-width: 899px) {
   #cc-main .cm.cm--wide {
     border-radius: 1.25rem;
