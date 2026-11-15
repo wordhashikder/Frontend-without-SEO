@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ScrollButton } from "@/components/layout/section-link";
 import { cn } from "@/lib/utils";
 
 export type TocItem = { id: string; title: string };
@@ -9,8 +10,8 @@ export type TocItem = { id: string; title: string };
 const READING_LINE = 0.25;
 
 /**
- * "On this page" links. They are plain anchors, so they work without
- * JavaScript; once hydrated, the section being read is highlighted.
+ * "On this page" buttons that scroll to a section (no `#` is added to the address);
+ * the section being read is highlighted.
  */
 export function LegalToc({ items }: { items: TocItem[] }) {
   const [activeId, setActiveId] = useState(items[0]?.id);
@@ -66,18 +67,18 @@ export function LegalToc({ items }: { items: TocItem[] }) {
           const active = item.id === activeId;
           return (
             <li key={item.id}>
-              <a
-                href={`#${item.id}`}
-                aria-current={active ? "location" : undefined}
+              <ScrollButton
+                target={item.id}
+                current={active}
                 className={cn(
-                  "-ml-px flex min-h-10 items-center border-l-2 py-1 pl-4 text-sm leading-snug transition-colors lg:min-h-9",
+                  "-ml-px flex min-h-10 w-full items-center border-l-2 py-1 pl-4 text-sm leading-snug transition-colors lg:min-h-9",
                   active
                     ? "border-primary font-semibold text-primary"
                     : "border-transparent text-muted hover:text-ink",
                 )}
               >
                 {item.title}
-              </a>
+              </ScrollButton>
             </li>
           );
         })}

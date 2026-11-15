@@ -35,9 +35,7 @@ export const routes = {
   home: "/",
   quotes: "/get-quotes/",
   howItWorks: "/how-it-works/",
-  howItWorksInstallers: "/how-it-works/#for-electricians",
   faq: "/faq/",
-  faqInstallers: "/faq/#for-electricians",
   accreditations: "/electrician-accreditations/",
   safety: "/electrical-safety-regulations/",
   vetting: "/how-we-vet-installers/",
@@ -84,7 +82,12 @@ export const blogPostPath = (postSlug: string) => `${routes.blog}${postSlug}/`;
 export const blogListingPath = (page: number) =>
   page <= 1 ? routes.blog : `${routes.blog}page/${page}/`;
 
-export type NavLink = { label: string; href: string };
+export type NavLink = {
+  label: string;
+  href: string;
+  /** Section of the page to scroll to once it opens (no `#` in the URL). */
+  section?: string;
+};
 export type NavGroup = { title: string; links: NavLink[] };
 
 /** Footer link columns. */
@@ -104,8 +107,12 @@ export const navigation: NavGroup[] = [
     title: "For Installers",
     links: [
       { label: "Join as an Installer", href: routes.join },
-      { label: "How It Works", href: routes.howItWorksInstallers },
-      { label: "Installer FAQ", href: routes.faqInstallers },
+      {
+        label: "How It Works",
+        href: routes.howItWorks,
+        section: "for-electricians",
+      },
+      { label: "Installer FAQ", href: routes.faq, section: "for-electricians" },
       { label: "Installer Login", href: routes.login },
     ],
   },

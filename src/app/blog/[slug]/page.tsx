@@ -11,6 +11,7 @@ import { api } from "@/lib/api";
 import {
   absoluteUrl,
   blogPostingSchema,
+  entityId,
   pageMetadata,
   webPageSchema,
 } from "@/lib/seo";
@@ -172,7 +173,7 @@ export default async function BlogPostPage(props: Props) {
             title: post.seo_title ?? post.title,
             description,
             path,
-            extra: { mainEntity: { "@id": `${absoluteUrl(path)}#article` } },
+            extra: { mainEntity: { "@id": entityId("article", path) } },
           }),
           blogPostingSchema({
             title: post.title,

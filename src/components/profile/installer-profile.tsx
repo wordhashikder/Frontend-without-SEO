@@ -16,6 +16,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ClaimListing } from "@/components/claim/claim-listing";
+import { ScrollButton } from "@/components/layout/section-link";
 import { CoverageMap } from "@/components/profile/coverage-map";
 import { Gallery } from "@/components/profile/gallery";
 import { QuoteCard } from "@/components/profile/quote-card";
@@ -31,7 +32,7 @@ import { CheckBullet } from "@/components/ui/icon-badge";
 import { Container } from "@/components/ui/layout";
 import { StarRating } from "@/components/ui/star-rating";
 import { accreditationLabels, serviceLabels } from "@/content/labels";
-import { absoluteUrl, installerSchema, webPageSchema } from "@/lib/seo";
+import { entityId, installerSchema, webPageSchema } from "@/lib/seo";
 import { installerPath, locationPath, routes } from "@/lib/site";
 import type {
   AccreditationScheme,
@@ -198,8 +199,8 @@ export function InstallerProfile({
                   <p className="mt-1 text-sm">{installer.tagline}</p>
                 ) : null}
                 {hasRating && installer.rating_avg !== null ? (
-                  <a
-                    href="#reviews"
+                  <ScrollButton
+                    target="reviews"
                     className="mt-2 inline-flex flex-wrap items-center gap-x-2 text-sm hover:underline"
                   >
                     <StarRating rating={installer.rating_avg} />
@@ -207,7 +208,7 @@ export function InstallerProfile({
                       {installer.rating_avg.toFixed(1)}
                     </span>
                     <span>({reviewsLabel})</span>
-                  </a>
+                  </ScrollButton>
                 ) : (
                   <p className="mt-2 text-sm text-subtle">No reviews yet</p>
                 )}
@@ -556,7 +557,7 @@ export function InstallerProfile({
               installer.tagline ??
               `${name} is an EV charger installer covering ${installer.town}.`,
             path,
-            extra: { mainEntity: { "@id": `${absoluteUrl(path)}#business` } },
+            extra: { mainEntity: { "@id": entityId("business", path) } },
           }),
           installerSchema({
             name,

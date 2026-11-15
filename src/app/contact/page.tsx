@@ -13,8 +13,8 @@ import { PageSchema } from "@/components/sections/page-schema";
 import { IconBadge } from "@/components/ui/icon-badge";
 import { Container, Eyebrow } from "@/components/ui/layout";
 import { getContent, getOrganisation, getSiteContent } from "@/lib/content";
-import { absoluteUrl, pageMetadata } from "@/lib/seo";
-import { routes, site } from "@/lib/site";
+import { absoluteUrl, entityId, pageMetadata } from "@/lib/seo";
+import { routes } from "@/lib/site";
 import { keyed } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -29,7 +29,7 @@ const promiseIcons = [MessageSquareMore, ShieldCheck, UsersRound];
 function supportContact(name: string, email: string) {
   return {
     "@type": "Organization",
-    "@id": `${site.url}/#organization`,
+    "@id": entityId("organization"),
     name,
     url: absoluteUrl(routes.home),
     email,

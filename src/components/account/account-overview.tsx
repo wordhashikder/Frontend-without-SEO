@@ -17,6 +17,7 @@ import {
 } from "@/components/account/billing-actions";
 import { Card, textLink } from "@/components/auth/auth-card";
 import { SubmitButton } from "@/components/auth/submit-button";
+import { SectionLink } from "@/components/layout/section-link";
 import { IconBadge } from "@/components/ui/icon-badge";
 import { Container, Eyebrow } from "@/components/ui/layout";
 import type { PlanContent } from "@/content/plans";
@@ -247,9 +248,13 @@ function Membership({
           <UpgradeActions plans={paidPlans} />
           <p className="text-[13px]">
             Secure payment by Stripe. No long{"\u2011"}term contracts.{" "}
-            <Link href={`${routes.join}#plans-heading`} className={textLink}>
+            <SectionLink
+              href={routes.join}
+              section="plans-heading"
+              className={textLink}
+            >
               Compare plans
-            </Link>
+            </SectionLink>
           </p>
         </div>
       </>

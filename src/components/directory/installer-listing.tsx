@@ -12,9 +12,6 @@ export const MAX_LISTING_PAGE = MAX_INSTALLERS / INSTALLERS_PER_PAGE;
 export const listingPagePath = (basePath: string, page: number) =>
   page <= 1 ? basePath : `${basePath}page/${page}/`;
 
-/** Anchor on the first card added by the latest "Load More" step. */
-const NEW_ITEMS_ID = "more-installers";
-
 type InstallerListingProps = {
   city: string;
   installers: Installer[];
@@ -29,6 +26,8 @@ type InstallerListingProps = {
 /**
  * Card grid with a "Load More" link. The link is a real URL that renders the
  * longer list on the server, so it works without JavaScript and for crawlers.
+ * It is a plain path (no `#fragment`): `scroll={false}` keeps the reader where
+ * they are, so the cards added below the old ones come into view in place.
  */
 export function InstallerListing({
   city,
@@ -59,7 +58,6 @@ export function InstallerListing({
     );
   }
 
-  const firstNew = (page - 1) * INSTALLERS_PER_PAGE;
   const hasMore =
     page < MAX_LISTING_PAGE &&
     installers.length < Math.min(total, MAX_INSTALLERS);
@@ -67,11 +65,8 @@ export function InstallerListing({
   return (
     <>
       <ul className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-        {installers.map((installer, index) => (
-          <li
-            key={installer.slug}
-            id={page > 1 && index === firstNew ? NEW_ITEMS_ID : undefined}
-          >
+        {installers.map((installer) => (
+          <li key={installer.slug}>
             <InstallerCard installer={installer} />
           </li>
         ))}
@@ -82,7 +77,7 @@ export function InstallerListing({
       {hasMore ? (
         <div className="mt-6 text-center">
           <ButtonLink
-            href={`${listingPagePath(basePath, page + 1)}#${NEW_ITEMS_ID}`}
+            href={listingPagePath(basePath, page + 1)}
             scroll={false}
             arrow
           >

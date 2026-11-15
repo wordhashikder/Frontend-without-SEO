@@ -34,8 +34,8 @@ import {
 import type { PlanContent } from "@/content/plans";
 import { getContent } from "@/lib/content";
 import { getPlans } from "@/lib/plans";
-import { absoluteUrl, pageMetadata } from "@/lib/seo";
-import { routes, site } from "@/lib/site";
+import { absoluteUrl, entityId, pageMetadata } from "@/lib/seo";
+import { routes } from "@/lib/site";
 import { keyed } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -72,7 +72,7 @@ const membershipSchema = (description: string, plans: PlanContent[]) => ({
   description,
   url: absoluteUrl(routes.join),
   serviceType: "Customer enquiries and business listing for electricians",
-  provider: { "@id": `${site.url}/#organization` },
+  provider: { "@id": entityId("organization") },
   areaServed: { "@type": "Country", name: "United Kingdom" },
   audience: {
     "@type": "BusinessAudience",

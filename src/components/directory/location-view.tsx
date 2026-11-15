@@ -4,7 +4,10 @@ import {
   HowItWorksSteps,
   quoteSteps,
 } from "@/components/directory/how-it-works-steps";
-import { InstallerListing } from "@/components/directory/installer-listing";
+import {
+  InstallerListing,
+  listingPagePath,
+} from "@/components/directory/installer-listing";
 import { LocationMap } from "@/components/directory/location-map";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { ContentMarkdown } from "@/components/sections/content-markdown";
@@ -122,6 +125,8 @@ export function LocationView({
 }: LocationViewProps) {
   const city = location.name;
   const path = locationPath(location.slug);
+  // Page 2 onwards are their own URLs: the page's structured data and breadcrumb point at it.
+  const pagePath = listingPagePath(path, page);
   const { hero, installers: listing, why, local } = content;
   const steps = quoteSteps(content.steps.items);
   // This location's own text (SEO & Locations) replaces the template's intro.
@@ -184,6 +189,7 @@ export function LocationView({
               { name: "Home", path: routes.home },
               { name: "EV Charger Installers", path: routes.installers },
               { name: city, path },
+              ...(page > 1 ? [{ name: `Page ${page}`, path: pagePath }] : []),
             ]}
           />
           <div className="mt-6 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
@@ -273,7 +279,7 @@ export function LocationView({
             type: "CollectionPage",
             title: location.seo_title ?? content.seo.title,
             description: location.seo_description ?? content.seo.description,
-            path,
+            path: pagePath,
           }),
           serviceSchema({
             name: `EV charger installer quotes in ${city}`,

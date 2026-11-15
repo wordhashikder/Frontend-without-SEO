@@ -49,8 +49,10 @@ export async function loadLocation(slug: string, page = 1) {
 }
 
 /**
- * Every listing page shares one title, description and canonical (the location
- * page itself), because later pages repeat page 1 and only add to it.
+ * Every listing page is its own URL, so each one gets its own canonical, Open
+ * Graph URL, title and description: page 1 is the location page itself and page
+ * N is `{location}/page/N/`. Pages after the first say "Page N", so no two pages
+ * share a title or snippet.
  */
 export function locationMetadata(
   location: {
@@ -62,24 +64,26 @@ export function locationMetadata(
   total: number,
   page = 1,
 ): Metadata {
-  const path = locationPath(location.slug);
+  const basePath = locationPath(location.slug);
+  const path = listingPagePath(basePath, page);
   const hasNext =
     page < MAX_LISTING_PAGE &&
     page * INSTALLERS_PER_PAGE < Math.min(total, MAX_INSTALLERS);
 
   // This location's own snippet (SEO & Locations) wins over the template.
-  const base = pageMetadata({
-    title: location.seo_title ?? seo.title,
-    description: location.seo_description ?? seo.description,
-    path,
-  });
+  const suffix = page > 1 ? `: Page ${page}` : "";
+  const title = `${location.seo_title ?? seo.title}${suffix}`;
+  const description = `${location.seo_description ?? seo.description}${
+    page > 1 ? ` (Page ${page})` : ""
+  }`;
+  const base = pageMetadata({ title, description, path });
 
   return {
     ...base,
-    ...(location.seo_title ? { title: { absolute: location.seo_title } } : {}),
+    ...(location.seo_title ? { title: { absolute: title } } : {}),
     pagination: {
-      previous: page > 1 ? listingPagePath(path, page - 1) : null,
-      next: hasNext ? listingPagePath(path, page + 1) : null,
+      previous: page > 1 ? listingPagePath(basePath, page - 1) : null,
+      next: hasNext ? listingPagePath(basePath, page + 1) : null,
     },
   };
 }

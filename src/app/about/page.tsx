@@ -26,8 +26,8 @@ import {
   SectionHeading,
 } from "@/components/ui/layout";
 import { getContent } from "@/lib/content";
-import { pageMetadata } from "@/lib/seo";
-import { routes, site } from "@/lib/site";
+import { entityId, pageMetadata } from "@/lib/seo";
+import { routes } from "@/lib/site";
 import { keyed } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -255,8 +255,8 @@ export default async function AboutPage() {
         type="AboutPage"
         crumb="About"
         extra={{
-          about: { "@id": `${site.url}/#organization` },
-          mainEntity: { "@id": `${site.url}/#organization` },
+          about: { "@id": entityId("organization") },
+          mainEntity: { "@id": entityId("organization") },
         }}
       />
     </>

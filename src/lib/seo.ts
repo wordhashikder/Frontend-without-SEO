@@ -15,6 +15,14 @@ function canonicalPath(path: string) {
 /** Absolute, canonical URL for a site path. */
 export const absoluteUrl = (path = "/") => `${site.url}${canonicalPath(path)}`;
 
+/**
+ * Identifier of a structured-data entity (organisation, a page, its breadcrumb...), used
+ * wherever the entity is referred to. A URN rather than a URL, so it has no `#` and is not
+ * a link anything could follow.
+ */
+export const entityId = (kind: string, path?: string) =>
+  `urn:pickasparky:${kind}${path === undefined ? "" : `:${canonicalPath(path)}`}`;
+
 type PageMeta = {
   title: string;
   description: string;
@@ -63,7 +71,7 @@ export function organizationSchema(): Json {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": `${site.url}/#organization`,
+    "@id": entityId("organization"),
     name: site.name,
     url: absoluteUrl("/"),
     logo: absoluteUrl("/logo.svg"),
@@ -85,11 +93,11 @@ export function websiteSchema(): Json {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "@id": `${site.url}/#website`,
+    "@id": entityId("website"),
     name: site.name,
     url: absoluteUrl("/"),
     inLanguage: "en-GB",
-    publisher: { "@id": `${site.url}/#organization` },
+    publisher: { "@id": entityId("organization") },
   };
 }
 
@@ -118,13 +126,13 @@ export function webPageSchema(args: {
   return {
     "@context": "https://schema.org",
     "@type": args.type ?? "WebPage",
-    "@id": `${url}#webpage`,
+    "@id": entityId("webpage", args.path),
     url,
     name: args.title,
     description: args.description,
     inLanguage: "en-GB",
-    isPartOf: { "@id": `${site.url}/#website` },
-    publisher: { "@id": `${site.url}/#organization` },
+    isPartOf: { "@id": entityId("website") },
+    publisher: { "@id": entityId("organization") },
     ...(args.path === "/"
       ? {}
       : { breadcrumb: { "@id": breadcrumbId(args.path) } }),
@@ -133,7 +141,7 @@ export function webPageSchema(args: {
 }
 
 /** `@id` of a page's BreadcrumbList, so its WebPage node can point at it. */
-const breadcrumbId = (path: string) => `${absoluteUrl(path)}#breadcrumb`;
+const breadcrumbId = (path: string) => entityId("breadcrumb", path);
 
 /** The trail to a page; the last item is the page itself. */
 export function breadcrumbSchema(
@@ -205,7 +213,7 @@ export function serviceSchema(args: {
     description: args.description,
     url: absoluteUrl(args.path),
     serviceType: "EV charger installation quotes",
-    provider: { "@id": `${site.url}/#organization` },
+    provider: { "@id": entityId("organization") },
     areaServed: args.areaServed
       ? { "@type": "City", name: args.areaServed }
       : { "@type": "Country", name: "United Kingdom" },
@@ -250,7 +258,7 @@ export function installerSchema(args: {
   return {
     "@context": "https://schema.org",
     "@type": "Electrician",
-    "@id": `${url}#business`,
+    "@id": entityId("business", args.path),
     name: args.name,
     url,
     ...(args.description ? { description: args.description } : {}),
@@ -301,7 +309,7 @@ export function installerSchema(args: {
 }
 
 /** `@id` of the blog as a whole, shared by the listing and every article. */
-const blogId = () => `${absoluteUrl(routes.blog)}#blog`;
+const blogId = () => entityId("blog");
 
 /** Absolute URL for an image given as a site path or an absolute URL. */
 const imageUrl = (image: string) =>
@@ -310,7 +318,7 @@ const imageUrl = (image: string) =>
 /** The team byline is the organisation itself; any other name is a person. */
 const authorNode = (name: string) =>
   name === `${site.name} Team`
-    ? { "@id": `${site.url}/#organization` }
+    ? { "@id": entityId("organization") }
     : { "@type": "Person", name };
 
 type PostSummary = {
@@ -328,7 +336,7 @@ export function blogSchema(posts: PostSummary[]): Json {
     name: `${site.name} Blog`,
     url: absoluteUrl(routes.blog),
     inLanguage: "en-GB",
-    publisher: { "@id": `${site.url}/#organization` },
+    publisher: { "@id": entityId("organization") },
     blogPost: posts.map((post) => ({
       "@type": "BlogPosting",
       headline: post.title,
@@ -355,17 +363,17 @@ export function blogPostingSchema(args: {
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "@id": `${url}#article`,
+    "@id": entityId("article", args.path),
     headline: args.title,
     description: args.description,
     url,
-    mainEntityOfPage: { "@id": `${url}#webpage` },
+    mainEntityOfPage: { "@id": entityId("webpage", args.path) },
     isPartOf: { "@id": blogId() },
     ...(args.image ? { image: imageUrl(args.image) } : {}),
     datePublished: args.publishedAt,
     dateModified: args.modifiedAt,
     author: authorNode(args.author),
-    publisher: { "@id": `${site.url}/#organization` },
+    publisher: { "@id": entityId("organization") },
     articleSection: args.section,
     timeRequired: `PT${args.minutes}M`,
     inLanguage: "en-GB",

@@ -1,5 +1,4 @@
-import { absoluteUrl } from "@/lib/seo";
-import { site } from "@/lib/site";
+import { absoluteUrl, entityId } from "@/lib/seo";
 
 /**
  * schema.org `Article` for the evergreen guide pages. Publication dates are
@@ -15,7 +14,7 @@ export function guideArticleSchema(args: {
   about: string[];
 }): Record<string, unknown> {
   const url = absoluteUrl(args.path);
-  const organization = { "@id": `${site.url}/#organization` };
+  const organization = { "@id": entityId("organization") };
   return {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -27,7 +26,7 @@ export function guideArticleSchema(args: {
     inLanguage: "en-GB",
     author: organization,
     publisher: organization,
-    isPartOf: { "@id": `${site.url}/#website` },
+    isPartOf: { "@id": entityId("website") },
     about: args.about.map((name) => ({ "@type": "Thing", name })),
   };
 }
