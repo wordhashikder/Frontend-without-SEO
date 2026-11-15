@@ -3,8 +3,9 @@ import "server-only";
 import type { Metadata } from "next";
 import {
   INSTALLERS_PER_PAGE,
-  listingPageCount,
   listingPagePath,
+  MAX_INSTALLERS,
+  MAX_LISTING_PAGE,
 } from "@/components/directory/installer-listing";
 import { api } from "@/lib/api";
 import { getContent, type PageContent } from "@/lib/content";
@@ -12,7 +13,7 @@ import { pageMetadata } from "@/lib/seo";
 import { locationPath } from "@/lib/site";
 
 /**
- * Data for one page of a location's installers (12 per page).
+ * Data for a location page showing `page` cumulative pages of installers.
  * Shared by the location route (page 1) and its `/page/[number]` sibling;
  * `fetch` de-duplicates the calls between generateMetadata and the page.
  */
@@ -23,8 +24,8 @@ export async function loadLocation(slug: string, page = 1) {
   const [listing, reviews, locations, content] = await Promise.all([
     api.installers({
       location: slug,
-      page,
-      pageSize: INSTALLERS_PER_PAGE,
+      page: 1,
+      pageSize: Math.min(page * INSTALLERS_PER_PAGE, MAX_INSTALLERS),
     }),
     api.featuredReviews(10),
     // Neighbouring towns for the local map (cached for an hour, shared by every page).
@@ -48,10 +49,9 @@ export async function loadLocation(slug: string, page = 1) {
 }
 
 /**
- * Every listing page is its own URL, so each one gets its own canonical, Open
- * Graph URL, title and description: page 1 is the location page itself and page
- * N is `{location}/page/N/`. Pages after the first say "Page N", so no two pages
- * share a title or snippet.
+ * Every listing page shares one title, description and canonical (the location
+ * page itself): "Load More" pages repeat the installers already shown and only
+ * add to them, so search engines are pointed at the main city page.
  */
 export function locationMetadata(
   location: {
@@ -63,20 +63,16 @@ export function locationMetadata(
   total: number,
   page = 1,
 ): Metadata {
-  const basePath = locationPath(location.slug);
-  const path = listingPagePath(basePath, page);
-  const hasNext = page < listingPageCount(total);
+  const path = locationPath(location.slug);
+  const hasNext =
+    page < MAX_LISTING_PAGE &&
+    page * INSTALLERS_PER_PAGE < Math.min(total, MAX_INSTALLERS);
 
-  // This location's own snippet (SEO & Locations) wins over the template.
-  const suffix = page > 1 ? `: Page ${page}` : "";
-  const title = `${location.seo_title ?? seo.title}${suffix}`;
-  const description = `${location.seo_description ?? seo.description}${
-    page > 1 ? ` (Page ${page})` : ""
-  }`;
-  // A title written for this location is shown as written, without the brand suffix.
+  // This location's own snippet (SEO & Locations) wins over the template; it is shown
+  // as written, without the brand suffix.
   const base = pageMetadata({
-    title,
-    description,
+    title: location.seo_title ?? seo.title,
+    description: location.seo_description ?? seo.description,
     path,
     standalone: location.seo_title ? true : undefined,
   });
@@ -84,8 +80,8 @@ export function locationMetadata(
   return {
     ...base,
     pagination: {
-      previous: page > 1 ? listingPagePath(basePath, page - 1) : null,
-      next: hasNext ? listingPagePath(basePath, page + 1) : null,
+      previous: page > 1 ? listingPagePath(path, page - 1) : null,
+      next: hasNext ? listingPagePath(path, page + 1) : null,
     },
   };
 }

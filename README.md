@@ -75,10 +75,11 @@ Before opening a pull request: `npm run lint && npm run typecheck && npm run bui
 
 - Every page address ends with a slash, and links, redirects, canonical tags and the sitemap
   all use that form (`trailingSlash`; `src/lib/site.ts` holds every route).
-- **One canonical per page.** Location listings are paginated as `/uk/ev-charger-installers/<town>/page/N/`.
-  Each page lists its own 12 installers (page 2 shows installers 13 to 24), links to all other pages
-  in a numbered pager, and declares itself as its own canonical, with its own title and description.
-  Every installer profile is also in the sitemap.
+- **City listings load on top of each other.** "Load More" on `/uk/ev-charger-installers/<town>/`
+  opens `/uk/ev-charger-installers/<town>/page/N/`, which shows the installers already listed plus
+  12 more (12 per step, up to 96). These pages repeat page 1 and add to it, so they share the city
+  page's title and description, and their canonical (and `og:url`) is the main city page. Every
+  installer profile is in the sitemap and linked from the site.
 - **One title everywhere.** The browser tab, Open Graph and Twitter titles are identical and name the
   brand once. `pageMetadata()` (`src/lib/seo.ts`) adds " | PickASparky" unless the title already
   contains the brand or is marked `standalone`.
