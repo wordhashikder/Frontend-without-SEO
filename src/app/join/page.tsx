@@ -290,7 +290,6 @@ export default async function JoinPage() {
         title={seo.title}
         description={seo.description}
         path={routes.join}
-        crumb="Join as an Installer"
       />
       <JsonLd data={membershipSchema(seo.description, plans)} />
     </>

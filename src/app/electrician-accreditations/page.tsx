@@ -192,7 +192,6 @@ export default async function AccreditationsPage() {
         title={seo.title}
         description={seo.description}
         path={routes.accreditations}
-        crumb="Electrician Accreditations"
       />
       <JsonLd
         data={guideArticleSchema({

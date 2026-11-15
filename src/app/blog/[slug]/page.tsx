@@ -40,7 +40,13 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const path = blogPostPath(post.slug);
   const title = post.seo_title ?? post.title;
   const description = post.seo_description ?? post.excerpt;
-  const metadata = pageMetadata({ title, description, path });
+  // An SEO title is written to stand alone, without the " | PickASparky" suffix.
+  const metadata = pageMetadata({
+    title,
+    description,
+    path,
+    standalone: post.seo_title ? true : undefined,
+  });
   const image = post.cover_image_url
     ? {
         url: post.cover_image_url.startsWith("/")
@@ -53,8 +59,6 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   return {
     ...metadata,
     authors: [{ name: post.author_name }],
-    // An SEO title is written to stand alone, without the " | PickASparky" suffix.
-    ...(post.seo_title ? { title: { absolute: post.seo_title } } : {}),
     openGraph: {
       ...metadata.openGraph,
       type: "article",

@@ -47,11 +47,19 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   } EV charger installer covering ${town}`;
 
   const fullTitle = `${name}: EV Charger Installer in ${town}`;
-  // The root layout appends " | PickASparky" (14 characters) to `title`.
-  const title = fit([fullTitle, `${name}: EV Charger Installer`, name], 46);
+  // The brand suffix (" | PickASparky", 14 characters) is added to `title`, so it must fit
+  // in 46. When only a shorter title fits but the full one is still under 60 characters
+  // without the suffix, keep the town (what people search for) and drop the suffix instead.
+  const shortTitle = fit(
+    [fullTitle, `${name}: EV Charger Installer`, name],
+    46,
+  );
+  const standalone = shortTitle !== fullTitle && fullTitle.length <= 60;
+  const title = standalone ? fullTitle : shortTitle;
 
   const metadata = pageMetadata({
     title,
+    standalone,
     description: fit(
       [
         `${intro} and nearby areas. ${check} and areas covered, then request a free, no-obligation quote.`,
@@ -64,12 +72,6 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     ),
     path,
   });
-
-  // When the brand suffix would push the title past 60 characters, keep the
-  // town (what people search for) and drop the suffix instead.
-  if (title !== fullTitle && fullTitle.length <= 60) {
-    metadata.title = { absolute: fullTitle };
-  }
 
   const photo = installer.photos[0];
   return photo

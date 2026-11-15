@@ -1,8 +1,5 @@
 import { JsonLd } from "@/components/sections/json-ld";
-import { breadcrumbSchema, type WebPageType, webPageSchema } from "@/lib/seo";
-import { routes } from "@/lib/site";
-
-type Crumb = { name: string; path: string };
+import { type WebPageType, webPageSchema } from "@/lib/seo";
 
 type PageSchemaProps = {
   /** A more specific schema.org page type, when one fits. */
@@ -12,44 +9,37 @@ type PageSchemaProps = {
   description: string;
   path: string;
   /**
-   * This page's label in the breadcrumb trail. Set it on pages that have no
-   * visible breadcrumbs; pages that render `<Breadcrumbs>` already publish
-   * their trail, so they leave it out.
+   * Set on pages that render `<Breadcrumbs>` (which publishes the BreadcrumbList): the
+   * page then points at its trail. Pages without a visible trail have no breadcrumb markup.
    */
-  crumb?: string;
-  /** Pages between Home and this one. */
-  parents?: Crumb[];
+  breadcrumb?: boolean;
   /** Extra properties for the WebPage node, e.g. `mainEntity`. */
   extra?: Record<string, unknown>;
 };
 
 /**
  * Page-level structured data, used once on every public page: the page as a
- * schema.org `WebPage` linked to the site and the organisation, plus its
- * breadcrumb trail.
+ * schema.org `WebPage` linked to the site and the organisation. Breadcrumb
+ * structured data is only published where the page shows breadcrumbs.
  */
 export function PageSchema({
   type,
   title,
   description,
   path,
-  crumb,
-  parents = [],
+  breadcrumb = false,
   extra,
 }: PageSchemaProps) {
-  const page = webPageSchema({ type, title, description, path, extra });
-  if (!crumb) return <JsonLd data={page} />;
-
   return (
     <JsonLd
-      data={[
-        page,
-        breadcrumbSchema([
-          { name: "Home", path: routes.home },
-          ...parents,
-          { name: crumb, path },
-        ]),
-      ]}
+      data={webPageSchema({
+        type,
+        title,
+        description,
+        path,
+        breadcrumb,
+        extra,
+      })}
     />
   );
 }

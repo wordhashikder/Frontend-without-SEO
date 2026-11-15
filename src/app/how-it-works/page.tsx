@@ -115,7 +115,6 @@ export default async function HowItWorksPage() {
         title={seo.title}
         description={seo.description}
         path={routes.howItWorks}
-        crumb="How It Works"
       />
       <JsonLd
         data={howToSchema({

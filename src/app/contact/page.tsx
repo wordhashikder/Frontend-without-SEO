@@ -157,7 +157,6 @@ export default async function ContactPage() {
         description={seo.description}
         path={routes.contact}
         type="ContactPage"
-        crumb="Contact Us"
         extra={{
           mainEntity: supportContact(organisation.name, organisation.email),
         }}

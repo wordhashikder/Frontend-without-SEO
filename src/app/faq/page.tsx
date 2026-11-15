@@ -138,7 +138,6 @@ export default async function FaqPage() {
         description={seo.description}
         path={routes.faq}
         type="FAQPage"
-        crumb="FAQ"
         extra={{
           mainEntity: faqEntities([...homeowners.items, ...electricians.items]),
         }}

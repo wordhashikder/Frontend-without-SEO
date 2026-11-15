@@ -149,7 +149,6 @@ export default async function ElectricalSafetyPage() {
         title={seo.title}
         description={seo.description}
         path={routes.safety}
-        crumb="Electrical Safety & Regulations"
       />
       <JsonLd
         data={guideArticleSchema({

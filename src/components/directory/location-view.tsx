@@ -44,7 +44,7 @@ type LocationViewProps = {
   content: PageContent<"location">;
   /** Other locations, for the neighbouring towns on the local map. */
   neighbours: LocationSummary[];
-  /** The installers to list (cumulative across "Load More" pages). */
+  /** The installers to list (this listing page only). */
   installers: InstallerCard[];
   /** All installers covering this location. */
   total: number;

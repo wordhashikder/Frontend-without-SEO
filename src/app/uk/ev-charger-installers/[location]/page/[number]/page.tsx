@@ -10,10 +10,11 @@ import { locationPath } from "@/lib/site";
 import { loadLocation, locationMetadata } from "../../location-data";
 
 /*
- * "Load More" target: the location page with `number` pages of installers
- * (12 each, cumulative). It is a path segment rather than `?page=` because
- * reading `searchParams` would make the location page render on every request;
- * as a sibling route both stay ISR-cached and the link works without JavaScript.
+ * Page `number` of a location's installers (12 each; page 1 is the location page).
+ * Every page lists its own installers and is its own canonical URL. It is a path
+ * segment rather than `?page=` because reading `searchParams` would make the
+ * location page render on every request; as a sibling route both stay ISR-cached
+ * and the links work without JavaScript.
  */
 export const revalidate = 300;
 export const dynamicParams = true;

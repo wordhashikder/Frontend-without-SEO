@@ -36,10 +36,7 @@ const installTypeLinks = [
 
 export async function generateMetadata(): Promise<Metadata> {
   const { seo } = await getContent("home");
-  return {
-    ...pageMetadata({ ...seo, path: routes.home }),
-    title: { absolute: seo.title },
-  };
+  return pageMetadata({ ...seo, path: routes.home });
 }
 
 export default async function HomePage() {

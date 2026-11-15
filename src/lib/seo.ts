@@ -29,17 +29,27 @@ type PageMeta = {
   path: string;
   /** Set false for utility pages (login, account, form confirmations). */
   index?: boolean;
+  /**
+   * The title is complete as written, so no " | PickASparky" is added to it. Left out, a
+   * title that already names the brand counts as complete; any other title gets the suffix.
+   */
+  standalone?: boolean;
 };
 
-/** Consistent title, description, canonical and social tags for a page. */
+/**
+ * Consistent title, description, canonical and social tags for a page. The browser tab,
+ * Open Graph and Twitter titles always read the same, with the brand named once.
+ */
 export function pageMetadata({
   title,
   description,
   path,
   index = true,
+  standalone = title.toLowerCase().includes(site.name.toLowerCase()),
 }: PageMeta): Metadata {
+  const fullTitle = standalone ? title : `${title} | ${site.name}`;
   return {
-    title,
+    title: standalone ? { absolute: title } : title,
     description,
     alternates: { canonical: path },
     openGraph: {
@@ -47,12 +57,12 @@ export function pageMetadata({
       siteName: site.name,
       locale: site.locale,
       url: absoluteUrl(path),
-      title: `${title} | ${site.name}`,
+      title: fullTitle,
       description,
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | ${site.name}`,
+      title: fullTitle,
       description,
     },
     ...(index ? {} : { robots: { index: false, follow: false } }),
@@ -111,14 +121,20 @@ export type WebPageType =
 
 /**
  * The page itself as a `WebPage` (or a more specific subtype), tied to the
- * site, the organisation and the page's breadcrumb trail by `@id`. Every page
- * except the homepage has a BreadcrumbList with the matching `@id`.
+ * site and the organisation by `@id`, and to its breadcrumb trail when it shows
+ * one: the pages that render `<Breadcrumbs>` publish a BreadcrumbList with the
+ * matching `@id`.
  */
 export function webPageSchema(args: {
   type?: WebPageType;
   title: string;
   description: string;
   path: string;
+  /**
+   * Link the page to its BreadcrumbList. Only pages that show a breadcrumb trail (and
+   * publish its schema with `<Breadcrumbs>`) should; the default follows the homepage rule.
+   */
+  breadcrumb?: boolean;
   /** Extra properties for the node, e.g. `mainEntity`. */
   extra?: Json;
 }): Json {
@@ -133,9 +149,9 @@ export function webPageSchema(args: {
     inLanguage: "en-GB",
     isPartOf: { "@id": entityId("website") },
     publisher: { "@id": entityId("organization") },
-    ...(args.path === "/"
-      ? {}
-      : { breadcrumb: { "@id": breadcrumbId(args.path) } }),
+    ...((args.breadcrumb ?? args.path !== "/")
+      ? { breadcrumb: { "@id": breadcrumbId(args.path) } }
+      : {}),
     ...args.extra,
   };
 }

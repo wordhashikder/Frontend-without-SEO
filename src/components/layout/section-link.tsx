@@ -49,11 +49,18 @@ export function SectionLink({
   href,
   section,
   className,
+  rel,
+  current,
+  label,
   children,
 }: {
   href: string;
   section: string;
   className?: string;
+  rel?: string;
+  /** Marks the link as the reader's current page (e.g. in a pager). */
+  current?: boolean;
+  label?: string;
   children: ReactNode;
 }) {
   const pathname = usePathname();
@@ -61,6 +68,9 @@ export function SectionLink({
     <Link
       href={href}
       className={className}
+      rel={rel}
+      aria-current={current ? "page" : undefined}
+      aria-label={label}
       onClick={(event) => {
         if (pathname === href) {
           // Already on the page: just move to the section.

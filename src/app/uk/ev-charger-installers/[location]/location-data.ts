@@ -3,9 +3,8 @@ import "server-only";
 import type { Metadata } from "next";
 import {
   INSTALLERS_PER_PAGE,
+  listingPageCount,
   listingPagePath,
-  MAX_INSTALLERS,
-  MAX_LISTING_PAGE,
 } from "@/components/directory/installer-listing";
 import { api } from "@/lib/api";
 import { getContent, type PageContent } from "@/lib/content";
@@ -13,7 +12,7 @@ import { pageMetadata } from "@/lib/seo";
 import { locationPath } from "@/lib/site";
 
 /**
- * Data for a location page showing `page` cumulative pages of installers.
+ * Data for one page of a location's installers (12 per page).
  * Shared by the location route (page 1) and its `/page/[number]` sibling;
  * `fetch` de-duplicates the calls between generateMetadata and the page.
  */
@@ -24,8 +23,8 @@ export async function loadLocation(slug: string, page = 1) {
   const [listing, reviews, locations, content] = await Promise.all([
     api.installers({
       location: slug,
-      page: 1,
-      pageSize: Math.min(page * INSTALLERS_PER_PAGE, MAX_INSTALLERS),
+      page,
+      pageSize: INSTALLERS_PER_PAGE,
     }),
     api.featuredReviews(10),
     // Neighbouring towns for the local map (cached for an hour, shared by every page).
@@ -66,9 +65,7 @@ export function locationMetadata(
 ): Metadata {
   const basePath = locationPath(location.slug);
   const path = listingPagePath(basePath, page);
-  const hasNext =
-    page < MAX_LISTING_PAGE &&
-    page * INSTALLERS_PER_PAGE < Math.min(total, MAX_INSTALLERS);
+  const hasNext = page < listingPageCount(total);
 
   // This location's own snippet (SEO & Locations) wins over the template.
   const suffix = page > 1 ? `: Page ${page}` : "";
@@ -76,11 +73,16 @@ export function locationMetadata(
   const description = `${location.seo_description ?? seo.description}${
     page > 1 ? ` (Page ${page})` : ""
   }`;
-  const base = pageMetadata({ title, description, path });
+  // A title written for this location is shown as written, without the brand suffix.
+  const base = pageMetadata({
+    title,
+    description,
+    path,
+    standalone: location.seo_title ? true : undefined,
+  });
 
   return {
     ...base,
-    ...(location.seo_title ? { title: { absolute: title } } : {}),
     pagination: {
       previous: page > 1 ? listingPagePath(basePath, page - 1) : null,
       next: hasNext ? listingPagePath(basePath, page + 1) : null,

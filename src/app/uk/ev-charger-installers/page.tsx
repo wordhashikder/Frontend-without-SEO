@@ -275,6 +275,7 @@ export default async function InstallersHubPage() {
         description={seo.description}
         path={routes.installers}
         type="CollectionPage"
+        breadcrumb
       />
       {locations.length > 0 ? (
         <JsonLd

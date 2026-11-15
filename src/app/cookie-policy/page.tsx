@@ -20,7 +20,6 @@ export default async function Page() {
         title={content.seo.title}
         description={content.seo.description}
         path={routes.cookies}
-        crumb="Cookie Policy"
       />
     </>
   );

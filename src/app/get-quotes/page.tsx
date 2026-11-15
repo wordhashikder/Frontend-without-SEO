@@ -58,7 +58,6 @@ export default async function GetQuotesPage({
         title={seo.title}
         description={seo.description}
         path={routes.quotes}
-        crumb="Get Free Quotes"
       />
       <JsonLd
         data={serviceSchema({

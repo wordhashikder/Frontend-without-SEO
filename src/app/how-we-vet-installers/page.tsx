@@ -140,7 +140,6 @@ export default async function VettingPage() {
         title={seo.title}
         description={seo.description}
         path={routes.vetting}
-        crumb="How We Vet Installers"
       />
     </>
   );

@@ -253,7 +253,6 @@ export default async function AboutPage() {
         description={content.seo.description}
         path={routes.about}
         type="AboutPage"
-        crumb="About"
         extra={{
           about: { "@id": entityId("organization") },
           mainEntity: { "@id": entityId("organization") },

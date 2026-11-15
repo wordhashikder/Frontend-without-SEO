@@ -75,8 +75,16 @@ Before opening a pull request: `npm run lint && npm run typecheck && npm run bui
 
 - Every page address ends with a slash, and links, redirects, canonical tags and the sitemap
   all use that form (`trailingSlash`; `src/lib/site.ts` holds every route).
-- **One canonical per page.** Listing pages are paginated as `/uk/ev-charger-installers/<town>/page/N/`;
-  each page declares itself as its own canonical, with its own title and description.
+- **One canonical per page.** Location listings are paginated as `/uk/ev-charger-installers/<town>/page/N/`.
+  Each page lists its own 12 installers (page 2 shows installers 13 to 24), links to all other pages
+  in a numbered pager, and declares itself as its own canonical, with its own title and description.
+  Every installer profile is also in the sitemap.
+- **One title everywhere.** The browser tab, Open Graph and Twitter titles are identical and name the
+  brand once. `pageMetadata()` (`src/lib/seo.ts`) adds " | PickASparky" unless the title already
+  contains the brand or is marked `standalone`.
+- **Breadcrumb schema only where a breadcrumb is shown.** `<Breadcrumbs>` renders the trail and its
+  `BreadcrumbList` together (directory hub, locations, installer profiles, blog posts); other pages
+  publish no breadcrumb markup.
 - **No `#` in any URL.** Links never carry a fragment, canonical tags and the sitemap are clean,
   and structured-data identifiers are URNs (`entityId()` in `src/lib/seo.ts`). To take a reader to
   a section, use `ScrollButton` or `SectionLink` (`src/components/layout/section-link.tsx`):

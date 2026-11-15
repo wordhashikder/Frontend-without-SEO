@@ -169,8 +169,6 @@ export async function BlogListing({
         title={page > 1 ? `${seo.title} (page ${page})` : seo.title}
         description={seo.description}
         path={path}
-        crumb={page > 1 ? `Page ${page}` : "Blog"}
-        parents={page > 1 ? [{ name: "Blog", path: routes.blog }] : []}
         extra={{
           mainEntity: blogSchema(
             posts.map((post) => ({
