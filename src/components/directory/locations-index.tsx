@@ -20,7 +20,7 @@ function groupByRegion(locations: LocationSummary[]) {
     }));
 }
 
-/** Every location page with its installer count, as crawlable link lists under a heading per region (two columns of regions on desktop). */
+/** Every location page, as crawlable link lists under a heading per region (two columns of regions on desktop). */
 export function LocationsIndex({
   locations,
   title = "EV charger installers by town and city",
@@ -75,20 +75,10 @@ export function LocationsIndex({
                             {location.name}
                           </span>
                         </span>
-                        <span className="flex shrink-0 items-center gap-2">
-                          {location.installer_count > 0 ? (
-                            <span className="rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-medium whitespace-nowrap text-forest">
-                              {location.installer_count}{" "}
-                              {location.installer_count === 1
-                                ? "installer"
-                                : "installers"}
-                            </span>
-                          ) : null}
-                          <ChevronRight
-                            aria-hidden
-                            className="size-3.5 opacity-70 transition-transform group-hover:translate-x-0.5"
-                          />
-                        </span>
+                        <ChevronRight
+                          aria-hidden
+                          className="size-3.5 shrink-0 opacity-70 transition-transform group-hover:translate-x-0.5"
+                        />
                       </Link>
                     </li>
                   ))}

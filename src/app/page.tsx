@@ -73,11 +73,7 @@ export default async function HomePage() {
       </section>
 
       {/* How it works: the walkthrough video, directly under the hero */}
-      <HowItWorksVideo
-        title="How PickASparky Works"
-        size="narrow"
-        className="pb-12 md:pb-20"
-      />
+      <HowItWorksVideo heading size="narrow" className="pb-12 md:pb-20" />
 
       {/* Installation types */}
       <Section spacing="sm" aria-labelledby="types-heading" className="md:pt-8">
