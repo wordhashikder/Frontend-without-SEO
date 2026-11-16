@@ -5,6 +5,7 @@ import Link from "next/link";
 import { QuoteComparisonArt } from "@/components/home/quote-comparison-art";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
 import { ClosingSection } from "@/components/sections/closing-section";
+import { HowItWorksVideo } from "@/components/sections/how-it-works-video";
 import { InstallerLogo } from "@/components/sections/installer-card";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PageSchema } from "@/components/sections/page-schema";
@@ -70,6 +71,13 @@ export default async function HomePage() {
           />
         </Container>
       </section>
+
+      {/* How it works: the walkthrough video, directly under the hero */}
+      <HowItWorksVideo
+        title="How PickASparky Works"
+        size="narrow"
+        className="pb-12 md:pb-20"
+      />
 
       {/* Installation types */}
       <Section spacing="sm" aria-labelledby="types-heading" className="md:pt-8">

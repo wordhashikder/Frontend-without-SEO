@@ -4,6 +4,7 @@ import { checkPostcode } from "@/actions/quote";
 import { QuoteFlow } from "@/components/quote/quote-flow";
 import type { InstallerRef, QuoteEntry } from "@/components/quote/state";
 import { StepNumber } from "@/components/sections/feature-blocks";
+import { HowItWorksVideo } from "@/components/sections/how-it-works-video";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PageSchema } from "@/components/sections/page-schema";
 import { Container, Eyebrow } from "@/components/ui/layout";
@@ -89,7 +90,18 @@ async function QuoteStart({ searchParams }: { searchParams: SearchParams }) {
     installer,
   };
 
-  return <QuoteFlow entry={entry} intro={<Intro />} outro={<HowItWorks />} />;
+  return (
+    <QuoteFlow
+      entry={entry}
+      intro={<Intro />}
+      outro={
+        <>
+          <HowItWorksVideo bare className="mt-12 sm:mt-16" />
+          <HowItWorks />
+        </>
+      }
+    />
+  );
 }
 
 const first = (value: string | string[] | undefined) =>

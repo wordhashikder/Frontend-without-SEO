@@ -20,6 +20,7 @@ import { LocationsDirectory } from "@/components/layout/locations-directory";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { ClosingSection } from "@/components/sections/closing-section";
 import { FaqList } from "@/components/sections/faq";
+import { HowItWorksVideo } from "@/components/sections/how-it-works-video";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PageSchema } from "@/components/sections/page-schema";
 import { PostcodeForm } from "@/components/sections/postcode-form";
@@ -122,6 +123,9 @@ export default async function InstallersHubPage() {
           </div>
         </Container>
       </section>
+
+      {/* How it works: the walkthrough video, directly under the hero */}
+      <HowItWorksVideo className="pt-8 pb-10 md:pt-10 md:pb-14" />
 
       {/* Trust strip */}
       <section

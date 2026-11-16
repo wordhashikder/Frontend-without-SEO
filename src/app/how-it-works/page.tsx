@@ -7,6 +7,7 @@ import {
 } from "@/components/how-it-works/step-flow";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
 import { ClosingSection } from "@/components/sections/closing-section";
+import { HowItWorksVideo } from "@/components/sections/how-it-works-video";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PageHero } from "@/components/sections/page-hero";
 import { PageSchema } from "@/components/sections/page-schema";
@@ -68,6 +69,8 @@ export default async function HowItWorksPage() {
           {hero.lead}
         </p>
       </PageHero>
+
+      <HowItWorksVideo className="pb-12 md:pb-16" />
 
       <Section
         id="for-homeowners"

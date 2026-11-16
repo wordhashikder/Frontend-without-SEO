@@ -38,6 +38,7 @@ npm run dev          # http://localhost:3000
 | `NEXT_PUBLIC_SITE_URL` | build | Public address (`https://pickasparky.co.uk`); used for canonical URLs, the sitemap and structured data |
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | build | Google Analytics 4 ID (`G-XXXXXXXXXX`). Leave empty and nothing is loaded or sent. When set, the cookie banner is switched on automatically |
 | `NEXT_PUBLIC_COOKIE_BANNER` | build | `on` shows the cookie banner even without analytics (staging previews) |
+| `NEXT_PUBLIC_HOW_IT_WORKS_VIDEO_URL` | build | Cloudinary URL of the "how it works" video (default: the current upload). Leave blank to keep the default |
 | `NEXT_PUBLIC_SOCIAL_X_URL`, `NEXT_PUBLIC_SOCIAL_LINKEDIN_URL` | build | Social profile links; omitted when blank |
 
 `NEXT_PUBLIC_*` values are inlined into the bundle at build time, so in Docker they are build
@@ -92,6 +93,22 @@ Before opening a pull request: `npm run lint && npm run typecheck && npm run bui
   they scroll without changing the address.
 - Structured data (JSON-LD) is generated in `src/lib/seo.ts`; `llms.txt`, `robots.txt` and the
   sitemap are generated routes.
+
+## The "How PickASparky Works" video
+
+A silent, looping walkthrough sits directly under the hero on the home page, How It Works, Get
+Quotes and the EV installers directory (`HowItWorksVideo`, `src/components/sections/`).
+
+- **Delivery.** The video lives on Cloudinary. `videoAssets()` (`src/lib/video.ts`) gives the browser a
+  1280px, audio-free WebM (VP9) and MP4 (H.264) that Cloudinary makes from the same upload, plus a
+  poster image, and the original file only as a last resort. Cloudinary may need a few seconds to
+  make a new format the first time, so open the WebM and MP4 URLs once after changing the video.
+- **Light on the page.** Nothing but the poster loads with the page. The video file downloads after
+  the page has loaded and only when the video is within 200px of the screen; it plays only while
+  visible. Its 16:9 space is reserved, so nothing shifts.
+- **Accessible.** A pause/play button is always shown. With "reduce motion" or Data Saver on, or
+  when the browser blocks autoplay, the video waits for the reader to press play.
+- **Security.** The Content Security Policy allows `media-src` from `self` and `res.cloudinary.com`.
 
 ## Project layout
 

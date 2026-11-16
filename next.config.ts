@@ -21,6 +21,7 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   `img-src 'self' blob: data: https://res.cloudinary.com https://tile.openstreetmap.org${gtm}${ga}`,
   "font-src 'self'",
+  "media-src 'self' https://res.cloudinary.com",
   `connect-src 'self'${gtm}${ga}${gaApi}`,
   "object-src 'none'",
   "base-uri 'self'",
