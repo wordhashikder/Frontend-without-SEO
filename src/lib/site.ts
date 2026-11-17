@@ -16,8 +16,8 @@ export const site = {
   description:
     "Compare up to 5 free quotes from vetted, local EV charger installers. Enter your postcode and PickASparky connects you with qualified electricians in your area.",
   locale: "en_GB",
-  email: "hello@pickasparky.co.uk",
-  privacyEmail: "privacy@pickasparky.co.uk",
+  email: "notifications@pickasparky.com",
+  privacyEmail: "notifications@pickasparky.com",
   hours: { days: "Monday – Friday", time: "9:00am – 5:00pm (UK time)" },
   social: {
     x: profileUrl(process.env.NEXT_PUBLIC_SOCIAL_X_URL),

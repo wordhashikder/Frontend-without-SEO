@@ -1,6 +1,6 @@
 # PickASparky Website
 
-The public website and homeowner area for [PickASparky](https://pickasparky.co.uk), a UK
+The public website and homeowner area for [PickASparky](https://www.pickasparky.com), a UK
 marketplace that connects homeowners with vetted EV charger installers. Visitors compare
 installers by town, request free quotes, read guides and, with a private email link, follow
 their requests under *My Quotes*. Installers sign up and manage their account here and in the
@@ -35,7 +35,7 @@ npm run dev          # http://localhost:3000
 |---|---|---|
 | `API_URL` | runtime (and build, optional) | Base URL of the API, server-side only. Default `http://localhost:8000`. If the API is reachable during the build, pages are pre-rendered with live data; otherwise they fill in on first request |
 | `INTERNAL_API_KEY` | runtime | Shared secret with the API (the same value as the API's `INTERNAL_API_KEY`). It lets the API trust the visitor's real IP for rate limits and call `/api/revalidate`. Required in production |
-| `NEXT_PUBLIC_SITE_URL` | build | Public address (`https://pickasparky.co.uk`); used for canonical URLs, the sitemap and structured data |
+| `NEXT_PUBLIC_SITE_URL` | build | Public address (`https://www.pickasparky.com`); used for canonical URLs, the sitemap and structured data |
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | build | Google Analytics 4 ID (`G-XXXXXXXXXX`). Leave empty and nothing is loaded or sent. When set, the cookie banner is switched on automatically |
 | `NEXT_PUBLIC_COOKIE_BANNER` | build | `on` shows the cookie banner even without analytics (staging previews) |
 | `NEXT_PUBLIC_HOW_IT_WORKS_VIDEO_URL` | build | Cloudinary URL of the "how it works" video (default: the current upload). Leave blank to keep the default |

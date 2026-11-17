@@ -124,8 +124,11 @@ export function LocationView({
   const path = locationPath(location.slug);
   const { hero, installers: listing, why, local } = content;
   const steps = quoteSteps(content.steps.items);
-  // This location's own text (SEO & Locations) replaces the template's intro.
-  const intro = location.intro?.trim() || local.intro;
+  // This location's own text (SEO & Locations) replaces the whole About block: the
+  // template's intro and its closing line. Towns without their own text keep both.
+  const ownText = location.intro?.trim() ?? "";
+  const intro = ownText || local.intro;
+  const closing = ownText ? "" : local.closing;
 
   const featureStyles = [
     { icon: ShieldCheck, tone: "mint" },
@@ -254,8 +257,8 @@ export function LocationView({
                 {local.title}
               </h2>
               <ContentMarkdown className="mt-4">{intro}</ContentMarkdown>
-              {local.closing ? (
-                <p className="mt-5 text-sm leading-[1.45]">{local.closing}</p>
+              {closing ? (
+                <p className="mt-5 text-sm leading-[1.45]">{closing}</p>
               ) : null}
               <ButtonLink href={routes.quotes} variant="dark" className="mt-5">
                 {local.button}
