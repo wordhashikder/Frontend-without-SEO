@@ -56,6 +56,8 @@ export const routes = {
   installerProfiles: "/uk/installer/",
   privacy: "/privacy-policy/",
   terms: "/terms-and-conditions/",
+  /** What an installer accepts when registering. Linked from the sign-up form only. */
+  electriciansAgreement: "/electricians-agreement/",
   cookies: "/cookie-policy/",
   /** The homeowner's quote dashboard (opened by the emailed magic link). */
   myQuotes: "/uk/my-quotes/",

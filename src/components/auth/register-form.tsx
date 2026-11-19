@@ -291,12 +291,12 @@ export function RegisterForm({
             <span>
               I agree to the{" "}
               <Link
-                href={routes.terms}
+                href={routes.electriciansAgreement}
                 target="_blank"
                 rel="noopener"
                 className={textLink}
               >
-                Terms &amp; Conditions
+                Electricians Agreement
                 <span className="sr-only"> (opens in a new tab)</span>
               </Link>{" "}
               and{" "}

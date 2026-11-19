@@ -244,7 +244,10 @@ export function serviceSchema(args: {
 
 /**
  * An installer's public profile as an `Electrician` (LocalBusiness subtype).
- * `aggregateRating` and `review` are emitted only when real reviews exist.
+ * `aggregateRating` and `review` are emitted only for verified reviews, the ones a
+ * customer wrote from a review invitation after a job. Reviews the team adds by hand
+ * stay visible on the page but are never given to search engines (Google's review
+ * rules ask for ratings that come directly from users).
  */
 export function installerSchema(args: {
   name: string;
@@ -254,19 +257,21 @@ export function installerSchema(args: {
   /** Logo: a site-relative path or an absolute URL. */
   image?: string | null;
   areasServed?: string[];
+  /** The rating from verified reviews only (not the rating the page displays). */
   rating?: { average: number | null; count: number };
-  /** Only the reviews that are rendered on the page. */
+  /** The reviews rendered on the page; only the verified ones are emitted. */
   reviews?: {
     rating: number;
     title: string;
     body: string;
     author_name: string;
     created_at: string;
+    verified: boolean;
   }[];
 }): Json {
   const url = absoluteUrl(args.path);
   const areas = args.areasServed ?? [];
-  const reviews = args.reviews ?? [];
+  const reviews = (args.reviews ?? []).filter((review) => review.verified);
   const hasRating =
     args.rating !== undefined &&
     args.rating.average !== null &&

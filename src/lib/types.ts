@@ -160,6 +160,13 @@ export interface InstallerDetail extends InstallerCard {
     alt: string | null;
     credit: string | null;
   } | null;
+  /**
+   * Rating from verified reviews only (a completed job backs each one). It is what goes
+   * to search engines as structured data; `rating_avg` / `review_count` stay the ones
+   * shown on the page. Absent from an API that predates this field: treated as none.
+   */
+  verified_rating_avg?: number | null;
+  verified_review_count?: number;
 }
 
 export interface Review {

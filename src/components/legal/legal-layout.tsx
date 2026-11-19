@@ -26,27 +26,30 @@ export function LegalLayout({ title, updated, sections }: LegalLayoutProps) {
   return (
     <>
       <PageHero eyebrow={`Last updated: ${updated}`} title={title} />
-      <Container className="grid gap-10 pb-6 md:pt-10 md:pb-10 lg:grid-cols-[230px_minmax(0,1fr)] lg:gap-[82px] lg:pt-24">
-        <LegalToc items={sections.map(({ id, title }) => ({ id, title }))} />
-        <div className="max-w-[800px] text-[#3f5159]">
-          {sections.map((section) => (
-            <section
-              key={section.id}
-              id={section.id}
-              aria-labelledby={`${section.id}-heading`}
-              className="pb-10 md:pb-14"
-            >
-              <h2
-                id={`${section.id}-heading`}
-                className="text-[22px] font-bold leading-snug sm:text-2xl"
+      {/* A page with no sections yet (a new policy, before it is written) shows just its title. */}
+      {sections.length > 0 ? (
+        <Container className="grid gap-10 pb-6 md:pt-10 md:pb-10 lg:grid-cols-[230px_minmax(0,1fr)] lg:gap-[82px] lg:pt-24">
+          <LegalToc items={sections.map(({ id, title }) => ({ id, title }))} />
+          <div className="max-w-[800px] text-[#3f5159]">
+            {sections.map((section) => (
+              <section
+                key={section.id}
+                id={section.id}
+                aria-labelledby={`${section.id}-heading`}
+                className="pb-10 md:pb-14"
               >
-                {section.title}
-              </h2>
-              {section.content}
-            </section>
-          ))}
-        </div>
-      </Container>
+                <h2
+                  id={`${section.id}-heading`}
+                  className="text-[22px] font-bold leading-snug sm:text-2xl"
+                >
+                  {section.title}
+                </h2>
+                {section.content}
+              </section>
+            ))}
+          </div>
+        </Container>
+      ) : null}
       <LocationsDirectory />
     </>
   );

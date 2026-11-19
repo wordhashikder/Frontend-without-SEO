@@ -567,8 +567,8 @@ export function InstallerProfile({
             image: installer.logo_url,
             areasServed: installer.areas_covered,
             rating: {
-              average: installer.rating_avg,
-              count: installer.review_count,
+              average: installer.verified_rating_avg ?? null,
+              count: installer.verified_review_count ?? 0,
             },
             reviews,
           }),

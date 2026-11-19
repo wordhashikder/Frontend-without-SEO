@@ -1328,5 +1328,18 @@
         }
       ]
     }
+  },
+  "electricians-agreement": {
+    "seo": {
+      "title": "Electricians Agreement",
+      "description": "The agreement electricians and EV charger installers accept when they join PickASparky."
+    },
+    "header": {
+      "title": "Electricians Agreement",
+      "updated": "Nov 2026"
+    },
+    "body": {
+      "sections": []
+    }
   }
 }
