@@ -16,7 +16,16 @@ type Variant = "compact" | "legal";
 
 const styles: Record<
   Variant,
-  { root: string; p: string; h: string; list: string; link: string }
+  {
+    root: string;
+    p: string;
+    h: string;
+    list: string;
+    link: string;
+    tableBox: string;
+    table: string;
+    cell: string;
+  }
 > = {
   compact: {
     root: "space-y-5 text-sm leading-[1.45]",
@@ -24,6 +33,9 @@ const styles: Record<
     h: "pt-1 text-base font-bold text-ink",
     list: "list-disc space-y-1.5 pl-5 marker:text-primary",
     link: "font-medium text-primary-dark underline decoration-primary/40 underline-offset-4 hover:decoration-primary",
+    tableBox: "",
+    table: "text-sm",
+    cell: "px-3 py-2.5",
   },
   legal: {
     root: "",
@@ -31,6 +43,9 @@ const styles: Record<
     h: "mt-6 text-lg font-bold text-ink",
     list: "mt-5 space-y-2.5 pl-4 text-base leading-relaxed sm:mt-6 sm:space-y-3 sm:text-lg sm:leading-8 [&>li]:relative [&>li]:pl-5 [&>li]:before:absolute [&>li]:before:top-[0.8em] [&>li]:before:left-0 [&>li]:before:size-[5px] [&>li]:before:rounded-full [&>li]:before:bg-primary",
     link: "font-medium text-primary underline-offset-4 hover:underline",
+    tableBox: "mt-5",
+    table: "text-base sm:text-lg",
+    cell: "px-4 py-3",
   },
 };
 
@@ -72,6 +87,45 @@ function components(variant: Variant): Components {
           {children}
         </a>
       ),
+    // Tables (GitHub-style Markdown): wide ones scroll inside their own box
+    // rather than the page.
+    table: ({ node: _node, ...props }) => (
+      <div
+        className={cn(
+          "overflow-x-auto rounded-xl border border-line",
+          style.tableBox,
+        )}
+      >
+        <table
+          className={cn(
+            "w-full min-w-[420px] border-collapse text-left",
+            style.table,
+          )}
+          {...props}
+        />
+      </div>
+    ),
+    thead: ({ node: _node, ...props }) => (
+      <thead className="bg-mint-soft" {...props} />
+    ),
+    th: ({ node: _node, ...props }) => (
+      <th
+        className={cn(
+          "border-b border-line font-semibold text-ink",
+          style.cell,
+        )}
+        {...props}
+      />
+    ),
+    td: ({ node: _node, ...props }) => (
+      <td
+        className={cn(
+          "border-b border-line align-top [tr:last-child_&]:border-b-0",
+          style.cell,
+        )}
+        {...props}
+      />
+    ),
     img: () => null,
   };
 }
