@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Markdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { linkTarget } from "@/lib/links";
 import { cn } from "@/lib/utils";
 
 /*
@@ -8,9 +9,6 @@ import { cn } from "@/lib/utils";
  * styles. Raw HTML is never rendered and unsafe link protocols (javascript:
  * and the like) are removed, so a post cannot inject markup or scripts.
  */
-
-const isInternal = (href: string) =>
-  href.startsWith("/") && !href.startsWith("//");
 
 const components: Components = {
   // The page title is the only h1; a "# Heading" in a post becomes a section heading.
@@ -52,13 +50,24 @@ const components: Components = {
   a: ({ node: _node, href = "", children, ...props }) => {
     const className =
       "font-medium text-primary-dark underline decoration-primary/40 underline-offset-4 hover:decoration-primary";
-    return isInternal(href) ? (
-      <Link href={href} className={className} {...props}>
-        {children}
-      </Link>
-    ) : (
+    const target = linkTarget(href);
+    if (target.kind === "internal") {
+      return (
+        <Link href={target.path} className={className} {...props}>
+          {children}
+        </Link>
+      );
+    }
+    if (target.kind === "same-tab") {
+      return (
+        <a href={target.href} className={className} {...props}>
+          {children}
+        </a>
+      );
+    }
+    return (
       <a
-        href={href}
+        href={target.href}
         target="_blank"
         rel="noopener noreferrer"
         className={className}

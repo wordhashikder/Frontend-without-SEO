@@ -27,12 +27,16 @@ import { pageMetadata, serviceSchema } from "@/lib/seo";
 import { installerPath, routes } from "@/lib/site";
 import { keyed } from "@/lib/utils";
 
-/** Where each installation-type card leads (the cards' words and photos are editable). */
-const installTypeLinks = [
-  "new_home",
-  "replace_existing",
-  "workplace_commercial",
-  "workplace_commercial",
+/**
+ * The page each installation-type card leads to, in card order (Dashboard → Website content →
+ * Pages). The cards' words and photos are editable; their destinations follow these pages, and
+ * if the team changes a page's address the old one redirects.
+ */
+const installTypePages = [
+  "/uk/home-ev-charger-installation/",
+  "/uk/ev-charger-replacement/",
+  "/uk/commercial-ev-charging/",
+  "/uk/workplace-ev-charging/",
 ] as const;
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -89,7 +93,7 @@ export default async function HomePage() {
               ({ item, key }, index) => (
                 <li key={key}>
                   <Link
-                    href={`${routes.quotes}?type=${installTypeLinks[index] ?? "new_home"}`}
+                    href={installTypePages[index] ?? routes.quotes}
                     className="group relative block aspect-[261/208] overflow-hidden rounded-2xl bg-ink"
                   >
                     <Image

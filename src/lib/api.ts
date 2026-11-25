@@ -1,6 +1,7 @@
 import "server-only";
 
 import type {
+  AccreditationSchemeInfo,
   ApiErrorBody,
   BlogPostDetail,
   BlogPostSummary,
@@ -22,6 +23,9 @@ import type {
   LocationDirectory,
   LocationSummary,
   MessageResponse,
+  PageCard,
+  PageLookup,
+  PageSitemapEntry,
   Paginated,
   Plan,
   PostcodeLookup,
@@ -215,6 +219,53 @@ export const api = {
         tags: ["content"],
       }),
       null,
+    ),
+
+  // ---- Pages (Dashboard → Website content → Pages) --------------------------
+  /**
+   * The page at an address, or where it moved to; `null` when there is none. A preview
+   * (the team's link to a draft) is never cached.
+   */
+  page: (path: string, preview?: string) =>
+    orNull(
+      request<PageLookup>("/pages/lookup", {
+        query: { path, preview },
+        ...(preview ? {} : { revalidate: HOUR, tags: ["pages"] }),
+      }),
+    ),
+
+  /** Published supporting pages with content, for a main page (an overview, say). */
+  pageChildren: (parent: string) =>
+    safe(
+      request<PageCard[]>("/pages/children", {
+        query: { parent },
+        revalidate: HOUR,
+        tags: ["pages"],
+      }),
+      [] as PageCard[],
+    ),
+
+  /** Published pages with content, for the sitemap. */
+  pageSitemap: () =>
+    safe(
+      request<PageSitemapEntry[]>("/pages/sitemap", {
+        revalidate: HOUR,
+        tags: ["pages"],
+      }),
+      [] as PageSitemapEntry[],
+    ),
+
+  /**
+   * The accreditation schemes (Dashboard → Website content → Accreditation schemes), with
+   * the link to a scheme's page once it has content.
+   */
+  accreditationSchemes: () =>
+    safe(
+      request<AccreditationSchemeInfo[]>("/accreditation-schemes", {
+        revalidate: HOUR,
+        tags: ["accreditation-schemes"],
+      }),
+      [] as AccreditationSchemeInfo[],
     ),
 
   // ---- Locations ---------------------------------------------------------

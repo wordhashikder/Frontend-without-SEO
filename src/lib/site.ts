@@ -36,7 +36,8 @@ export const routes = {
   quotes: "/get-quotes/",
   howItWorks: "/how-it-works/",
   faq: "/faq/",
-  accreditations: "/electrician-accreditations/",
+  /** The accreditations overview; each scheme has its own page beneath it. */
+  accreditations: "/uk/accreditations/",
   safety: "/electrical-safety-regulations/",
   vetting: "/how-we-vet-installers/",
   about: "/about/",
@@ -100,7 +101,6 @@ export const navigation: NavGroup[] = [
       { label: "Get Quotes", href: routes.quotes },
       { label: "How It Works", href: routes.howItWorks },
       { label: "FAQ", href: routes.faq },
-      { label: "Electrician Accreditations", href: routes.accreditations },
       { label: "Electrical Safety & Regulations", href: routes.safety },
       { label: "EV Charging Blog", href: routes.blog },
     ],

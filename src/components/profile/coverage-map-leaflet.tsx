@@ -1,13 +1,15 @@
 "use client";
 
 import "leaflet/dist/leaflet.css";
-import { Browser, latLng } from "leaflet";
+import { Browser, type Circle as LeafletCircle, latLng } from "leaflet";
+import { useEffect, useRef } from "react";
 import {
   AttributionControl,
   Circle,
   CircleMarker,
   MapContainer,
   TileLayer,
+  useMap,
   ZoomControl,
 } from "react-leaflet";
 
@@ -23,6 +25,45 @@ const METRES_PER_MILE = 1609.344;
 const BRAND_GREEN = "#0a9b53";
 const FOREST = "#153a2c";
 
+const FIT_PADDING: [number, number] = [14, 14];
+
+/**
+ * The coverage circle, kept in view. A map ignores changes to its initial bounds,
+ * so the view is refitted to the circle that is actually drawn whenever the
+ * centre or radius changes (a 15-mile and a 1,000-mile area both fill the map).
+ */
+function FittedCircle({
+  centre,
+  radius,
+}: {
+  centre: ReturnType<typeof latLng>;
+  radius: number;
+}) {
+  const map = useMap();
+  const circle = useRef<LeafletCircle | null>(null);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: the circle is read from a ref; refit exactly when its centre or radius changes
+  useEffect(() => {
+    if (circle.current) {
+      map.fitBounds(circle.current.getBounds(), { padding: FIT_PADDING });
+    }
+  }, [map, centre.lat, centre.lng, radius]);
+
+  return (
+    <Circle
+      ref={circle}
+      center={centre}
+      radius={radius}
+      pathOptions={{
+        color: BRAND_GREEN,
+        weight: 2,
+        fillColor: BRAND_GREEN,
+        fillOpacity: 0.2,
+      }}
+    />
+  );
+}
+
 /** OpenStreetMap view fitted to the installer's coverage circle. */
 export default function CoverageMapLeaflet({
   latitude,
@@ -36,7 +77,7 @@ export default function CoverageMapLeaflet({
     <>
       <MapContainer
         bounds={centre.toBounds(radius * 2)}
-        boundsOptions={{ padding: [14, 14] }}
+        boundsOptions={{ padding: FIT_PADDING }}
         // The page must keep scrolling when the pointer crosses the map.
         scrollWheelZoom={false}
         // One-finger drags scroll the page on touch devices; pinch still zooms.
@@ -58,16 +99,7 @@ export default function CoverageMapLeaflet({
         />
         <AttributionControl position="bottomleft" prefix={false} />
         <ZoomControl position="topright" />
-        <Circle
-          center={centre}
-          radius={radius}
-          pathOptions={{
-            color: BRAND_GREEN,
-            weight: 2,
-            fillColor: BRAND_GREEN,
-            fillOpacity: 0.2,
-          }}
-        />
+        <FittedCircle centre={centre} radius={radius} />
         <CircleMarker
           center={centre}
           radius={5}

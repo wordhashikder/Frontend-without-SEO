@@ -6,6 +6,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/** "1000" -> "1,000", so a nationwide radius reads clearly. */
+export function formatMiles(miles: number) {
+  return miles.toLocaleString("en-GB");
+}
+
 /** UK postcode (outward + inward), tolerant of spacing and case. */
 export const UK_POSTCODE_PATTERN =
   "^[A-Za-z]{1,2}[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}$";

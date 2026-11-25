@@ -87,13 +87,15 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
 export default async function InstallerPage(props: Props) {
   const installer = await loadInstaller(props);
-  const [location, reviews, similar, locations] = await Promise.all([
+  const [location, reviews, similar, locations, schemes] = await Promise.all([
     // Only for the breadcrumb label; an outage here must not take the page down.
     api.location(installer.location_slug).catch(() => null),
     api.installerReviews(installer.slug, 1, 6),
     api.similarInstallers(installer.slug, 4),
     // The published town pages, so each area can link to its page (none if the API is down).
     api.locations(),
+    // Names, badges and text for the accreditation cards (none if the API is down).
+    api.accreditationSchemes(),
   ]);
 
   return (
@@ -104,6 +106,7 @@ export default async function InstallerPage(props: Props) {
         reviews={reviews?.items ?? []}
         similar={similar}
         areaLinks={areaLinks(installer.areas_covered, locations)}
+        schemes={schemes}
       />
       <LocationsDirectory />
     </>

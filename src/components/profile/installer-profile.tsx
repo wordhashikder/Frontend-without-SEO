@@ -1,15 +1,11 @@
 import {
-  BadgeCheck,
-  ClipboardCheck,
   Clock,
   FileText,
-  Leaf,
   type LucideIcon,
   MapPin,
   MapPinned,
   PoundSterling,
   ShieldCheck,
-  Sun,
   Zap,
 } from "lucide-react";
 import Image from "next/image";
@@ -29,27 +25,18 @@ import { JsonLd } from "@/components/sections/json-ld";
 import { PostcodeForm } from "@/components/sections/postcode-form";
 import { ReviewCard } from "@/components/sections/reviews";
 import { CheckBullet } from "@/components/ui/icon-badge";
-import { Container } from "@/components/ui/layout";
+import { Container, Eyebrow } from "@/components/ui/layout";
 import { StarRating } from "@/components/ui/star-rating";
-import { accreditationLabels, serviceLabels } from "@/content/labels";
+import { serviceLabels } from "@/content/labels";
 import { entityId, installerSchema, webPageSchema } from "@/lib/seo";
 import { installerPath, locationPath, routes } from "@/lib/site";
 import type {
-  AccreditationScheme,
+  AccreditationSchemeInfo,
   InstallerDetail,
   InstallerCard as InstallerSummary,
   Review,
 } from "@/lib/types";
-import { cn } from "@/lib/utils";
-
-const accreditationIcons: Record<AccreditationScheme, LucideIcon> = {
-  ozev: Leaf,
-  napit: ShieldCheck,
-  niceic: BadgeCheck,
-  trustmark: ClipboardCheck,
-  mcs: Sun,
-  elecsa: Zap,
-};
+import { cn, formatMiles } from "@/lib/utils";
 
 type InstallerProfileProps = {
   installer: InstallerDetail;
@@ -60,6 +47,8 @@ type InstallerProfileProps = {
   similar: InstallerSummary[];
   /** Page path of each listed area that has a published location page, by area name. */
   areaLinks?: Record<string, string>;
+  /** The accreditation schemes (names, badges, card text and links to their pages). */
+  schemes?: AccreditationSchemeInfo[];
 };
 
 /** The page's H2 style: also used by the "We cover ..." title in Areas covered. */
@@ -96,6 +85,7 @@ export function InstallerProfile({
   reviews,
   similar,
   areaLinks = {},
+  schemes = [],
 }: InstallerProfileProps) {
   const name = installer.business_name;
   const path = installerPath(installer.slug);
@@ -118,7 +108,7 @@ export function InstallerProfile({
     ["Based in", `${installer.town} (${installer.postcode_district})`],
     [
       "Service area",
-      `Within ${installer.coverage.radius_miles} ${installer.coverage.radius_miles === 1 ? "mile" : "miles"} of ${installer.town}`,
+      `Within ${formatMiles(installer.coverage.radius_miles)} ${installer.coverage.radius_miles === 1 ? "mile" : "miles"} of ${installer.town}`,
     ],
     [
       "Services",
@@ -303,43 +293,57 @@ export function InstallerProfile({
 
           {installer.accreditations.length > 0 ? (
             <section aria-labelledby="accreditations-heading">
-              <Heading id="accreditations-heading">
+              <Eyebrow>Trusted standards</Eyebrow>
+              <Heading id="accreditations-heading" className="mt-2">
                 Accreditations &amp; Registrations
               </Heading>
-              <p className="mt-1 text-xs">
-                Industry schemes and registrations held by {name}.
-              </p>
-              <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <span
+                aria-hidden
+                className="mt-3 block h-1 w-12 rounded-full bg-primary"
+              />
+              <ul className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {installer.accreditations.map((accreditation) => {
-                  const Icon = accreditationIcons[accreditation.scheme];
-                  const label = accreditationLabels[accreditation.scheme];
+                  const scheme = schemes.find(
+                    (item) => item.key === accreditation.scheme,
+                  );
+                  const name =
+                    scheme?.name ?? accreditation.scheme.toUpperCase();
                   return (
                     <li
                       key={accreditation.scheme}
-                      className="flex flex-col rounded-lg border border-line bg-white p-4 shadow-soft"
+                      className="flex flex-col rounded-2xl border border-line bg-white p-6 shadow-soft"
                     >
-                      <span
-                        aria-hidden
-                        className="inline-flex size-9 items-center justify-center rounded-md bg-[#f0fdf4] text-primary"
-                      >
-                        <Icon className="size-[18px]" strokeWidth={1.75} />
-                      </span>
-                      <h3 className="mt-4 text-sm font-semibold">
-                        {label.title}
-                      </h3>
-                      <p className="mt-1.5 flex-1 text-[11px] leading-[15px]">
-                        {label.text}
+                      <p className="text-3xl font-extrabold leading-none tracking-[-0.02em] text-ink">
+                        {name}
                       </p>
-                      {accreditation.registration_number ? (
-                        <p className="mt-2 text-[11px] leading-[15px] text-subtle">
-                          Registration no. {accreditation.registration_number}
-                        </p>
+                      {scheme?.badge ? (
+                        <span className="mt-4 inline-flex w-fit items-center rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-forest">
+                          {scheme.badge}
+                        </span>
                       ) : null}
+                      <h3 className="mt-4 text-base font-bold text-ink">
+                        {scheme?.card_title ?? name}
+                      </h3>
+                      {scheme?.card_text ? (
+                        <p className="mt-2 flex-1 text-sm leading-relaxed">
+                          {scheme.card_text}
+                        </p>
+                      ) : (
+                        <span className="flex-1" />
+                      )}
                       {accreditation.verified ? (
-                        <p className="mt-2.5 flex items-center gap-1.5 text-[11px] font-medium text-primary-dark">
-                          <CheckBullet className="size-3.5" />
+                        <p className="mt-4 flex items-center gap-1.5 text-xs font-medium text-primary-dark">
+                          <CheckBullet className="size-4" />
                           Verified by PickASparky
                         </p>
+                      ) : null}
+                      {scheme?.href ? (
+                        <Link
+                          href={scheme.href}
+                          className="mt-4 w-fit text-sm font-semibold text-primary underline underline-offset-4 hover:text-primary-dark"
+                        >
+                          About {name} <span aria-hidden>→</span>
+                        </Link>
                       ) : null}
                     </li>
                   );
@@ -402,7 +406,8 @@ export function InstallerProfile({
               </div>
             </div>
             <p className="mt-2 text-xs">
-              Approximate coverage: within {installer.coverage.radius_miles}{" "}
+              Approximate coverage: within{" "}
+              {formatMiles(installer.coverage.radius_miles)}{" "}
               {installer.coverage.radius_miles === 1 ? "mile" : "miles"} of{" "}
               {installer.town}.
             </p>

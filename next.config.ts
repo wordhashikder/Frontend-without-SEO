@@ -66,6 +66,12 @@ const hostRedirects: Redirect[] = bareHost
 const directory = "/uk/ev-charger-installers";
 const profiles = "/uk/installer";
 const legacyRedirects: Redirect[] = [
+  // The accreditations page moved under /uk/ and became the overview of every scheme.
+  {
+    source: "/electrician-accreditations",
+    destination: "/uk/accreditations/",
+    statusCode: 301,
+  },
   {
     source: "/ev-charger-installers",
     destination: `${directory}/`,

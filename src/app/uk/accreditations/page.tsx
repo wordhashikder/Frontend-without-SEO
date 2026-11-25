@@ -15,6 +15,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { guideArticleSchema } from "@/components/about/guide-schema";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
+import { SupportingPages } from "@/components/pages/supporting-pages";
 import { ClosingSection } from "@/components/sections/closing-section";
 import { CtaBand } from "@/components/sections/cta-band";
 import { FaqList } from "@/components/sections/faq";
@@ -23,6 +24,7 @@ import { JsonLd } from "@/components/sections/json-ld";
 import { PageHero } from "@/components/sections/page-hero";
 import { PageSchema } from "@/components/sections/page-schema";
 import { Container, Section, SectionHeading } from "@/components/ui/layout";
+import { api } from "@/lib/api";
 import { getContent } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
@@ -65,8 +67,12 @@ function Lead({ children }: { children: ReactNode }) {
 }
 
 export default async function AccreditationsPage() {
-  const { seo, hero, schemes, meaning, consider, faq, cta } =
-    await getContent("accreditations");
+  const [{ seo, hero, schemes, meaning, consider, faq, cta }, schemePages] =
+    await Promise.all([
+      getContent("accreditations"),
+      // Each scheme's own page, listed here once it has content.
+      api.pageChildren(routes.accreditations),
+    ]);
   return (
     <>
       <PageHero
@@ -107,6 +113,12 @@ export default async function AccreditationsPage() {
           </ul>
         </Container>
       </Section>
+
+      <SupportingPages
+        pages={schemePages}
+        eyebrow="Scheme guides"
+        title="Learn about each scheme"
+      />
 
       {/* What accreditations tell you */}
       <Section

@@ -41,13 +41,8 @@ export type ServiceKey =
   | "smart_home"
   | "eicr_testing";
 
-export type AccreditationScheme =
-  | "ozev"
-  | "napit"
-  | "niceic"
-  | "trustmark"
-  | "mcs"
-  | "elecsa";
+/** A scheme's key ("niceic", "select" ...); the team manages the list in the Dashboard. */
+export type AccreditationScheme = string;
 
 export interface Paginated<T> {
   items: T[];
@@ -528,4 +523,73 @@ export interface CustomerConversation {
   unread: boolean;
   offer_count: number;
   latest_offer_status: OfferStatus | null;
+}
+
+// ---- Pages and accreditation schemes (Dashboard → Website content) -----------------
+
+export interface PageSection {
+  heading: string;
+  body: string;
+  image_url: string | null;
+  image_alt: string | null;
+}
+
+export interface PageFaq {
+  question: string;
+  answer: string;
+}
+
+export interface PageRef {
+  path: string;
+  title: string;
+}
+
+export interface PageCard {
+  path: string;
+  title: string;
+  intro: string | null;
+  hero_image_url: string | null;
+  hero_image_alt: string | null;
+}
+
+export interface SitePage {
+  path: string;
+  title: string;
+  eyebrow: string | null;
+  intro: string | null;
+  hero_image_url: string | null;
+  hero_image_alt: string | null;
+  sections: PageSection[];
+  faq: PageFaq[];
+  seo_title: string | null;
+  seo_description: string | null;
+  updated_at: string;
+  /** Search engines are only asked to index a published page that has content. */
+  indexable: boolean;
+  parent: PageRef | null;
+  children: PageCard[];
+  /** The team's preview of an unpublished page. */
+  preview: boolean;
+}
+
+/** Either the page, or where it moved to. */
+export interface PageLookup {
+  page: SitePage | null;
+  redirect_to: string | null;
+}
+
+export interface PageSitemapEntry {
+  path: string;
+  updated_at: string;
+}
+
+export interface AccreditationSchemeInfo {
+  key: string;
+  name: string;
+  badge: string | null;
+  card_title: string;
+  card_text: string;
+  is_active: boolean;
+  /** The scheme's page, once it is published and has content. */
+  href: string | null;
 }

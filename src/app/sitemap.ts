@@ -57,12 +57,14 @@ async function allPosts() {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const [locations, installers, posts] = await Promise.all([
+  const [locations, installers, posts, pages] = await Promise.all([
     api.locations(),
     allInstallers(),
     allPosts(),
+    // Pages the team created: only the published ones that have content.
+    api.pageSitemap(),
   ]);
- 
+
   return [
     ...staticPages.map(({ path, priority }) => ({
       url: absoluteUrl(path),
@@ -81,6 +83,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "weekly" as const,
       priority: 0.6,
+    })),
+    ...pages.map((page) => ({
+      url: absoluteUrl(page.path),
+      lastModified: new Date(page.updated_at),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
     })),
     ...posts.map((post) => ({
       url: absoluteUrl(blogPostPath(post.slug)),
