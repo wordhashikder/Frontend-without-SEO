@@ -1,13 +1,4 @@
-import {
-  Clock,
-  FileText,
-  type LucideIcon,
-  MapPin,
-  MapPinned,
-  PoundSterling,
-  ShieldCheck,
-  Zap,
-} from "lucide-react";
+import { Clock, MapPin, MapPinned, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -22,7 +13,7 @@ import {
   InstallerLogo,
 } from "@/components/sections/installer-card";
 import { JsonLd } from "@/components/sections/json-ld";
-import { PostcodeForm } from "@/components/sections/postcode-form";
+import { QuoteCtaBar } from "@/components/sections/quote-cta-bar";
 import { ReviewCard } from "@/components/sections/reviews";
 import { CheckBullet } from "@/components/ui/icon-badge";
 import { Container, Eyebrow } from "@/components/ui/layout";
@@ -70,13 +61,6 @@ function Heading({
     </h2>
   );
 }
-
-/** The three reassurances under the closing banner's headline. */
-const ctaPoints: { icon: LucideIcon; title: string; text: string }[] = [
-  { icon: Zap, title: "Trusted", text: "installers" },
-  { icon: FileText, title: "Compare", text: "multiple quotes" },
-  { icon: PoundSterling, title: "Free", text: "to use" },
-];
 
 /** Everything on an installer profile between the header and the locations directory. */
 export function InstallerProfile({
@@ -308,13 +292,32 @@ export function InstallerProfile({
                   );
                   const name =
                     scheme?.name ?? accreditation.scheme.toUpperCase();
+                  // The scheme's page, once the team has published it with content.
+                  const href = scheme?.href ?? null;
                   return (
                     <li
                       key={accreditation.scheme}
-                      className="flex flex-col rounded-2xl border border-line bg-white p-6 shadow-soft"
+                      className={cn(
+                        "relative flex flex-col rounded-2xl border border-line bg-white p-6 shadow-soft",
+                        href &&
+                          "transition-[border-color,box-shadow] hover:border-primary/40 hover:shadow-card has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-primary/50",
+                      )}
                     >
                       <p className="text-3xl font-extrabold leading-none tracking-[-0.02em] text-ink">
-                        {name}
+                        {href ? (
+                          // The whole card is the link: this one stretches over it.
+                          <Link
+                            href={href}
+                            className="outline-none after:absolute after:inset-0 after:rounded-2xl after:content-['']"
+                          >
+                            {name}
+                            <span className="sr-only">
+                              : read about this accreditation
+                            </span>
+                          </Link>
+                        ) : (
+                          name
+                        )}
                       </p>
                       {scheme?.badge ? (
                         <span className="mt-4 inline-flex w-fit items-center rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-forest">
@@ -336,14 +339,6 @@ export function InstallerProfile({
                           <CheckBullet className="size-4" />
                           Verified by PickASparky
                         </p>
-                      ) : null}
-                      {scheme?.href ? (
-                        <Link
-                          href={scheme.href}
-                          className="mt-4 w-fit text-sm font-semibold text-primary underline underline-offset-4 hover:text-primary-dark"
-                        >
-                          About {name} <span aria-hidden>→</span>
-                        </Link>
                       ) : null}
                     </li>
                   );
@@ -472,85 +467,7 @@ export function InstallerProfile({
         </div>
 
         {/* Closing call to action */}
-        <section
-          aria-labelledby="profile-cta-heading"
-          className="relative isolate mt-14 overflow-hidden rounded-2xl border border-[#d9efe6] bg-gradient-to-r from-[#f2f9f8] via-[#f2f9f7] to-[#e9f5f1] lg:mt-[76px]"
-        >
-          <svg
-            aria-hidden
-            viewBox="0 0 600 300"
-            preserveAspectRatio="none"
-            className="pointer-events-none absolute inset-y-0 right-0 -z-10 hidden h-full w-[48%] text-[#e1f2ec] lg:block"
-          >
-            <path
-              d="M330 0H600V300H0C70 215 215 145 330 0Z"
-              fill="currentColor"
-            />
-          </svg>
-          <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,430px)] lg:items-center lg:gap-8 lg:px-9 lg:py-10">
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-primary-dark">
-                Ready to get started?
-              </p>
-              <h2
-                id="profile-cta-heading"
-                className="mt-2.5 max-w-[640px] text-[24px] font-bold leading-[1.25] tracking-[-0.01em] sm:text-[28px] lg:text-[24px] xl:text-[26px]"
-              >
-                Compare up to 5 quotes from trusted EV charger installers in
-                your area
-              </h2>
-              <p className="mt-3 text-[15px]">
-                It&apos;s free, fast and there&apos;s no obligation.
-              </p>
-              <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-4 sm:flex-nowrap sm:gap-x-0">
-                {ctaPoints.map((point, index) => (
-                  <li
-                    key={point.title}
-                    className={cn(
-                      "flex items-center gap-2.5 sm:pr-4 xl:gap-3 xl:pr-5",
-                      index > 0 &&
-                        "sm:border-l sm:border-[#d7efe6] sm:pl-4 xl:pl-5",
-                    )}
-                  >
-                    <span
-                      aria-hidden
-                      className="flex size-9 shrink-0 items-center xl:size-10 justify-center rounded-full bg-[#ddf2ea] text-primary"
-                    >
-                      <point.icon className="size-5" strokeWidth={1.75} />
-                    </span>
-                    <span className="text-[13px] leading-[1.35] whitespace-nowrap xl:text-sm">
-                      <span className="block font-semibold text-ink">
-                        {point.title}
-                      </span>
-                      {point.text}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="relative">
-              <svg
-                aria-hidden
-                viewBox="0 0 40 44"
-                className="pointer-events-none absolute -top-9 -right-3 hidden h-11 w-10 text-primary lg:block"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-              >
-                <path d="M9 4 6 17" />
-                <path d="M32 14 21 22" />
-                <path d="M36 30 27 31" />
-              </svg>
-              <PostcodeForm
-                id="profile-cta-postcode"
-                variant="inline"
-                large
-                className="w-full"
-              />
-            </div>
-          </div>
-        </section>
+        <QuoteCtaBar id="profile-cta" className="mt-14 lg:mt-[76px]" />
       </Container>
 
       <JsonLd

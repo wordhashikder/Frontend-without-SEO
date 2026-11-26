@@ -11,6 +11,7 @@ import { CtaBand } from "@/components/sections/cta-band";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PageHero } from "@/components/sections/page-hero";
 import { PageSchema } from "@/components/sections/page-schema";
+import { QuoteCtaBar } from "@/components/sections/quote-cta-bar";
 import { Container, Section, SectionHeading } from "@/components/ui/layout";
 import { faqSchema } from "@/lib/seo";
 import { routes } from "@/lib/site";
@@ -41,6 +42,8 @@ export function SitePageView({ page }: { page: SitePage }) {
     { name: page.title, path: page.path },
   ];
   const empty = page.sections.length === 0 && page.faq.length === 0;
+  // The page of one accreditation scheme, under the accreditations overview.
+  const accreditationPage = parent?.path === routes.accreditations;
 
   return (
     <>
@@ -176,7 +179,12 @@ export function SitePageView({ page }: { page: SitePage }) {
         </Container>
       ) : null}
 
-      {empty ? null : (
+      {accreditationPage ? (
+        // An accreditation's page closes with the same quote bar as installer profiles.
+        <Container className="pt-4 pb-14 md:pb-20">
+          <QuoteCtaBar id="page-cta" />
+        </Container>
+      ) : empty ? null : (
         <CtaBand
           eyebrow="Free and no obligation"
           title="Compare up to 5 free quotes from local EV charger installers"
@@ -191,6 +199,13 @@ export function SitePageView({ page }: { page: SitePage }) {
         description={description}
         path={page.path}
         breadcrumb
+        extra={{
+          dateModified: page.updated_at,
+          // The picture the team chose for the page, when there is one.
+          ...(page.hero_image_url?.startsWith("https://")
+            ? { primaryImageOfPage: page.hero_image_url }
+            : {}),
+        }}
       />
     </>
   );

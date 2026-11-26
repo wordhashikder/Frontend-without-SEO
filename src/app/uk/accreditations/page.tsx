@@ -17,12 +17,12 @@ import { guideArticleSchema } from "@/components/about/guide-schema";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
 import { SupportingPages } from "@/components/pages/supporting-pages";
 import { ClosingSection } from "@/components/sections/closing-section";
-import { CtaBand } from "@/components/sections/cta-band";
 import { FaqList } from "@/components/sections/faq";
 import { FeatureCard, IconColumns } from "@/components/sections/feature-blocks";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PageHero } from "@/components/sections/page-hero";
 import { PageSchema } from "@/components/sections/page-schema";
+import { QuoteCtaBar } from "@/components/sections/quote-cta-bar";
 import { Container, Section, SectionHeading } from "@/components/ui/layout";
 import { api } from "@/lib/api";
 import { getContent } from "@/lib/content";
@@ -186,17 +186,17 @@ export default async function AccreditationsPage() {
         </Container>
       </Section>
 
-      {/* The design sets this page's call to action on white, not the mint band. */}
-      <div className="[&>section]:bg-white [&>section]:pt-0 md:[&>section]:pb-20">
-        <CtaBand
+      <ClosingSection page="accreditations" />
+
+      {/* The same quote bar as installer profiles and each scheme's page. */}
+      <Container className="pt-4 pb-14 md:pb-20">
+        <QuoteCtaBar
+          id="accreditations-cta"
           eyebrow={cta.eyebrow}
           title={cta.title}
           lead={cta.lead}
-          buttonLabel={cta.button}
         />
-      </div>
-
-      <ClosingSection page="accreditations" />
+      </Container>
 
       <LocationsDirectory />
 
