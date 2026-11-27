@@ -8,6 +8,7 @@ import {
   type SearchTab,
   tabFor,
 } from "@/lib/search";
+import { routes } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 const TABS: { key: SearchTab; label: string; icon: typeof Search }[] = [
@@ -34,7 +35,7 @@ const FIELD: Record<
 };
 
 /**
- * The three ways to search. It is a plain GET form to /search/, so a search is a link that can
+ * The three ways to search. It is a plain GET form to the search page (/uk/search/), so a search is a link that can
  * be shared and works without JavaScript; the tabs only change which box is shown.
  */
 export function SearchForm({
@@ -80,7 +81,7 @@ export function SearchForm({
       </div>
 
       <form
-        action="/search/"
+        action={routes.search}
         method="get"
         role="tabpanel"
         id={`${id}-panel`}
@@ -164,12 +165,12 @@ export function SearchForm({
           className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 text-[15px] font-semibold text-white shadow-[0_1px_2px_rgb(10_155_83/0.3)] transition-colors hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <Search aria-hidden className="size-4" />
-          Find Installers
+          Find Electricians
         </button>
       </form>
       {tab === "general" ? (
         <p className="mt-2 px-1 text-sm text-subtle">
-          Enter a postcode to see installers within the distance you choose.
+          Enter a postcode to see electricians within the distance you choose.
         </p>
       ) : null}
     </div>

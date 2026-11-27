@@ -1,7 +1,8 @@
+import { routes } from "@/lib/site";
 import type { ServiceKey } from "@/lib/types";
 
 /**
- * The address of each service in a search link (`/search/?service=ev-charger`) and the key
+ * The address of each service in a search link (`/uk/search/?service=ev-charger`) and the key
  * the API knows it by. A link with any other value finds nothing and is ignored.
  */
 export const SERVICE_SLUGS: Record<string, ServiceKey> = {
@@ -82,8 +83,11 @@ export function tabFor(filters: SearchFilters): SearchTab {
   return "general";
 }
 
-/** A search address with only the filters that are set, e.g. `/search/?service=ev-charger`. */
-export function searchHref(filters: Partial<SearchFilters>, path = "/search/") {
+/** A search address with only the filters that are set, e.g. `/uk/search/?service=ev-charger`. */
+export function searchHref(
+  filters: Partial<SearchFilters>,
+  path: string = routes.search,
+) {
   const query = new URLSearchParams();
   for (const key of [
     "q",

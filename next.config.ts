@@ -72,6 +72,12 @@ const legacyRedirects: Redirect[] = [
     destination: "/uk/accreditations/",
     statusCode: 301,
   },
+  // The search page moved under /uk/ (one search page per country). The query is kept.
+  {
+    source: "/search",
+    destination: "/uk/search/",
+    statusCode: 301,
+  },
   {
     source: "/ev-charger-installers",
     destination: `${directory}/`,

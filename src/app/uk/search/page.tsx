@@ -28,11 +28,11 @@ import type { LocationSummary } from "@/lib/types";
 
 const PER_PAGE = 12;
 const POSTCODE = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
-const TITLE = "Search EV Charger Installers";
+const TITLE = "Find and Compare Electricians";
 const DESCRIPTION =
-  "Search verified local electricians and EV charger installers across the UK by postcode, town or company name, and compare their accreditations.";
+  "Search and compare verified local electricians and electrical service providers by postcode, town or company name, and check their accreditations.";
 
-type Props = PageProps<"/search">;
+type Props = PageProps<"/uk/search">;
 
 /** Every link to a narrowed search is kept out of Google's index, but its links are followed. */
 export async function generateMetadata({
@@ -92,11 +92,11 @@ const titleCase = (value: string) =>
     .replace(/-/g, " ")
     .replace(/\b\p{L}/gu, (letter) => letter.toUpperCase());
 
-/** "EV Charger Installation in Bradford", from what the link asks for. */
+/** "EV Charger Installation in Bradford" or "Electricians in Bradford", from what the link asks for. */
 function resultsTitle(filters: SearchFilters, locations: LocationSummary[]) {
   const service = filters.service
     ? serviceLabels[SERVICE_SLUGS[filters.service]]
-    : "EV Charger Installers";
+    : "Electricians";
   if (filters.location) {
     const wanted = filters.location.toLowerCase();
     const known = locations.find(
@@ -112,7 +112,7 @@ function resultsTitle(filters: SearchFilters, locations: LocationSummary[]) {
       : `${service} matching “${filters.q}”`;
   }
   if (filters.company) return `${service} named “${filters.company}”`;
-  return filters.service ? service : "EV Charger Installers across the UK";
+  return filters.service ? service : "Electricians across the UK";
 }
 
 export default async function SearchPage({ searchParams }: Props) {
@@ -157,17 +157,18 @@ export default async function SearchPage({ searchParams }: Props) {
       <section className="bg-gradient-to-b from-surface to-white">
         <Container
           size="narrow"
-          className="pt-20 pb-10 sm:pt-28 lg:pt-[148px] lg:pb-14"
+          className="pt-6 pb-10 sm:pt-9 lg:pt-[49px] lg:pb-14"
         >
           <p className="inline-flex items-center gap-2 rounded-full bg-primary-soft px-3 py-1 text-sm font-semibold text-forest">
-            UK&apos;s EV Installer Marketplace
+            Electrical Services Marketplace
           </p>
           <h1 className="mt-5 max-w-[640px] text-[34px] font-bold leading-[1.15] tracking-[-0.01em] sm:text-5xl sm:leading-[1.17]">
-            Search and Compare EV Charger Installers in Your Area
+            Find and Compare Electricians in Your Area
           </h1>
           <p className="mt-6 max-w-[600px] text-base leading-relaxed">
-            Search verified, local electricians and EV charger installers across
-            the UK. Find the right installer for your home or business.
+            Search and compare verified local electricians and electrical
+            service providers. Find the right specialist for your home or
+            business.
           </p>
           <div className="mt-8 max-w-[860px]">
             <SearchForm
@@ -175,7 +176,7 @@ export default async function SearchPage({ searchParams }: Props) {
               cities={places.map((place) => place.name)}
             />
           </div>
-          <ul className="mt-8 grid max-w-[860px] grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
+          <ul className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 lg:grid-cols-4">
             {trust.map(({ icon: Icon, text }) => (
               <li key={text} className="flex items-center gap-3 text-sm">
                 <Icon
@@ -216,7 +217,7 @@ export default async function SearchPage({ searchParams }: Props) {
               Please try again in a moment.
             </Notice>
           ) : results && results.items.length === 0 ? (
-            <Notice title="No installers match that search">
+            <Notice title="No electricians match that search">
               Try a different postcode, a wider distance or fewer words, or{" "}
               <a
                 className="font-semibold text-primary underline"
@@ -224,16 +225,16 @@ export default async function SearchPage({ searchParams }: Props) {
               >
                 tell us what you need
               </a>{" "}
-              and we&apos;ll match you with installers.
+              and we&apos;ll match you with electricians.
             </Notice>
           ) : results ? (
             <>
               <p className="sr-only" role="status">
-                Showing {results.items.length} of {results.total} installers.
+                Showing {results.items.length} of {results.total} electricians.
               </p>
               <p className="mt-6 text-sm font-medium text-ink">
                 {results.total}{" "}
-                {results.total === 1 ? "installer" : "installers"} found
+                {results.total === 1 ? "electrician" : "electricians"} found
               </p>
               <ul className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
                 {results.items.map((installer) => (
