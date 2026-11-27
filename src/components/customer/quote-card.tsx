@@ -76,7 +76,7 @@ export function QuoteCard({ quote }: { quote: CustomerQuote }) {
                 {installer.accreditations.map((name) => (
                   <li
                     key={name}
-                    className="inline-flex items-center gap-1 rounded-md bg-surface px-2 py-1 text-[11px] font-medium text-ink/80"
+                    className="inline-flex items-center gap-1 rounded-md bg-surface px-2 py-1 text-sm font-medium text-ink/80"
                   >
                     <ShieldCheck aria-hidden className="size-3 text-primary" />
                     {name}

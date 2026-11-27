@@ -58,7 +58,7 @@ export function LegalToc({ items }: { items: TocItem[] }) {
     >
       <h2
         id="toc-heading"
-        className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted"
+        className="text-sm font-bold uppercase tracking-[0.12em] text-muted"
       >
         On this page
       </h2>

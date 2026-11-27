@@ -17,7 +17,7 @@ function PlanCard({ plan }: { plan: PlanContent }) {
       )}
     >
       {plan.popular ? (
-        <p className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-primary px-4 py-1 text-[11px] font-bold uppercase leading-4 tracking-[0.05em] text-white">
+        <p className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-primary px-4 py-1 text-sm font-bold uppercase leading-5 tracking-[0.05em] text-white">
           Most popular
         </p>
       ) : null}

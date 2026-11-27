@@ -297,6 +297,56 @@ export const api = {
     ),
 
   // ---- Installers --------------------------------------------------------
+  /**
+   * The /search/ page's results: best plan first, rotating hourly inside each plan. Never
+   * cached (the order changes every hour and a visitor's search is their own); the visitor's
+   * address is passed so the API's rate limit counts them and not this server.
+   */
+  searchInstallers: async (
+    params: {
+      q?: string;
+      company?: string;
+      location?: string;
+      service?: string;
+      accreditation?: string;
+      distance?: number;
+      page?: number;
+      pageSize?: number;
+    },
+    clientIp?: string,
+  ): Promise<
+    | { status: "ok"; results: Paginated<InstallerCard> }
+    | { status: "postcode_not_found" | "unavailable" }
+  > => {
+    try {
+      const results = await request<Paginated<InstallerCard>>(
+        "/installers/search",
+        {
+          clientIp,
+          query: {
+            q: params.q,
+            company: params.company,
+            location: params.location,
+            service: params.service,
+            accreditation: params.accreditation,
+            distance: params.distance,
+            page: params.page ?? 1,
+            page_size: params.pageSize ?? 12,
+          },
+        },
+      );
+      return { status: "ok", results };
+    } catch (error) {
+      if (error instanceof ApiError) {
+        if (error.code === "postcode_not_found")
+          return { status: "postcode_not_found" };
+        console.error(`[api] ${error.status} ${error.code}: ${error.message}`);
+        return { status: "unavailable" };
+      }
+      throw error;
+    }
+  },
+
   installers: (params: {
     location?: string;
     featured?: boolean;

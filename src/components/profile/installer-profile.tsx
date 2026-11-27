@@ -1,4 +1,15 @@
-import { Clock, MapPin, MapPinned, ShieldCheck } from "lucide-react";
+import {
+  Award,
+  Clock,
+  ExternalLink,
+  Globe,
+  type LucideIcon,
+  Map as MapIcon,
+  MapPin,
+  MapPinned,
+  ShieldCheck,
+  Wrench,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -62,6 +73,20 @@ function Heading({
   );
 }
 
+/** The website as a safe address to link to and a short label to show, or `null`. */
+function websiteLink(url: string | null | undefined) {
+  if (!url || !/^https?:\/\//i.test(url)) return null;
+  try {
+    const { host, pathname } = new URL(url);
+    return {
+      href: url,
+      label: `${host}${pathname === "/" ? "" : pathname.replace(/\/$/, "")}`,
+    };
+  } catch {
+    return null;
+  }
+}
+
 /** Everything on an installer profile between the header and the locations directory. */
 export function InstallerProfile({
   installer,
@@ -81,33 +106,55 @@ export function InstallerProfile({
     .map((text) => text.trim())
     .filter(Boolean);
 
-  const listedSince = installer.listed_since
-    ? new Intl.DateTimeFormat("en-GB", {
-        month: "long",
-        year: "numeric",
-        timeZone: "Europe/London",
-      }).format(new Date(installer.listed_since))
-    : null;
-  const facts: [string, string][] = [
-    ["Based in", `${installer.town} (${installer.postcode_district})`],
-    [
-      "Service area",
-      `Within ${formatMiles(installer.coverage.radius_miles)} ${installer.coverage.radius_miles === 1 ? "mile" : "miles"} of ${installer.town}`,
-    ],
-    [
-      "Services",
-      installer.services.map((key) => serviceLabels[key] ?? key).join(", ") ||
+  const website = websiteLink(installer.website_url);
+  const facts: { label: string; icon: LucideIcon; value: ReactNode }[] = [
+    {
+      label: "Based in",
+      icon: MapPin,
+      value: `${installer.town} (${installer.postcode_district})`,
+    },
+    {
+      label: "Service area",
+      icon: MapIcon,
+      value: `Within ${formatMiles(installer.coverage.radius_miles)} ${installer.coverage.radius_miles === 1 ? "mile" : "miles"} of ${installer.town}`,
+    },
+    {
+      label: "Services",
+      icon: Wrench,
+      value:
+        installer.services.map((key) => serviceLabels[key] ?? key).join(", ") ||
         "EV charger installation",
-    ],
+    },
     ...(installer.years_experience
       ? [
-          ["Experience", `${installer.years_experience}+ years`] as [
-            string,
-            string,
-          ],
+          {
+            label: "Experience",
+            icon: Award,
+            value: `${installer.years_experience}+ years`,
+          },
         ]
       : []),
-    ...(listedSince ? [["Listed since", listedSince] as [string, string]] : []),
+    // Only sent for the plans that show it (Pro and Premium).
+    ...(website
+      ? [
+          {
+            label: "Website",
+            icon: Globe,
+            value: (
+              <a
+                href={website.href}
+                target="_blank"
+                rel="nofollow noopener noreferrer"
+                className="inline-flex items-center gap-1.5 font-medium text-primary underline underline-offset-2 hover:text-primary-dark"
+              >
+                <span className="break-all">{website.label}</span>
+                <ExternalLink aria-hidden className="size-4 shrink-0" />
+                <span className="sr-only">(opens in a new tab)</span>
+              </a>
+            ),
+          },
+        ]
+      : []),
   ];
 
   // The facts card (including "Experience") shows even when the business has not written an
@@ -124,16 +171,33 @@ export function InstallerProfile({
           ))}
         </div>
       ) : null}
-      <dl
-        className={`${paragraphs.length > 0 ? "mt-5" : "mt-3"} grid grid-cols-1 gap-x-8 gap-y-2.5 rounded-xl border border-line bg-white p-5 text-sm shadow-soft sm:grid-cols-[130px_1fr]`}
+      <div
+        className={`${paragraphs.length > 0 ? "mt-5" : "mt-3"} rounded-2xl border border-line bg-white px-5 py-4 shadow-soft sm:px-6`}
       >
-        {facts.map(([label, value]) => (
-          <div key={label} className="contents">
-            <dt className="text-subtle">{label}</dt>
-            <dd className="font-medium text-ink">{value}</dd>
-          </div>
-        ))}
-      </dl>
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 pb-3">
+          <p className="text-lg font-bold text-ink">{name}</p>
+          {installer.verified ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary-soft px-3 py-1 text-sm font-semibold text-forest">
+              <CheckBullet className="size-4" />
+              Verified Installer
+            </span>
+          ) : null}
+        </div>
+        <dl className="text-sm">
+          {facts.map(({ label, icon: Icon, value }) => (
+            <div
+              key={label}
+              className="grid grid-cols-[110px_28px_1fr] items-center gap-x-3 border-t border-line py-2.5 sm:grid-cols-[150px_32px_1fr]"
+            >
+              <dt className="text-subtle">{label}</dt>
+              <dd className="m-0 flex justify-center text-primary">
+                <Icon aria-hidden className="size-5" strokeWidth={1.75} />
+              </dd>
+              <dd className="m-0 min-w-0 font-medium text-ink">{value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
     </section>
   );
 
@@ -328,7 +392,7 @@ export function InstallerProfile({
                         {scheme?.card_title ?? name}
                       </h3>
                       {scheme?.card_text ? (
-                        <p className="mt-2 flex-1 text-sm leading-relaxed">
+                        <p className="mt-2 flex-1 text-base leading-relaxed">
                           {scheme.card_text}
                         </p>
                       ) : (

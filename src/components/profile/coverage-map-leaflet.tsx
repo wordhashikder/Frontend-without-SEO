@@ -111,7 +111,7 @@ export default function CoverageMapLeaflet({
           }}
         />
       </MapContainer>
-      <p className="absolute right-2.5 bottom-2.5 z-[1000] flex items-center gap-2 rounded-md bg-white px-2.5 py-1.5 text-[11px] font-medium text-ink shadow-soft">
+      <p className="absolute right-2.5 bottom-2.5 z-[1000] flex items-center gap-2 rounded-md bg-white px-2.5 py-1.5 text-sm font-medium text-ink shadow-soft">
         <span
           aria-hidden
           className="size-3 rounded-full border border-primary bg-primary/25"

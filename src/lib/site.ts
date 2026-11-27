@@ -53,6 +53,8 @@ export const routes = {
   signOut: "/installer/sign-out/",
   /** Directory hub. Location pages live directly under it. */
   installers: "/uk/ev-charger-installers/",
+  /** Search the whole directory by place, company, service or accreditation. */
+  search: "/search/",
   /** Parent of every installer profile. Profiles are never nested under a location. */
   installerProfiles: "/uk/installer/",
   privacy: "/privacy-policy/",

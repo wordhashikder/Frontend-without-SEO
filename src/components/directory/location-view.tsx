@@ -93,7 +93,7 @@ function LocationPicture({
           className="object-cover"
         />
         {location.image_credit ? (
-          <p className="absolute top-3 right-3 max-w-[70%] truncate rounded-md bg-ink/60 px-2 py-0.5 text-[10px] leading-4 text-white">
+          <p className="absolute top-3 right-3 max-w-[70%] truncate rounded-md bg-ink/60 px-2 py-0.5 text-sm leading-5 text-white">
             {location.image_credit}
           </p>
         ) : null}
@@ -196,7 +196,7 @@ export function LocationView({
               title={listing.title}
             />
             <ButtonLink
-              href={routes.quotes}
+              href={routes.search}
               variant="link"
               arrow
               className="sm:mb-2"

@@ -11,6 +11,7 @@ const staticPages: { path: string; priority: number }[] = [
   { path: routes.home, priority: 1 },
   { path: routes.quotes, priority: 0.9 },
   { path: routes.installers, priority: 0.9 },
+  { path: routes.search, priority: 0.8 },
   { path: routes.howItWorks, priority: 0.8 },
   { path: routes.join, priority: 0.8 },
   { path: routes.faq, priority: 0.7 },

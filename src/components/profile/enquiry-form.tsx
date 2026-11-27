@@ -234,7 +234,7 @@ export function EnquiryForm({
         {pending ? "Sending…" : enquiryForm.button}
       </Button>
 
-      <p className="flex gap-2 pt-1 text-[11px] leading-[15px]">
+      <p className="flex gap-2 pt-1 text-sm leading-5">
         <ShieldCheck
           aria-hidden
           className="mt-px size-3.5 shrink-0 text-primary"

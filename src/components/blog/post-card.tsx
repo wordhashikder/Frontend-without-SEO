@@ -123,7 +123,7 @@ export function FeaturedPost({ post }: { post: BlogPostSummary }) {
         className="aspect-[16/9] lg:aspect-auto lg:min-h-[360px]"
       />
       <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
-        <p className="mb-3 flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.04em]">
+        <p className="mb-3 flex flex-wrap items-center gap-2 text-sm font-semibold uppercase tracking-[0.04em]">
           <span className="rounded-full bg-primary-soft px-2.5 py-1 text-primary-dark">
             Featured
           </span>

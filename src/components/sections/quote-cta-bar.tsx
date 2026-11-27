@@ -48,7 +48,7 @@ export function QuoteCtaBar({
       </svg>
       <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,430px)] lg:items-center lg:gap-8 lg:px-9 lg:py-10">
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-primary-dark">
+          <p className="text-sm font-bold uppercase tracking-[0.14em] text-primary-dark">
             {eyebrow}
           </p>
           <h2

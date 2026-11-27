@@ -8,11 +8,13 @@ import {
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { ContentMarkdown } from "@/components/sections/content-markdown";
 import { CtaBand } from "@/components/sections/cta-band";
+import { FeatureCard } from "@/components/sections/feature-blocks";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PageHero } from "@/components/sections/page-hero";
 import { PageSchema } from "@/components/sections/page-schema";
 import { QuoteCtaBar } from "@/components/sections/quote-cta-bar";
 import { Container, Section, SectionHeading } from "@/components/ui/layout";
+import { cardIcon } from "@/lib/card-icons";
 import { faqSchema } from "@/lib/seo";
 import { routes } from "@/lib/site";
 import type { SitePage } from "@/lib/types";
@@ -101,9 +103,11 @@ export function SitePageView({ page }: { page: SitePage }) {
                     title={section.heading}
                     size="lg"
                   />
-                  <ContentMarkdown variant="page" className="mt-2">
-                    {section.body}
-                  </ContentMarkdown>
+                  {section.body ? (
+                    <ContentMarkdown variant="page" className="mt-2">
+                      {section.body}
+                    </ContentMarkdown>
+                  ) : null}
                 </div>
                 {section.image_url ? (
                   <PageImage
@@ -113,6 +117,21 @@ export function SitePageView({ page }: { page: SitePage }) {
                   />
                 ) : null}
               </div>
+              {section.cards?.length ? (
+                <ul className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2">
+                  {section.cards.map((card, cardIndex) => (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: cards have no ids; the list is never reordered on the page
+                    <li key={cardIndex}>
+                      <FeatureCard
+                        inline
+                        icon={cardIcon(card.icon)}
+                        title={card.title}
+                        text={card.description}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </Container>
           </Section>
         );

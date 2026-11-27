@@ -149,6 +149,8 @@ export interface InstallerDetail extends InstallerCard {
   /** "M20": the outward part of the base postcode. */
   postcode_district: string;
   listed_since: string | null;
+  /** The company's own website; only sent when the plan shows it (Pro and Premium). */
+  website_url?: string | null;
   /** The town's photo, shown behind a profile with no photos of its own. */
   cover_image: {
     url: string;
@@ -527,11 +529,20 @@ export interface CustomerConversation {
 
 // ---- Pages and accreditation schemes (Dashboard → Website content) -----------------
 
+/** One card of a section's grid; `icon` is a name from `lib/card-icons.ts`. */
+export interface SectionCard {
+  icon: string | null;
+  title: string;
+  description: string;
+}
+
 export interface PageSection {
   heading: string;
   body: string;
   image_url: string | null;
   image_alt: string | null;
+  /** Absent from an API that predates cards: treated as none. */
+  cards?: SectionCard[];
 }
 
 export interface PageFaq {

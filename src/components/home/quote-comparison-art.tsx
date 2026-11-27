@@ -28,7 +28,7 @@ export function QuoteComparisonArt() {
               <StarRating rating={5} size="sm" className="mt-0.5" />
             </span>
             <span className="text-sm font-bold text-ink">{price}</span>
-            <span className="hidden rounded-full border border-primary px-3 py-1 text-[11px] font-semibold text-primary min-[400px]:inline">
+            <span className="hidden rounded-full border border-primary px-3 py-1 text-sm font-semibold text-primary min-[400px]:inline">
               View Quote
             </span>
           </li>

@@ -180,7 +180,7 @@ export default async function HomePage() {
                     className="object-cover [mask-image:linear-gradient(to_right,transparent,black_30%)]"
                   />
                   <ShieldTick className="absolute top-7 -left-8 hidden size-14 drop-shadow-md sm:block" />
-                  <p className="absolute top-[41%] -left-11 hidden rounded-lg bg-white px-3 py-2 text-[11px] font-semibold leading-snug text-ink shadow-card sm:block">
+                  <p className="absolute top-[41%] -left-11 hidden rounded-lg bg-white px-3 py-2 text-sm font-semibold leading-snug text-ink shadow-card sm:block">
                     NAPIT / NICEIC
                     <br />
                     Registered

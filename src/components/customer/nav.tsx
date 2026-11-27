@@ -89,7 +89,7 @@ export function CustomerNav({
                 <Icon aria-hidden className="size-[18px]" strokeWidth={1.75} />
                 <span className="flex-1">{label}</span>
                 {badge ? (
-                  <span className="rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-white">
+                  <span className="rounded-full bg-primary px-2 py-0.5 text-sm font-semibold text-white">
                     {badge}
                     <span className="sr-only">
                       {label === "Messages" ? " unread" : " received"}
@@ -113,7 +113,7 @@ export function CustomerNav({
                 href={withQuery(href)}
                 aria-current={active(href) ? "page" : undefined}
                 className={cn(
-                  "relative flex flex-col items-center gap-1 px-1 py-2.5 text-[11px] font-medium",
+                  "relative flex flex-col items-center gap-1 px-1 py-2.5 text-sm font-medium",
                   active(href) ? "text-primary" : "text-subtle",
                 )}
               >
@@ -122,7 +122,7 @@ export function CustomerNav({
                 {badge ? (
                   <span
                     aria-hidden
-                    className="absolute top-1.5 left-1/2 ml-2 min-w-4 rounded-full bg-primary px-1 text-center text-[10px] leading-4 font-semibold text-white"
+                    className="absolute top-1.5 left-1/2 ml-2 min-w-5 rounded-full bg-primary px-1 text-center text-sm leading-5 font-semibold text-white"
                   >
                     {badge}
                   </span>

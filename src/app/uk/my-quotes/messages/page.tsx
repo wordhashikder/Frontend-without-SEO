@@ -85,7 +85,7 @@ export default async function MessagesPage({
                         >
                           {item.installer_name}
                         </span>
-                        <span className="shrink-0 text-[11px] text-subtle">
+                        <span className="shrink-0 text-sm text-subtle">
                           {formatDate(item.last_message_at)}
                         </span>
                       </span>

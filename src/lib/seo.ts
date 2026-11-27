@@ -34,6 +34,8 @@ type PageMeta = {
    * title that already names the brand counts as complete; any other title gets the suffix.
    */
   standalone?: boolean;
+  /** For a page kept out of the index: still let search engines follow its links. */
+  followLinks?: boolean;
 };
 
 /**
@@ -46,6 +48,7 @@ export function pageMetadata({
   path,
   index = true,
   standalone = title.toLowerCase().includes(site.name.toLowerCase()),
+  followLinks = false,
 }: PageMeta): Metadata {
   const fullTitle = standalone ? title : `${title} | ${site.name}`;
   return {
@@ -65,7 +68,7 @@ export function pageMetadata({
       title: fullTitle,
       description,
     },
-    ...(index ? {} : { robots: { index: false, follow: false } }),
+    ...(index ? {} : { robots: { index: false, follow: followLinks } }),
   };
 }
 
@@ -117,6 +120,7 @@ export type WebPageType =
   | "ContactPage"
   | "FAQPage"
   | "CollectionPage"
+  | "SearchResultsPage"
   | "ProfilePage";
 
 /**
